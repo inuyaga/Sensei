@@ -1,0 +1,33 @@
+{% extends 'admin/base_sensei.html'%}
+{% block contenido %}
+<img src="{{object.blog_imagen.url}}" alt="">
+<h1>{{object.blog_titulo}}</h1>
+<p>{{object.blog_contenido}}</p>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form action="{% url 'control_escolar:comentar_blog' id_blog %}" method="post">
+            {% csrf_token %}
+            {{coment_form.as_p}}
+            <button type="submit" class="btn btn-primary">Comentar</button>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    {% for comentario in comentarios %}
+    <div class="panel panel-info">
+            <div class="panel-heading">{{comentario.comentario_comentado_by.first_name}} {{comentario.comentario_comentado_by.last_name}}</div>
+            <div class="panel-body">
+                    <p>{{comentario.comentario_comentario}}</p>
+                    <h6 class="text-right">{{comentario.comentario_creado}}</h6>
+            </div>
+
+          </div>
+    {% endfor %}
+</div>
+
+{% endblock contenido %}
+{% block footer %}
+
+{% endblock footer %}

@@ -1,0 +1,88 @@
+{% extends 'admin/base_sensei.html'%}
+{% block contenido %}
+<h1>{{msn}}</h1>
+<div class="row">
+    {% if materias or unidades %}
+    {% else %}
+    <form action="" method="GET">
+        <div class="col-md-3">
+            <label for="materia">Aula</label>
+            <select class="custom-select form-control" id="" name="aula">
+                <option selected disabled>Elije una opcion</option>
+                {% for aula in aulas %}
+                <option value="{{aula.id}}">{{aula.aula_nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-1">
+            <br>
+            <button type="submit" title="Buscar" class="btn btn-success"><span class="glyphicon glyphicon-search"
+                    aria-hidden="true"></span></button>
+        </div>
+    </form>
+    {% endif %}
+    {% if materias %}
+    <form action="" method="GET">
+        <div class="col-md-3">
+            <label for="materia">Materia</label>
+            <select class="custom-select form-control" id="" name="materia">
+                <option selected disabled>Elije una opcion</option>
+                {% for materia in materias %}
+                <option value="{{materia.materia_id}}">{{materia.materia_nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-1">
+            <br>
+            <button title="Buscar" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-search"
+                    aria-hidden="true"></span></button>
+        </div>
+    </form>
+    {% endif %}
+    {% if unidades %}
+    <form action="" method="GET">
+        <div class="col-md-3">
+            <label for="materia">Unidad</label>
+            <select class="custom-select form-control" id="" name="unidad">
+                <option selected disabled>Elije una opcion</option>
+                {% for unidad in unidades %}
+                <option value="{{unidad.unidad_id}}">{{unidad.unidad_nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-1">
+            <br>
+            <button title="Promediar" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok"
+                    aria-hidden="true"></span></button>
+        </div>
+    </form>
+    {% endif %}
+</div>
+
+<div class="row">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Materia</th>
+                <th scope="col">Unidad</th>
+                <th scope="col">Alumno</th>
+                <th scope="col">Entrego</th>
+                <th scope="col">Falta calificar</th>
+                <th scope="col">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for alumno in alumnos %}
+            <tr>
+                <th scope="row">{{alumno.calU_Materia_nombre}}</th>
+                <td>{{alumno.calU_unidadNombre}}</td>
+                <td>{{alumno.calU_pertenece.first_name}} {{alumno.calU_pertenece.last_name}}</td>
+                <td>{{alumno.calU_entrego}}</td>
+                <td>{{alumno.calU_falta_calificar}}</td>
+                <td>{{alumno.calU_calificacion}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock contenido %}

@@ -1,0 +1,148 @@
+{% extends 'admin/base_sensei.html'%}
+{% block contenido %}
+
+<div class="row">
+    <div class="col-md-3">
+        <label for="materia">Materia</label>
+        <select class="custom-select form-control" id="id_materia">
+            <option selected disabled>Elije una opcion</option>
+            {% for materia in list_materia %}
+            <option value="{{materia.materia_id}}">{{materia.materia_nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-5">
+        <label for="materia">Unidad</label>
+        <select class="custom-select form-control" id="id_unidad">
+        </select>
+    </div>
+    <div class="col-md-3">
+        <br>
+        <button type="button" class="btn btn-primary" id="btn_nuevo" disabled data-toggle="modal" data-target="#nuevo_tarea">Nuevo</button>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="nuevo_tarea" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Tarea</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="form_tarea">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-outline-success">Guardar</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Descripcion</th>
+            <th scope="col">Inicio</th>
+            <th scope="col">Termino</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Accion</th>
+        </tr>
+    </thead>
+    <tbody id="contenido_tabla">
+
+    </tbody>
+</table>
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#id_materia').on('change', function () {
+        // $("#id_unidad_materia").val(this.value);
+        $("#btn_nuevo").attr("disabled", true);
+        $('#contenido_tabla').html('');
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'control_escolar:maestro_tarea_json' %}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                id_materia: this.value,
+                tipo_post: 'materia',
+            },
+            success: function (data) {
+                var contenido = data.content.contenido
+                var tipo_mensaje = data.content.tipo_mensaje
+                if (tipo_mensaje == 'materia') {
+                    $('#id_unidad').html(contenido)
+
+                } else {
+                    //   alertify.error(message);
+                }
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+
+                console.log(data);
+            },
+        });
+    });
+
+    $('#id_unidad').on('change', function () {
+        // $("#id_unidad_materia").val(this.value);
+        $("#btn_nuevo").attr("disabled", false);
+        $("#id_tarea_unidad").val(this.value);
+
+        $.post("{% url 'control_escolar:maestro_tarea_json' %}", {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                UnidadID: this.value,
+                tipo_post: 'tareas',
+            },
+            function (data, status) {
+                var message = data.content.contenido;
+                $('#contenido_tabla').html(message);
+            });
+    });
+
+
+
+
+    var frm = $('#form_tarea');
+
+    frm.submit(function (e) {
+
+        e.preventDefault();
+
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+                var message = data.content.cont
+                alertify.success('Listo');
+                $('#contenido_tabla').html(message)
+                $('#id_tarea_nombre').val('')
+                $('#id_tarea_descripcion').val('')
+                $('#id_tarea_fecha_inicio').val('')
+                $('#id_tarea_fecha_termino').val('')
+                $('#id_tarea_tipo').val('')
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+                console.log(data);
+                alertify.error('Un error al intentar guardar');
+            },
+        });
+    });
+</script>
+{% endblock script %}

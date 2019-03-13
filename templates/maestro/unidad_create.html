@@ -1,0 +1,231 @@
+{% extends 'admin/base_sensei.html'%}
+{% block contenido %}
+<div class="col-md-3">
+    <label for="Aula">Aula</label>
+    <select class="custom-select form-control" id="Aula">
+        <option selected disabled>Elija una opcion</option>
+        {% for aula in list_aula %}
+        <option value="{{aula.id}}">{{aula.aula_nombre}}</option>
+        {% endfor %}
+    </select>
+</div>
+<div class="col-md-3">
+    <label for="materia">Materia</label>
+    <select class="custom-select form-control" id="id_materia">
+    </select>
+</div>
+<div class="col-md-3">
+    <br>
+    <button type="button" class="btn btn-primary" id="btn_nuevo" disabled data-toggle="modal" data-target="#nuevo_unidad">Nuevo</button>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Unidad</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="contenido_tabla">
+
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="nuevo_unidad" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Nueva unidad</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="post_unidad">
+                    {% csrf_token %}
+                    {{ form.unidad_nombre.label }}
+                    {{ form.unidad_nombre }}
+                    {{ form.unidad_materia }}
+                    <div class="row col-md-3">
+                        <button type="submit" class="btn btn-outline-success">Guardar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $('#Aula').on('change', function () {
+        $('#contenido_tabla').html('');
+        $("#btn_nuevo").attr("disabled", true);
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'control_escolar:consultas_json' %}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                id_aula: this.value,
+                tipo_post: 'aula',
+            },
+            success: function (data) {
+                var contenido = data.content.contenido
+                var tipo_mensaje = data.content.tipo_mensaje
+                if (tipo_mensaje == 'aula') {
+                    $('#id_materia').html(contenido)
+                    //   alertify.success(message);
+                } else {
+                    //   alertify.error(message);
+                }
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+                console.log(data);
+            },
+        });
+
+    });
+
+
+    $('#id_materia').on('change', function () {
+        $("#id_unidad_materia").val(this.value);
+        $("#btn_nuevo").attr("disabled", false);
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'control_escolar:consultas_json' %}",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                id_materia: this.value,
+                tipo_post: 'materia',
+            },
+            success: function (data) {
+                var contenido = data.content.contenido
+                var tipo_mensaje = data.content.tipo_mensaje
+                if (tipo_mensaje == 'materia') {
+                    $('#contenido_tabla').html(contenido)
+
+                } else {
+                    //   alertify.error(message);
+                }
+
+
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+
+                console.log(data);
+            },
+        });
+    });
+
+
+
+
+    var frm = $('#post_unidad');
+
+    frm.submit(function (e) {
+
+        e.preventDefault();
+
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+                var message = data.content.cont
+                alertify.success('Listo');
+                $('#contenido_tabla').html(message)
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+                console.log(data);
+                alertify.error('Un error al intentar guardar');
+            },
+        });
+    });
+
+    function eliminar_unidad(id) {
+        alertify.confirm('Eliminar', 'Desea eliminar esta Unidad?', function () {
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'control_escolar:maestro_unidad_delete' %}",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    id_unidad: id,
+                    id_materia: $("#id_materia option:selected").val(),
+                },
+                success: function (data) {
+                    var contenido = data.content.contenido
+                    var tipo_mensaje = data.content.tipo_mensaje
+                    if (tipo_mensaje == 'materia') {
+                        $('#contenido_tabla').html(contenido)
+                        alertify.success('Ok')
+
+                    } else {
+                        //   alertify.error(message);
+                    }
+                },
+                error: function (data) {
+                    console.log('An error occurred.');
+
+                    console.log(data);
+                },
+            });
+        }, function () {
+            alertify.error('Cancel')
+        });
+    }
+
+    function update_unidad(id) {
+
+        alertify.prompt('Unidad', 'Cambiar nombre', '', function (evt, value) {
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'control_escolar:maestro_unidad_update' %}",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    id_unidad: id,
+                    id_materia: $("#id_materia option:selected").val(),
+                    cambio_nombre: value,
+                },
+                success: function (data) {
+                    var contenido = data.content.contenido
+                    var tipo_mensaje = data.content.tipo_mensaje
+                    if (tipo_mensaje == 'materia') {
+                        $('#contenido_tabla').html(contenido)
+                        alertify.success('Ok')
+
+                    } else {
+                        //   alertify.error(message);
+                    }
+                },
+                error: function (data) {
+                    console.log('An error occurred.');
+
+                    console.log(data);
+                },
+            });
+
+        }, function () {
+            alertify.error('Cancel')
+        }).set('labels', {ok:'Guardar', cancel:'Cancelar'});
+    }
+</script>
+{% endblock script %}

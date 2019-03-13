@@ -1,0 +1,8 @@
+{% extends 'admin/base_sensei.html'%}
+{% block contenido %}
+<form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit" class="btn btn-success">Guardar</button>
+</form>
+{% endblock contenido %}

@@ -1,0 +1,65 @@
+{% extends 'admin/base_sensei.html'%}
+{% block contenido %}
+<h1>{{msn}}</h1>
+<div class="row">
+    {% if materias %}
+    {% else %}
+    <form action="" method="GET">
+        <div class="col-md-3">
+            <label for="materia">Aula</label>
+            <select class="custom-select form-control" id="" name="aula">
+                <option selected disabled>Elije una opcion</option>
+                {% for aula in aulas %}
+                <option value="{{aula.id}}">{{aula.aula_nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-1">
+            <br>
+            <button type="submit" title="Buscar" class="btn btn-success"><span class="glyphicon glyphicon-search"
+                    aria-hidden="true"></span></button>
+        </div>
+    </form>
+    {% endif %}
+    {% if materias %}
+    <form action="" method="GET">
+        <div class="col-md-3">
+            <label for="materia">Materia</label>
+            <select class="custom-select form-control" id="" name="materia">
+                <option selected disabled>Elije una opcion</option>
+                {% for materia in materias %}
+                <option value="{{materia.materia_id}}">{{materia.materia_nombre}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-1">
+            <br>
+            <button title="Promediar" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok"
+                    aria-hidden="true"></span></button>
+        </div>
+    </form>
+    {% endif %}
+
+</div>
+
+<div class="row">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Materia</th>
+                <th scope="col">Alumno</th>
+                <th scope="col">Promedio Final</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for alumno in alumnos %}
+            <tr>
+                <th scope="row">{{alumno.calM_nombre_materia}}</th>
+                <td>{{alumno.calM_alumno.first_name}} {{alumno.calM_alumno.last_name}}</td>
+                <td>{{alumno.calM_calificacionFinal}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock contenido %}

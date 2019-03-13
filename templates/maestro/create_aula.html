@@ -1,0 +1,37 @@
+{% extends 'admin/base_sensei.html'%}
+{% block contenido %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-outline-success">Guardar</button>
+    </form>
+
+    <table class="table">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Creado</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for aula in  list_aula %}
+                <tr>
+                        <th scope="row">{{aula.id}}</th>
+                        <td>{{aula.aula_nombre}}</td>
+                        <td>{{aula.aula_creacion}}</td>
+                        <td>
+                        <a class="btn btn-pill btn-primary" href="{% url 'control_escolar:maestro_update_aula' aula.id %}" role="button"><i class="cui-pencil"></i>
+                        <a class="btn btn-pill btn-danger" href="{% url 'control_escolar:maestro_delete_aula' aula.id %}" role="button"><i class="cui-circle-x"></i>
+                        </a>
+                        </td>
+                      </tr>
+                {% endfor %}
+
+            </tbody>
+          </table>
+
+{% endblock contenido %}

@@ -1,0 +1,18 @@
+{% extends 'admin/base_sensei.html'%}
+{% block contenido %}
+{% for materia in object_list %}
+<div class="col-md-6">
+    <div class="metric">
+        <span class="icon"><i class="fa fa-download"></i></span>
+        <p>
+            <span class="title">{{materia.materia_aula}}</span>
+            <span class="number">{{materia.materia_nombre}}</span>
+            <p><a class="btn btn-primary" href="{% url 'control_escolar:doc_materia_alu' materia.materia_id %}" role="button">Documentos</a></p>
+        </p>
+    </div>
+</div>
+{% endfor %}
+
+
+
+{% endblock %}

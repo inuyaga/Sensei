@@ -1,0 +1,14 @@
+{% extends 'admin/base_sensei.html'%}
+{% block contenido %}
+<ul class="list-group">
+{% for materia in object_list %}
+{% for doc in materia.materia_archivos.all %}
+  <li class="list-group-item">
+    <span class="badge badge-primary badge-pill"><a class="badge badge-primary" href="{{doc.doc_archivo.url}}"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span></a></span>
+    {{doc.doc_nombre}}
+  </li>
+{% endfor %}
+{% endfor %}
+</ul>
+
+{% endblock contenido %}

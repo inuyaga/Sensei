@@ -1,0 +1,30 @@
+{% extends 'admin/base_sensei.html'%}
+{% block contenido %}
+<div class="row">
+        <li class="list-group-item active">Materias</li>
+        <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Materia</th>
+                    <th scope="col">Calificación</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for cal in calificaciones  %}
+                    <tr>
+                      <th scope="row">{{cal.calM_nombre_materia}}</th>
+                      <td>{{cal.calM_calificacionFinal}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+</div>
+<ul class="list-group">
+  <li class="list-group-item active">Unidades</li>
+  {% for unidad in unidades %}
+  <li class="list-group-item"> <strong>{{unidad.calU_Materia_nombre}}:</strong>  {{unidad.calU_unidadNombre}}
+    <span class="badge badge-primary badge-pill">Total: {{unidad.calU_calificacion}}</span>
+</li>
+  {% endfor %}
+</ul>
+{% endblock contenido %}

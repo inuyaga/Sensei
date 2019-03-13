@@ -1,0 +1,50 @@
+{% extends 'admin/base_sensei.html'%}
+{% block contenido %}
+
+<form action="" method="post">
+  {% csrf_token %}
+  <div class="col-md-3">
+    {{form.materia_aula.label}}
+    {{form.materia_aula.errors}}
+    {{form.materia_aula}}
+  </div>
+  <div class="col-md-3">
+      {{form.materia_nombre.label}}
+      {{form.materia_nombre.errors}}
+      {{form.materia_nombre}}
+  </div>
+  <br>
+  <button type="submit" class="btn btn-outline-success">Guardar</button>
+</form>
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Nombre</th>
+      <th scope="col">Aula</th>
+      <th scope="col">Creado</th>
+      <th scope="col">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for materia in lista %}
+    <tr>
+      <th scope="row">{{materia.materia_id}}</th>
+      <td>{{materia.materia_nombre}}</td>
+      <td>{{materia.materia_aula}}</td>
+      <td>{{materia.materia_creado}}</td>
+      <td>
+        <a class="btn btn-pill btn-primary" title="Editar" href="{% url 'control_escolar:maestro_materias_update' materia.materia_id %}"
+          role="button"><i class="cui-pencil"></i>
+          <a class="btn btn-pill btn-danger" title="Eliminar" href="{% url 'control_escolar:maestro_materias_delete' materia.materia_id %}"
+            role="button"><i class="cui-circle-x"></i>
+            <a class="btn btn-pill btn-success" title="Descargar lista" href="#" role="button"><i class="glyphicon glyphicon-list"></i>
+      </td>
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+{% endblock %}
