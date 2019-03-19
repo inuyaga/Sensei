@@ -39,7 +39,7 @@
           role="button"><i class="cui-pencil"></i>
           <a class="btn btn-pill btn-danger" title="Eliminar" href="{% url 'control_escolar:maestro_materias_delete' materia.materia_id %}"
             role="button"><i class="cui-circle-x"></i>
-            <a class="btn btn-pill btn-success" title="Descargar lista" href="#" role="button"><i class="glyphicon glyphicon-list"></i>
+            <a class="btn btn-pill btn-success" title="Descargar lista" href="{% url 'control_escolar:maestro_materias_list_alumno' materia.materia_id %}" role="button"><i class="glyphicon glyphicon-list"></i>
       </td>
     </tr>
     {% endfor %}

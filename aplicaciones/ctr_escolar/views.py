@@ -15,6 +15,10 @@ from datetime import datetime, date, timedelta
 from django.db.models import Sum
 import pytz
 from django.utils import timezone
+
+from openpyxl.styles import Font, Fill, Alignment
+from django.http import HttpResponse
+from openpyxl import Workbook
 """
 CLASES ESCUSIVAMENTE PARA LOS USUARIOS CON PERMISOS DE MAESTRO
 DE AQUI EN ADELANTE
@@ -244,6 +248,94 @@ class MateriaDelete(LoginRequiredMixin, DeleteView):
         context['protected']=protected
 
         return context
+
+class MateriaListaAlumno(TemplateView):
+    template_name='maestro/lista_alumno.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        context['maestro'] = self.request.user.is_maestro
+        context['alumno'] = self.request.user.is_alumno
+        context['foto_perfil'] = self.request.user.foto_perfil
+        context['Usuario'] = self.request.user
+        context['activate'] = 'materia'
+        context['id_mteria'] = self.kwargs.get('pk')
+        mat=Materia.objects.get(materia_id=self.kwargs.get('pk'))
+        context['lista_alumno'] = mat.materia_registro_alumnnos.all()
+
+        return context
+
+class DownloadExcel(TemplateView):
+    template_name='maestro/lista_alumno.html'
+
+    def get(self, request , *args, **kwargs):
+        from openpyxl.utils import get_column_letter
+        import calendar
+        wb = Workbook()
+        ws=wb.active
+        # id_pedido=self.kwargs.get('pk')
+        # ped = Pedido.objects.get(ped_id_ped=id_pedido)
+
+        mes_get = self.request.GET.get('mes')
+        id_materia = self.request.GET.get('id_materia')
+        m=mes_get.split('-')
+        año=m[0]
+        mes=m[1]
+        cal= calendar.Calendar()
+        materia=Materia.objects.get(materia_id=id_materia)
+
+
+
+        ws['A1'] = 'Lista de Materia '+materia.materia_nombre
+        st=ws['A1']
+        st.font = Font(size=14, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+
+        st=ws['A2']
+        st.font = Font(size=14, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+        # ws.merge_cells('A1:F1')
+
+        ws.sheet_properties.tabColor = "1072BA"
+        meses={1:'Enero',2:'Febrero',3:'Marzo', 4:'Abril', 5:'Mayo', 6:'Junio', 7:'Julio', 8:'Agosto', 9:'Septiembre', 10:'Octubre', 11:'Noviembre', 12:'Diciembre'}
+
+        ws['A2'] = 'Mes de '+meses[int(mes)]
+
+
+        ws['A4'] = 'Nombre'
+        fin_x=0
+        for x in cal.itermonthdays(int(año), int(mes)):
+            if x != 0:
+                ws.cell(row=4, column=x+1).value = x
+                fin_x = x
+
+        ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=fin_x)
+        ws.merge_cells(start_row=2, start_column=1, end_row=2, end_column=fin_x)
+        lista_alumno=materia.materia_registro_alumnnos.all()
+        contador=5
+        for alumno in lista_alumno:
+            ws.cell(row=contador, column=1).value = alumno.first_name+' '+alumno.last_name
+            contador += 1
+
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+
+        nombre_archivo='Lista_materia.xls'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition']=content
+        wb.save(response)
+        return response
+
 
 class DocumentoCreate(LoginRequiredMixin, CreateView):
     login_url = '/login/'

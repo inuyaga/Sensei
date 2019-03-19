@@ -5,7 +5,7 @@ MateriaDelete, DocumentoCreate, DocumentoUpdate, DocumentoDelete, UnidadCreate, 
 UnidadUpdate, TareaCreate, JsonTareas, TareaDelete, TareaUpdate, BlogCreate, BolgList, BlogUpdate, BlogDelete, \
 BlogDetalle, InscripcionCreate, MateriaAlumnoList, DocumentMateriaAlumnoList, BoligAlumnoList, TareaAlumnoCreate, \
 ListTareaAlumno, TareaEntregadaList, TareaEntregadaUpdate, PromediarCreate, PromediarMateria, CalificacionesVer, \
-ComentarioCreate
+ComentarioCreate, MateriaListaAlumno, DownloadExcel
 app_name='control_escolar'
 urlpatterns = [
     path('',index.as_view(), name='index'),
@@ -16,6 +16,9 @@ urlpatterns = [
     path('maestro/materias/', MateriaCreate.as_view(), name='maestro_materias'),
     path('maestro/materias/update/<int:pk>/', MateriaUpdate.as_view(), name='maestro_materias_update'),
     path('maestro/materias/delete/<int:pk>/', MateriaDelete.as_view(), name='maestro_materias_delete'),
+    path('maestro/materias/lista/<int:pk>/', MateriaListaAlumno.as_view(), name='maestro_materias_list_alumno'),
+
+    path('maestro/materias/lista_descargar/', DownloadExcel.as_view(), name='maestro_materias_list_download'),
 
     path('maestro/documento/', DocumentoCreate.as_view(), name='maestro_documento'),
     path('maestro/documento/update/<int:pk>', DocumentoUpdate.as_view(), name='maestro_documento_update'),

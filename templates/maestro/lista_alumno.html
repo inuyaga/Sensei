@@ -1,0 +1,14 @@
+ {% extends 'admin/base_sensei.html'%}
+ {% block contenido %}
+<form class="form-inline" action="{% url 'control_escolar:maestro_materias_list_download' %}" method="GET">
+    <div class="form-group">
+        <input class="form-control" type="month" name="mes" required>
+    </div>
+    <button type="submit" class="btn btn-primary" title="Descargar Lista"><span class="lnr lnr-arrow-down-circle"></span></button>
+    <input type="text" class="invisible" value="{{id_mteria}}" name="id_materia">
+</form>
+<h3>Lista de Alumnos</h3>
+{% for lista in lista_alumno %}
+<li>{{lista.first_name}} {{lista.last_name}}</li>
+{% endfor %}
+ {% endblock contenido %}

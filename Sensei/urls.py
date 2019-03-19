@@ -20,7 +20,7 @@ from django.conf import settings
 from django.contrib.auth.views import LoginView, LogoutView
 from aplicaciones.usuario.views import CreateUser, PerfilList, PerfilUpdate, ChaguePasswordUser
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('login/',LoginView.as_view(template_name='login_sensei.html'), name='login'),
     path('salir/', LogoutView.as_view(template_name='logout.html'), name="salir"),
     path('', include('aplicaciones.ctr_escolar.urls'), name='index_sensei'),
