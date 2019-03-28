@@ -80,7 +80,7 @@ class Blog(models.Model):
     blog_creado=models.DateTimeField('Creado en', auto_now_add=True)
     blog_ultima_actualizacion=models.DateTimeField('Ultima Actualizacion', auto_now=True)
     blog_pertenece=models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    blog_materia=models.ForeignKey(Materia, verbose_name='Materia', on_delete=models.CASCADE)
+    blog_materia=models.ManyToManyField(Materia, verbose_name="Relacionar")
 
     def __str__(self):
         return self.blog_titulo
@@ -104,7 +104,6 @@ class CalificacionUnidad(models.Model):
     calU_calificacion=models.FloatField()
     calU_entrego=models.CharField('Entrego', max_length=50)
     calU_falta_calificar=models.CharField('Falta Calificar', max_length=50, default='no')
-
     calU_pertenece=models.ForeignKey(Usuario, verbose_name='Usuario', on_delete=models.CASCADE)
 
 class CalificacionMateria(models.Model):
@@ -123,18 +122,7 @@ MODELOS PARA LAS VISTAS DE ALUMNOS
 ############################################################################################################
 ############################################################################################################
 """
-class Regitro_materia(models.Model):
-    regis_id=models.AutoField(primary_key=True)
-    regis_alumno=models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    regis_materia=models.ForeignKey(Materia, verbose_name="Alumno a la materia de", on_delete=models.CASCADE)
-    regis_calificacion_final=models.FloatField('Calificacion', null=True, blank=True)
-    regis_fecha_inscrito=models.DateTimeField('Inscrito', auto_now_add=True)
 
-    class Meta:
-        unique_together = (("regis_alumno", "regis_materia"),)
-
-    def __str__(self):
-        return str(self.regis_alumno)
 
 
 

@@ -1,5 +1,5 @@
 from django import forms
-from aplicaciones.ctr_escolar.models import Aula, Materia, Documento, Unidad, Tarea, Blog, Regitro_materia, \
+from aplicaciones.ctr_escolar.models import Aula, Materia, Documento, Unidad, Tarea, Blog, \
 TareaDocumento, ComentarioBlog
 
 class AulaForm(forms.ModelForm):

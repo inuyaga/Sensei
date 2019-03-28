@@ -3,8 +3,8 @@ from django.views.generic import TemplateView, CreateView, UpdateView, DeleteVie
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from aplicaciones.ctr_escolar.models import Aula, Materia, Documento, Unidad, Tarea, Blog, Regitro_materia, \
-Regitro_materia, TareaDocumento, CalificacionUnidad, CalificacionMateria, ComentarioBlog
+from aplicaciones.ctr_escolar.models import Aula, Materia, Documento, Unidad, Tarea, Blog, \
+TareaDocumento, CalificacionUnidad, CalificacionMateria, ComentarioBlog
 from aplicaciones.ctr_escolar.forms import AulaForm, MateriaForm,MateriaFormEdit, DocumentoCreateForm, UnidadForm, \
 TareaForm, TareaFormEdit, BlogFrom, TareaDocumentoFrom, TareaEntregadaEdit, ComentarioBlogForm
 from aplicaciones.ctr_escolar.eliminaciones import get_deleted_objects
