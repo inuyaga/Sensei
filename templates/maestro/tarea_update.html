@@ -1,0 +1,9 @@
+{% block contenido %}
+<form action="" method="post" enctype="multipart/form-data" id="Tarea_update">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-outline-success">Guardar</button>
+</form>
+
+{% endblock %}
+

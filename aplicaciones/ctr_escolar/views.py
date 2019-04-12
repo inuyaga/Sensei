@@ -17,7 +17,9 @@ import pytz
 from django.utils import timezone
 
 from django.core import serializers
+
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.serializers import serialize
 
 from openpyxl.styles import Font, Fill, Alignment
 from django.http import HttpResponse
@@ -598,6 +600,7 @@ class AjaxableResponseMixinTarea:
             return response
 
     def form_valid(self, form):
+        from django.utils.formats import localize
         response = super().form_valid(form)
         contenido=''
         if self.request.is_ajax():
@@ -607,11 +610,11 @@ class AjaxableResponseMixinTarea:
                 contenido += '<tr>' \
                 '<td>'+tarea.tarea_nombre +'</td>' \
                 '<td>'+tarea.tarea_descripcion +'</td>' \
-                '<td>'+str(tarea.tarea_fecha_inicio) +'</td>' \
-                '<td>'+str(tarea.tarea_fecha_termino) +'</td>' \
+                '<td>'+localize(tarea.tarea_fecha_inicio) +'</td>' \
+                '<td>'+localize(tarea.tarea_fecha_termino) +'</td>' \
                 '<td>'+tarea.get_tarea_tipo_display() +'</td>' \
                 '<td>' \
-                '<a class="btn btn-info" href="'+str(reverse_lazy('control_escolar:maestro_tarea_update',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="fas fa-pen-square"></span></a>' \
+                '<a class="btn btn-info" onclick="get_update_tarea('+str(tarea.tarea_id)+')" role="button"><span class="fas fa-pen-square"></span></a>' \
                 '<a class="btn btn-danger" href="'+str(reverse_lazy('control_escolar:maestro_tarea_delete',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="fas fa-trash"></span></a>' \
                 '</tr>'
             tipo_set=form.instance.tarea_tipo
@@ -634,7 +637,7 @@ class AjaxableResponseMixinTarea:
                 }
             )
         else:
-            return response
+            return response 
 
 
 
@@ -656,7 +659,7 @@ class TareaCreate(LoginRequiredMixin, AjaxableResponseMixinTarea, CreateView):
         if self.request.user.is_authenticated:
             if self.request.user.is_alumno:
                 return redirect('/')
-        return super().dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs) 
 
 
     def get_context_data(self, **kwargs):
@@ -697,7 +700,7 @@ class JsonTareas(TemplateView):
                 '<td>'+str(localize(tarea.tarea_fecha_termino)) +'</td>' \
                 '<td>'+tarea.get_tarea_tipo_display() +'</td>' \
                 '<td>' \
-                '<a class="btn btn-info" href="'+str(reverse_lazy('control_escolar:maestro_tarea_update',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="fas fa-pen-square"></span></a>' \
+                '<a class="btn btn-info" onclick="get_update_tarea('+str(tarea.tarea_id)+')" role="button"><span class="fas fa-pen-square"></span></a>' \
                 '<a class="btn btn-danger" href="'+str(reverse_lazy('control_escolar:maestro_tarea_delete',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="fas fa-trash"></span></a>' \
                 '</tr>'
 
@@ -746,12 +749,60 @@ class TareaDelete(LoginRequiredMixin, DeleteView):
 
 
 
-class TareaUpdate(LoginRequiredMixin, UpdateView):
+
+
+
+
+
+""" Mixin para la actualizacion de tareas"""
+
+class AjaxMixinTareaUpdate:
+    """
+    Mixin to add AJAX support to a form.
+    Must be used with an object-based FormView (e.g. CreateView)
+    """
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        if self.request.is_ajax():
+            return JsonResponse(form.errors, status=400)
+        else:
+            return response
+
+    def form_valid(self, form):
+        # We make sure to call the parent's form_valid() method because
+        # it might do some processing (in the case of CreateView, it will
+        # call form.save() for example).
+        response = super().form_valid(form)
+        if self.request.is_ajax():
+            tareas=Tarea.objects.filter(tarea_unidad=self.kwargs.get('id_unidad')).values('tarea_id','tarea_nombre','tarea_descripcion','tarea_fecha_inicio','tarea_fecha_termino','tarea_tipo','tarea_unidad')
+            tarea_list=list(tareas)
+
+            tipo_set=form.instance.tarea_tipo
+            if tipo_set=='PARA CALIFICAR':
+                unida=Unidad.objects.get(unidad_id=form.instance.tarea_unidad.unidad_id)
+                idmateria=unida.unidad_materia.materia_id
+                materia=Materia.objects.get(materia_id=idmateria)
+                tarea = form.save(commit=False)
+                tarea.save()
+                for id_user in materia.materia_registro_alumnnos.all():
+                    doc=TareaDocumento(tareaDocumento_archivo='s/n',tareaDocumento_comentario_alumno='s/n' ,tareaDocumento_pertenece=id_user ,tareaDocumento_Tarea=tarea)
+                    doc.save()
+
+            
+            data = {
+                'estado': True,
+                'Tareas': tarea_list,
+            }
+            return JsonResponse(data)
+        else:
+            return response
+
+class TareaUpdateChangue(LoginRequiredMixin,AjaxMixinTareaUpdate, UpdateView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     model = Tarea
     form_class = TareaFormEdit
-    template_name = 'maestro/blog_create.html'
+    template_name = 'maestro/tarea_update.html' 
     success_url = reverse_lazy('control_escolar:maestro_tarea_crear')
 
     def dispatch(self, *args, **kwargs):
@@ -760,15 +811,19 @@ class TareaUpdate(LoginRequiredMixin, UpdateView):
                 return redirect('/')
         return super().dispatch(*args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-        context['maestro'] = self.request.user.is_maestro
-        context['alumno'] = self.request.user.is_alumno
-        context['foto_perfil'] = self.request.user.foto_perfil
-        context['Usuario'] = self.request.user
-        context['activate'] = 'tarea'
-        return context
+
+class TareaUpdate(TemplateView):    
+    template_name = 'maestro/tarea_update.html'  
+
+    def get(self, request, *args, **kwargs):
+        tarea=Tarea.objects.filter(tarea_id=kwargs.get('pk')).values('tarea_nombre','tarea_descripcion','tarea_fecha_inicio','tarea_fecha_termino','tarea_tipo','tarea_unidad')
+        tarea_list=list(tarea)
+        return JsonResponse(tarea_list, safe=False)
+
+
+
+  
+    
 
 class BlogCreate(LoginRequiredMixin, CreateView):
     login_url = '/login/'
@@ -1154,6 +1209,12 @@ class InscripcionCreate(LoginRequiredMixin, View):
             materia=Materia.objects.get(materia_id=regis_materia)
             materia.materia_registro_alumnnos.add(self.request.user)
             link_materia=reverse_lazy('control_escolar:alumno_materia_list')
+
+            tareas=Tarea.objects.filter(tarea_unidad__unidad_materia=regis_materia,tarea_tipo='PARA CALIFICAR')
+            for tarea in tareas:
+                doc=TareaDocumento(tareaDocumento_archivo='s/n',tareaDocumento_comentario_alumno='s/n' ,tareaDocumento_pertenece=self.request.user ,tareaDocumento_Tarea=tarea)
+                doc.save()
+            
         except IntegrityError as err:
             msn="Usted ya se encuentra registrado actualmente en la materia"
             return render_to_response("IntegrityError.html", {"message": msn, 'alumno':self.request.user.is_alumno, 'maestro':self.request.user.is_maestro, 'foto_perfil':self.request.user.foto_perfil})
@@ -1321,6 +1382,7 @@ class ListTareaAlumno(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         from django.utils.formats import localize
         from datetime import datetime
+        from django.core.exceptions import ObjectDoesNotExist
         tipo_post = request.POST.get('tipo_post')
         contenido='';
         tipo_msn=''
@@ -1328,15 +1390,22 @@ class ListTareaAlumno(LoginRequiredMixin, View):
 
         if tipo_post == 'tareas':
             UnidadID = request.POST.get('UnidadID')
-            tareas = Tarea.objects.filter(tarea_unidad=UnidadID, tarea_tipo='ENTREGA')
+            tareas = Tarea.objects.filter(tarea_unidad=UnidadID)
             for tarea in tareas:
+                temporal=''
+                try:
+                    documento=TareaDocumento.objects.get(tareaDocumento_pertenece=self.request.user,tareaDocumento_Tarea=tarea)
+                    temporal=documento.tareaDocumento_calificacion
+                except ObjectDoesNotExist:
+                    temporal='No entregado'
+                
                 tipo_msn='tarea'
                 contenido += '<tr>' \
                 '<td>'+tarea.tarea_nombre +'</td>' \
                 '<td>'+tarea.tarea_descripcion +'</td>' \
                 '<td>'+str(localize(tarea.tarea_fecha_inicio)) +'</td>' \
                 '<td>'+str(localize(tarea.tarea_fecha_termino)) +'</td>' \
-                '<td>'+str(tarea.tarea_unidad)+'</td>' \
+                '<td>'+str(temporal)+'</td>' \
                 '<td>'+tarea.tarea_tipo+'</td>' \
                 '<td>'
                 fecha_tarea=datetime.strptime(str(tarea.tarea_fecha_termino), "%Y-%m-%d")
@@ -1400,11 +1469,7 @@ class ResponseMaestroAjax(TemplateView):
 
         return JsonResponse(data)
 
-class LazyEncoder(DjangoJSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, LazyEncoder):
-            return str(obj)
-        return super().default(obj)
+
 """
 #########################################################################################################
 #########################################################################################################

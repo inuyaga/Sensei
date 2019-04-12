@@ -1,69 +1,65 @@
 from django.contrib import admin
 from django.urls import path
-from aplicaciones.ctr_escolar.views import index,CreateAula, UpdateAula, AulaDelete , MateriaCreate, MateriaUpdate, \
-MateriaDelete, DocumentoCreate, DocumentoUpdate, DocumentoDelete, UnidadCreate, Consultas_json, UnidadDelete, \
-UnidadUpdate, TareaCreate, JsonTareas, TareaDelete, TareaUpdate, BlogCreate, BolgList, BlogUpdate, BlogDelete, \
-BlogDetalle, InscripcionCreate, MateriaAlumnoList, DocumentMateriaAlumnoList, BoligAlumnoList, TareaAlumnoCreate, \
-ListTareaAlumno, TareaEntregadaList, TareaEntregadaUpdate, PromediarCreate, PromediarMateria, CalificacionesVer, \
-ComentarioCreate, MateriaListaAlumno, DownloadExcel, ResponseMaestroAjax
+from aplicaciones.ctr_escolar import views as view_ctr
 app_name='control_escolar'
 urlpatterns = [
-    path('',index.as_view(), name='index'),
-    path('maestro/crear_aula/', CreateAula.as_view(), name='maestro_create_aula'),
-    path('maestro/actualizar_aula/<int:pk>', UpdateAula.as_view(), name='maestro_update_aula'),
-    path('maestro/elimina_aula/<int:pk>', AulaDelete.as_view(), name='maestro_delete_aula'),
+    path('',view_ctr.index.as_view(), name='index'),
+    path('maestro/crear_aula/', view_ctr.CreateAula.as_view(), name='maestro_create_aula'),
+    path('maestro/actualizar_aula/<int:pk>', view_ctr.UpdateAula.as_view(), name='maestro_update_aula'),
+    path('maestro/elimina_aula/<int:pk>', view_ctr.AulaDelete.as_view(), name='maestro_delete_aula'),
 
-    path('maestro/materias/', MateriaCreate.as_view(), name='maestro_materias'),
-    path('maestro/materias/update/<int:pk>/', MateriaUpdate.as_view(), name='maestro_materias_update'),
-    path('maestro/materias/delete/<int:pk>/', MateriaDelete.as_view(), name='maestro_materias_delete'),
-    path('maestro/materias/lista/<int:pk>/', MateriaListaAlumno.as_view(), name='maestro_materias_list_alumno'),
+    path('maestro/materias/', view_ctr.MateriaCreate.as_view(), name='maestro_materias'),
+    path('maestro/materias/update/<int:pk>/', view_ctr.MateriaUpdate.as_view(), name='maestro_materias_update'),
+    path('maestro/materias/delete/<int:pk>/', view_ctr.MateriaDelete.as_view(), name='maestro_materias_delete'),
+    path('maestro/materias/lista/<int:pk>/', view_ctr.MateriaListaAlumno.as_view(), name='maestro_materias_list_alumno'),
 
-    path('maestro/materias/lista_descargar/', DownloadExcel.as_view(), name='maestro_materias_list_download'),
+    path('maestro/materias/lista_descargar/', view_ctr.DownloadExcel.as_view(), name='maestro_materias_list_download'),
 
-    path('maestro/documento/', DocumentoCreate.as_view(), name='maestro_documento'),
-    path('maestro/documento/update/<int:pk>', DocumentoUpdate.as_view(), name='maestro_documento_update'),
-    path('maestro/documento/delete/<int:pk>', DocumentoDelete.as_view(), name='maestro_documento_delete'),
-
-
-    path('maestro/unidad/', UnidadCreate.as_view(), name='maestro_unidad'),
-    path('maestro/unidad/delete', UnidadDelete.as_view(), name='maestro_unidad_delete'),
-    path('maestro/unidad/update', UnidadUpdate.as_view(), name='maestro_unidad_update'),
-    path('maestro/consulta/json/', Consultas_json.as_view(), name='consultas_json'),
+    path('maestro/documento/', view_ctr.DocumentoCreate.as_view(), name='maestro_documento'),
+    path('maestro/documento/update/<int:pk>', view_ctr.DocumentoUpdate.as_view(), name='maestro_documento_update'),
+    path('maestro/documento/delete/<int:pk>', view_ctr.DocumentoDelete.as_view(), name='maestro_documento_delete'),
 
 
-    path('maestro/Tarea/', TareaCreate.as_view(), name='maestro_tarea_crear'),
-    path('maestro/Tarea/json', JsonTareas.as_view(), name='maestro_tarea_json'),
-    path('maestro/Tarea/delete/<int:pk>/', TareaDelete.as_view(), name='maestro_tarea_delete'),
-    path('maestro/Tarea/update/<int:pk>/', TareaUpdate.as_view(), name='maestro_tarea_update'),
-
-    path('maestro/blog/', BolgList.as_view(), name='maestro_blog_list'),
-    path('maestro/blog/crear/', BlogCreate.as_view(), name='maestro_blog_crear'),
-    path('maestro/blog/update/<int:pk>/', BlogUpdate.as_view(), name='maestro_blog_update'),
-    path('maestro/blog/delete/<int:pk>/', BlogDelete.as_view(), name='maestro_blog_delete'),
-    path('maestro/blog/detalle/<int:pk>/', BlogDetalle.as_view(), name='maestro_blog_detalle'),
-
-    path('comentar/blog/<int:pk>', ComentarioCreate.as_view(), name='comentar_blog'),
+    path('maestro/unidad/', view_ctr.UnidadCreate.as_view(), name='maestro_unidad'),
+    path('maestro/unidad/delete', view_ctr.UnidadDelete.as_view(), name='maestro_unidad_delete'),
+    path('maestro/unidad/update', view_ctr.UnidadUpdate.as_view(), name='maestro_unidad_update'),
+    path('maestro/consulta/json/', view_ctr.Consultas_json.as_view(), name='consultas_json'),
 
 
-    path('maestro/tarea/calificar/', TareaEntregadaList.as_view(), name='maestro_tarea_entregada_list'),
-    path('maestro/tarea/entregada/<int:pk>/', TareaEntregadaUpdate.as_view(), name='maestro_tarea_entregada_update'),
+    path('maestro/Tarea/', view_ctr.TareaCreate.as_view(), name='maestro_tarea_crear'),
+    path('maestro/Tarea/json', view_ctr.JsonTareas.as_view(), name='maestro_tarea_json'),
+    path('maestro/Tarea/delete/<int:pk>/', view_ctr.TareaDelete.as_view(), name='maestro_tarea_delete'),
+    path('maestro/Tarea/update/<int:pk>/', view_ctr.TareaUpdate.as_view(), name='maestro_tarea_update'), 
+    path('maestro/Tarea/updateCamio/<int:pk>/<int:id_unidad>/', view_ctr.TareaUpdateChangue.as_view(), name='maestro_tarea_updateChangue'), 
 
-    path('maestro/promediar/unidad/', PromediarCreate.as_view(), name='maestro_priomediar'),
-    path('maestro/promediar/materia/', PromediarMateria.as_view(), name='maestro_priomediar_materia'),
+    path('maestro/blog/', view_ctr.BolgList.as_view(), name='maestro_blog_list'),
+    path('maestro/blog/crear/', view_ctr.BlogCreate.as_view(), name='maestro_blog_crear'),
+    path('maestro/blog/update/<int:pk>/', view_ctr.BlogUpdate.as_view(), name='maestro_blog_update'),
+    path('maestro/blog/delete/<int:pk>/', view_ctr.BlogDelete.as_view(), name='maestro_blog_delete'),
+    path('maestro/blog/detalle/<int:pk>/', view_ctr.BlogDetalle.as_view(), name='maestro_blog_detalle'),
 
-
-    path('alumno/registro/', InscripcionCreate.as_view(), name='alumno_registrar'),
-    path('alumno/materias/', MateriaAlumnoList.as_view(), name='alumno_materia_list'),
-    path('alumno/materias/documentos/<int:pk>/', DocumentMateriaAlumnoList.as_view(), name='doc_materia_alu'),
-    path('alumno/blog/', BoligAlumnoList.as_view(), name='alumno_blog'),
-    path('alumno/tarea/crear/', TareaAlumnoCreate.as_view(), name='alumno_tarea_create'),
-
-    path('alumno/tarea/script/', ListTareaAlumno.as_view(), name='alumno_tarea_scrip'),
-    path('alumno/calificaciones/', CalificacionesVer.as_view(), name='alumno_calificaciones_alu'),
+    path('comentar/blog/<int:pk>', view_ctr.ComentarioCreate.as_view(), name='comentar_blog'),
 
 
+    path('maestro/tarea/calificar/', view_ctr.TareaEntregadaList.as_view(), name='maestro_tarea_entregada_list'),
+    path('maestro/tarea/entregada/<int:pk>/', view_ctr.TareaEntregadaUpdate.as_view(), name='maestro_tarea_entregada_update'),
 
-    path('maestro/msn/comentarios/', ResponseMaestroAjax.as_view(), name='msn_maestro_blog'),
+    path('maestro/promediar/unidad/', view_ctr.PromediarCreate.as_view(), name='maestro_priomediar'),
+    path('maestro/promediar/materia/', view_ctr.PromediarMateria.as_view(), name='maestro_priomediar_materia'),
+
+
+    path('alumno/registro/', view_ctr.InscripcionCreate.as_view(), name='alumno_registrar'),
+    path('alumno/materias/', view_ctr.MateriaAlumnoList.as_view(), name='alumno_materia_list'),
+    path('alumno/materias/documentos/<int:pk>/', view_ctr.DocumentMateriaAlumnoList.as_view(), name='doc_materia_alu'),
+    path('alumno/blog/', view_ctr.BoligAlumnoList.as_view(), name='alumno_blog'),
+    path('alumno/tarea/crear/', view_ctr.TareaAlumnoCreate.as_view(), name='alumno_tarea_create'),
+
+    path('alumno/tarea/script/', view_ctr.ListTareaAlumno.as_view(), name='alumno_tarea_scrip'),
+    path('alumno/calificaciones/', view_ctr.CalificacionesVer.as_view(), name='alumno_calificaciones_alu'),
+
+
+
+    path('maestro/msn/comentarios/', view_ctr.ResponseMaestroAjax.as_view(), name='msn_maestro_blog'),
 
 
 

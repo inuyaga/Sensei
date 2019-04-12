@@ -22,7 +22,7 @@ class Materia(models.Model):
     materia_id = models.AutoField(primary_key=True)
     materia_aula=models.ForeignKey(Aula, verbose_name='Aula', on_delete=models.CASCADE)
     materia_nombre = models.CharField('Nombre', max_length=150)
-    materia_archivos=models.ManyToManyField(Documento, verbose_name="Archivos")
+    materia_archivos=models.ManyToManyField(Documento, verbose_name="Archivos", blank=True, null=True)
     materia_registro_alumnnos=models.ManyToManyField(Usuario, verbose_name="Registro_materia")
     materia_creado = models.DateTimeField(auto_now_add=True)
 
