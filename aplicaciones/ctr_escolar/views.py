@@ -16,6 +16,9 @@ from django.db.models import Sum
 import pytz
 from django.utils import timezone
 
+from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
+
 from openpyxl.styles import Font, Fill, Alignment
 from django.http import HttpResponse
 from openpyxl import Workbook
@@ -40,21 +43,6 @@ class index(LoginRequiredMixin, TemplateView):
         context['alumno'] = self.request.user.is_alumno
         context['foto_perfil'] = self.request.user.foto_perfil
         context['Usuario'] = self.request.user
-        context['total_tareas_m'] = Tarea.objects.filter(tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user).count()
-        context['total_tareas_entregadas'] = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user).count()
-        if self.request.user.is_maestro:
-            fin = timezone.now()
-            inicio = fin - timedelta(days=30)
-            inicio = inicio
-            context['total_tareas_entregadas_mes'] = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user, tareaDocumento_creado__range=[inicio, fin]).count()
-            fin = timezone.now()
-            inicio = fin - timedelta(days=2)
-            context['entrgaron_tarea'] = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user, tareaDocumento_creado__range=[inicio, fin])
-            context['entrgaron_tarea_total'] = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user, tareaDocumento_creado__range=[inicio, fin]).count()
-
-
-
-        print(self.request.user.foto_perfil)
 
         return context
 
@@ -86,15 +74,6 @@ class CreateAula(LoginRequiredMixin, CreateView):
         context['Usuario'] = self.request.user
         context['activate'] = 'aula'
         context['list_aula'] = Aula.objects.filter(aula_pertenece=self.request.user)
-
-        fin = timezone.now()
-        inicio = fin - timedelta(days=30)
-        inicio = inicio
-        context['total_tareas_entregadas_mes'] = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user, tareaDocumento_creado__range=[inicio, fin]).count()
-        fin = timezone.now()
-        inicio = fin - timedelta(days=2)
-        context['entrgaron_tarea'] = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user, tareaDocumento_creado__range=[inicio, fin])
-        context['entrgaron_tarea_total'] = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user, tareaDocumento_creado__range=[inicio, fin]).count()
         return context
 
 
@@ -251,6 +230,12 @@ class MateriaDelete(LoginRequiredMixin, DeleteView):
 
 class MateriaListaAlumno(TemplateView):
     template_name='maestro/lista_alumno.html'
+
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_alumno:
+                return redirect('/')
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -457,8 +442,8 @@ class AjaxableResponseMixin:
             for unidad in unidades:
                 contenido += '<tr>' \
                 '<td>'+unidad.unidad_nombre +'</td>' \
-                '<td><button type="button" onclick="update_unidad('+str(unidad.unidad_id)+')" class="btn btn btn-info"><span class="lnr lnr-pencil"></span></button>' \
-                '<button type="button" onclick="eliminar_unidad('+str(unidad.unidad_id)+')" class="btn btn-danger"><span class="lnr lnr-trash"></span></button>' \
+                '<td><button type="button" onclick="update_unidad('+str(unidad.unidad_id)+')" class="btn btn btn-info"><span class="fas fa-pen-square"></span></button>' \
+                '<button type="button" onclick="eliminar_unidad('+str(unidad.unidad_id)+')" class="btn btn-danger"><span class="fas fa-trash"></span></button>' \
                 '</tr>'
 
             return JsonResponse(
@@ -525,8 +510,8 @@ class Consultas_json(CreateView):
             for unidad in unidades:
                 contenido += '<tr>' \
                 '<td>'+unidad.unidad_nombre +'</td>' \
-                '<td><button type="button" onclick="update_unidad('+str(unidad.unidad_id)+')" class="btn btn btn-info"><span class="lnr lnr-pencil"></span></button>' \
-                '<button type="button" onclick="eliminar_unidad('+str(unidad.unidad_id)+')" class="btn btn-danger"><span class="lnr lnr-trash"></span></button>' \
+                '<td><button type="button" onclick="update_unidad('+str(unidad.unidad_id)+')" class="btn btn btn-info"><span class="fas fa-pen-square"></span></button>' \
+                '<button type="button" onclick="eliminar_unidad('+str(unidad.unidad_id)+')" class="btn btn-danger"><span class="fas fa-trash"></span></button>' \
                 ' </td>' \
                 '</tr>'
 
@@ -553,8 +538,8 @@ class UnidadDelete(TemplateView):
         for unidad in unidades:
             contenido += '<tr>' \
             '<td>'+unidad.unidad_nombre +'</td>' \
-            '<td><button type="button" onclick="update_unidad('+str(unidad.unidad_id)+')" class="btn btn btn-info"><span class="lnr lnr-pencil"></span></button>' \
-            '<button type="button" onclick="eliminar_unidad('+str(unidad.unidad_id)+')" class="btn btn-danger"><span class="lnr lnr-trash"></span></button>' \
+            '<td><button type="button" onclick="update_unidad('+str(unidad.unidad_id)+')" class="btn btn btn-info"><span class="fas fa-pen-square"></span></button>' \
+            '<button type="button" onclick="eliminar_unidad('+str(unidad.unidad_id)+')" class="btn btn-danger"><span class="fas fa-trash"></span></button>' \
             ' </td>' \
             '</tr>'
 
@@ -580,8 +565,8 @@ class UnidadUpdate(TemplateView):
         for unidad in unidades:
             contenido += '<tr>' \
             '<td>'+unidad.unidad_nombre +'</td>' \
-            '<td><button type="button" onclick="update_unidad('+str(unidad.unidad_id)+')" class="btn btn btn-info"><span class="lnr lnr-pencil"></span></button>' \
-            '<button type="button" onclick="eliminar_unidad('+str(unidad.unidad_id)+')" class="btn btn-danger"><span class="lnr lnr-trash"></span></button>' \
+            '<td><button type="button" onclick="update_unidad('+str(unidad.unidad_id)+')" class="btn btn btn-info"><span class="fas fa-pen-square"></span></button>' \
+            '<button type="button" onclick="eliminar_unidad('+str(unidad.unidad_id)+')" class="btn btn-danger"><span class="fas fa-trash"></span></button>' \
             ' </td>' \
             '</tr>'
 
@@ -626,8 +611,8 @@ class AjaxableResponseMixinTarea:
                 '<td>'+str(tarea.tarea_fecha_termino) +'</td>' \
                 '<td>'+tarea.get_tarea_tipo_display() +'</td>' \
                 '<td>' \
-                '<a class="btn btn-info" href="'+str(reverse_lazy('control_escolar:maestro_tarea_update',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="lnr lnr-pencil"></span></a>' \
-                '<a class="btn btn-danger" href="'+str(reverse_lazy('control_escolar:maestro_tarea_delete',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="lnr lnr-trash"></span></a>' \
+                '<a class="btn btn-info" href="'+str(reverse_lazy('control_escolar:maestro_tarea_update',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="fas fa-pen-square"></span></a>' \
+                '<a class="btn btn-danger" href="'+str(reverse_lazy('control_escolar:maestro_tarea_delete',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="fas fa-trash"></span></a>' \
                 '</tr>'
             tipo_set=form.instance.tarea_tipo
             if tipo_set=='PARA CALIFICAR':
@@ -712,8 +697,8 @@ class JsonTareas(TemplateView):
                 '<td>'+str(localize(tarea.tarea_fecha_termino)) +'</td>' \
                 '<td>'+tarea.get_tarea_tipo_display() +'</td>' \
                 '<td>' \
-                '<a class="btn btn-info" href="'+str(reverse_lazy('control_escolar:maestro_tarea_update',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="lnr lnr-pencil"></span></a>' \
-                '<a class="btn btn-danger" href="'+str(reverse_lazy('control_escolar:maestro_tarea_delete',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="lnr lnr-trash"></span></a>' \
+                '<a class="btn btn-info" href="'+str(reverse_lazy('control_escolar:maestro_tarea_update',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="fas fa-pen-square"></span></a>' \
+                '<a class="btn btn-danger" href="'+str(reverse_lazy('control_escolar:maestro_tarea_delete',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="fas fa-trash"></span></a>' \
                 '</tr>'
 
 
@@ -950,6 +935,12 @@ class TareaEntregadaList(LoginRequiredMixin, ListView):
     model = TareaDocumento
     template_name = 'maestro/calificar_tarea.html'
 
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_alumno:
+                return redirect('/')
+        return super().dispatch(*args, **kwargs)
+
     def get_queryset(self):
         queryset = super(TareaEntregadaList, self).get_queryset()
         queryset=queryset.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user)
@@ -1023,6 +1014,12 @@ class PromediarCreate(LoginRequiredMixin, TemplateView):
     redirect_field_name = 'redirect_to'
     template_name = 'maestro/promediar.html'
 
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_alumno:
+                return redirect('/')
+        return super().dispatch(*args, **kwargs)
+
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
@@ -1033,6 +1030,8 @@ class PromediarCreate(LoginRequiredMixin, TemplateView):
         context['activate'] = 'promediar'
         context['aulas'] = Aula.objects.filter(aula_pertenece=self.request.user)
         context['msn'] = 'Elija un Aula'
+
+
 
 
         if self.request.method == 'GET':
@@ -1077,6 +1076,12 @@ class PromediarMateria(LoginRequiredMixin, TemplateView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     template_name = 'maestro/promediar_materia.html'
+
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_alumno:
+                return redirect('/')
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -1145,12 +1150,17 @@ class InscripcionCreate(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         regis_materia = request.POST.get('regis_materia')
-        print(regis_materia)
+        try:
+            materia=Materia.objects.get(materia_id=regis_materia)
+            materia.materia_registro_alumnnos.add(self.request.user)
+            link_materia=reverse_lazy('control_escolar:alumno_materia_list')
+        except IntegrityError as err:
+            msn="Usted ya se encuentra registrado actualmente en la materia"
+            return render_to_response("IntegrityError.html", {"message": msn, 'alumno':self.request.user.is_alumno, 'maestro':self.request.user.is_maestro, 'foto_perfil':self.request.user.foto_perfil})
 
-        materia=Materia.objects.get(materia_id=regis_materia)
-        materia.materia_registro_alumnnos.add(self.request.user)
-        msn="Usted ya se encuentra registrado actualmente en la materia"
-        return render_to_response("IntegrityError.html", {"message": msn})
+        return redirect(link_materia)
+
+
 
     # def form_valid(self, form):
     #     instancia = form.save(commit=False)
@@ -1368,6 +1378,33 @@ class CalificacionesVer(LoginRequiredMixin, TemplateView):
 
         return context
 
+
+class ResponseMaestroAjax(TemplateView):
+    template_name='maestro/ma_index.html'
+    def get(self, request, *args, **kwargs):
+        fin = timezone.now()
+        inicio = fin - timedelta(days=2)
+
+        data =  dict()
+
+        if self.request.user.is_maestro:
+            coment =  list(ComentarioBlog.objects.filter(comentario_blog__blog_pertenece=self.request.user, comentario_creado__range=[inicio, fin]).values('comentario_comentario', 'comentario_comentado_by__first_name','comentario_comentado_by__last_name', 'comentario_comentado_by__foto_perfil', 'comentario_creado'))
+            data['coment'] = coment
+            data['number_coment'] = ComentarioBlog.objects.filter(comentario_blog__blog_pertenece=self.request.user, comentario_creado__range=[inicio, fin]).count()
+        else:
+            coment =  list(ComentarioBlog.objects.filter(comentario_blog__blog_materia__materia_registro_alumnnos=self.request.user, comentario_creado__range=[inicio, fin]).values('comentario_comentario', 'comentario_comentado_by__first_name','comentario_comentado_by__last_name', 'comentario_comentado_by__foto_perfil', 'comentario_creado'))
+            data['coment'] = coment
+            data['number_coment'] = ComentarioBlog.objects.filter(comentario_blog__blog_materia__materia_registro_alumnnos=self.request.user, comentario_creado__range=[inicio, fin]).count()
+
+
+
+        return JsonResponse(data)
+
+class LazyEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, LazyEncoder):
+            return str(obj)
+        return super().default(obj)
 """
 #########################################################################################################
 #########################################################################################################

@@ -1,6 +1,7 @@
 from django import forms
 from aplicaciones.ctr_escolar.models import Aula, Materia, Documento, Unidad, Tarea, Blog, \
 TareaDocumento, ComentarioBlog
+from django.forms.widgets import CheckboxSelectMultiple
 
 class AulaForm(forms.ModelForm):
     class Meta:
@@ -14,7 +15,10 @@ class AulaForm(forms.ModelForm):
 class MateriaForm(forms.ModelForm):
     class Meta:
         model = Materia
-        exclude = ['materia_archivos', 'materia_registro_alumnnos']
+        exclude = ['materia_registro_alumnnos']
+        widgets = {
+        'materia_archivos': forms.CheckboxSelectMultiple(attrs={'type': 'checkbox'}),
+        }
 
     def __init__(self, *args, **kwargs):
         id_user = kwargs.pop('user')
@@ -22,11 +26,15 @@ class MateriaForm(forms.ModelForm):
         self.fields['materia_aula'].queryset=Aula.objects.filter(aula_pertenece=id_user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+        self.fields['materia_archivos'].widget.attrs.update({'class': 'form-check-input'})
 
 class MateriaFormEdit(forms.ModelForm):
     class Meta:
         model = Materia
-        fields = ('__all__')
+        exclude = ['materia_registro_alumnnos']
+        widgets = {
+        'materia_archivos': forms.CheckboxSelectMultiple(attrs={'type': 'checkbox'}),
+        }
 
     def __init__(self, *args, **kwargs):
         id_user = kwargs.pop('user')
@@ -35,6 +43,7 @@ class MateriaFormEdit(forms.ModelForm):
         self.fields['materia_archivos'].queryset=Documento.objects.filter(doc_pertenece=id_user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+        self.fields['materia_archivos'].widget.attrs.update({'class': 'form-check-input'})
 
 class DocumentoCreateForm(forms.ModelForm):
     class Meta:
@@ -95,12 +104,18 @@ class BlogFrom(forms.ModelForm):
     class Meta:
         model = Blog
         exclude = ['blog_pertenece']
+        widgets = {
+        'blog_materia': forms.CheckboxSelectMultiple(attrs={'type': 'checkbox'}),
+        }
+
     def __init__(self, *args, **kwargs):
         id_user = kwargs.pop('user')
         super(BlogFrom, self).__init__(*args, **kwargs)
         self.fields['blog_materia'].queryset=Materia.objects.filter(materia_aula__aula_pertenece=id_user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+        self.fields['blog_materia'].widget.attrs.update({'class': 'form-check-input'})
+
 class TareaDocumentoFrom(forms.ModelForm):
     class Meta:
         model = TareaDocumento

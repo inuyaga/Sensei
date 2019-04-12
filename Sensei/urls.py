@@ -24,6 +24,7 @@ urlpatterns = [
     path('login/',LoginView.as_view(template_name='login_sensei.html'), name='login'),
     path('salir/', LogoutView.as_view(template_name='logout.html'), name="salir"),
     path('', include('aplicaciones.ctr_escolar.urls'), name='index_sensei'),
+    path('chat/', include('aplicaciones.chat.urls'), name='chat_index'),
     path('registro/', CreateUser.as_view(),name='registro'),
     path('perfil-usuario/', PerfilList.as_view(),name='perfil_user'),
     path('perfil-usuario/edit/<int:pk>/', PerfilUpdate.as_view(),name='perfil_user_update'),

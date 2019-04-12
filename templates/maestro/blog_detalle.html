@@ -1,8 +1,32 @@
 {% extends 'admin/base_sensei.html'%}
+{% block indicadores %}
+<div class="page-header">
+    <h4 class="page-title">Blog</h4>
+    <ul class="breadcrumbs">
+        <li class="nav-home">
+            <a href="#">
+                <i class="flaticon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Blog</a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Leer</a>
+        </li>
+    </ul>
+</div>
+{% endblock indicadores %}
 {% block contenido %}
-<img src="{{object.blog_imagen.url}}" alt="">
 <h1>{{object.blog_titulo}}</h1>
-<p>{{object.blog_contenido}}</p>
+
+{{object.blog_contenido|safe }}
 
 <div class="panel panel-default">
     <div class="panel-body">
@@ -14,20 +38,67 @@
     </div>
 </div>
 
+
+{% for comentario in comentarios %}
 <div class="row">
-    {% for comentario in comentarios %}
-    <div class="panel panel-info">
-            <div class="panel-heading">{{comentario.comentario_comentado_by.first_name}} {{comentario.comentario_comentado_by.last_name}}</div>
-            <div class="panel-body">
-                    <p>{{comentario.comentario_comentario}}</p>
-                    <h6 class="text-right">{{comentario.comentario_creado}}</h6>
+    <div class="col-md-12">
+        <div class="timeline-panel">
+            <div class="timeline-heading">
+                <h4 class="timeline-title">
+                    <div class="user-box">
+                        <div class="avatar-lg"><img
+                                src="{% if comentario.comentario_comentado_by.foto_perfil != '' %} {{comentario.comentario_comentado_by.foto_perfil.url}} {% endif %}"
+                                alt="image profile" class="avatar-img rounded"></div>
+                        <div class="u-text">
+                            <h4>{{comentario.comentario_comentado_by.first_name}}
+                                {{comentario.comentario_comentado_by.last_name}}</h4>
+                            <div class="timeline-body">
+                                <p>{{comentario.comentario_comentario|safe }}</p>
+                            </div>
+                            <p><small class="text-muted"><i class="flaticon-message"></i>
+                                    {{comentario.comentario_creado}}</small>
+                            </p>
+                        </div>
+                    </div>
+                </h4>
+
             </div>
 
-          </div>
-    {% endfor %}
+        </div>
+    </div>
 </div>
+<div class="dropdown-divider"></div>
+{% endfor %}
+
 
 {% endblock contenido %}
 {% block footer %}
 
 {% endblock footer %}
+{% block script %}
+{% load static %}
+<script src="{% static 'ckeditor/ckeditor.js' %}"></script>
+
+
+<script>
+    CKEDITOR.replace('id_comentario_comentario', {
+        toolbarLocation: 'bottom',
+
+
+
+
+        toolbar: [{
+                name: 'basicstyles',
+                items: ['Bold', 'Italic']
+            },
+            {
+                name: 'insert',
+                items: ['Smiley']
+            },
+        ]
+
+    });
+</script>
+
+
+{% endblock script %}

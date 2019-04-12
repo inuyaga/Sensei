@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, UpdateView
 # from aplicaciones.usuario.models import User
@@ -55,6 +55,12 @@ class PerfilUpdate(LoginRequiredMixin, UpdateView):
     form_class = UserFormEdit
     template_name = 'admin/actualiza_perfil.html'
     success_url = reverse_lazy('perfil_user')
+
+    def dispatch(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.id != self.kwargs.get('pk'):
+                return redirect('/')
+        return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context

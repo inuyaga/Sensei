@@ -1,342 +1,651 @@
 {% load static %}
-<!doctype html>
-<html lang="es">
+<!DOCTYPE html>
+<html lang="es-mx">
 
 <head>
-	{% block titulo %}
-	<title>Sensei</title>
-	{% endblock titulo %}
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-	<!-- VENDOR CSS -->
-	<link rel="stylesheet" href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Dashboard</title>
+	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+	<link rel="icon" href="{% static 'overlay-admin/assets/img/icon.ico' %}" type="image/x-icon" />
 
-	<link rel="stylesheet" href="{% static 'assets/vendor/font-awesome/css/font-awesome.min.css' %}">
-	<link rel="stylesheet" href="{% static 'assets/vendor/linearicons/style.css' %}">
-	<link rel="stylesheet" href="{% static 'assets/vendor/chartist/css/chartist-custom.css' %}">
-	<!-- MAIN CSS -->
-	<link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
-	<!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
-	<link rel="stylesheet" href="{% static 'assets/css/demo.css' %}">
-	<!-- GOOGLE FONTS -->
+	<!-- Fonts and icons -->
+	<script src="{% static 'overlay-admin/assets/js/plugin/webfont/webfont.min.js' %}"></script>
+	<script>
+		WebFont.load({
+			google: {
+				"families": ["Lato:300,400,700,900"]
+			},
+			custom: {
+				"families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands",
+					"simple-line-icons"
+				],
+				urls: ['{% static "overlay-admin/assets/css/fonts.min.css" %}']
+			},
+			active: function () {
+				sessionStorage.fonts = true;
+			}
+		});
+	</script>
 
-	<link rel="stylesheet" href="https://unpkg.com/@coreui/icons/css/coreui-icons.min.css">
+	<!-- CSS Files -->
+	<link rel="stylesheet" href="{% static 'overlay-admin/assets/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'overlay-admin/assets/css/atlantis.min.css' %}">
+
+	<!-- CSS Just for demo purpose, don't include it in your project -->
+	<link rel="stylesheet" href="{% static 'overlay-admin/assets/css/demo.css' %}">
 
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/alertify.min.css" />
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/themes/default.min.css" />
-	<!-- ICONS -->
-	<link rel="apple-touch-icon" sizes="76x76" href="{% static 'img/image3791.png' %}">
-	<link rel="icon" type="image/png" sizes="96x96" href="{% static 'img/icono.png' %}">
 </head>
 
 <body>
-	<!-- WRAPPER -->
-	<div id="wrapper">
-		<!-- NAVBAR -->
-		{% block navegacion %}
-		<nav class="navbar navbar-default navbar-fixed-top">
-			<div class="brand">
-				<a href="/"><img src="{% static 'img/image10.png' %}" alt="Klorofil Logo" class="img-responsive logo"></a>
-			</div>
-			<div class="container-fluid">
-				<div class="navbar-btn">
-					<button type="button" class="btn-toggle-fullwidth"><i class="lnr lnr-arrow-left-circle"></i></button>
-				</div>
-				{% block buscador %}
-				<!-- <form class="navbar-form navbar-left">
-					<div class="input-group">
-						<input type="text" value="" class="form-control" placeholder="Search dashboard...">
-						<span class="input-group-btn"><button type="button" class="btn btn-primary">Go</button></span>
-					</div>
-				</form> -->
-				{% endblock buscador %}
+	<div class="wrapper">
+		<div class="main-header">
+			<!-- Logo Header -->
+			<div class="logo-header" data-background-color="blue">
 
-				<div id="navbar-menu">
-					<ul class="nav navbar-nav navbar-right">
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle icon-menu" data-toggle="dropdown">
-								<i class="lnr lnr-alarm"></i>
-								<span class="badge bg-danger">{{entrgaron_tarea_total}}</span>
-							</a>
-							{% if maestro %}
-							<ul class="dropdown-menu notifications">
-								{% for entr in entrgaron_tarea %}
-								<li><a href="#" class="notification-item"><span class="dot bg-success"></span>{{entr.tareaDocumento_pertenece.first_name}} {{entr.tareaDocumento_pertenece.last_name}} entrego: {{entr.tareaDocumento_creado}}</a></li>
-								{% endfor %}
-
-							</ul>
-							{% endif %}
-
-							{% if alumno %}
-							<ul class="dropdown-menu notifications">
-
-								<li><a href="#" class="notification-item"><span class="dot bg-warning"></span>System space is almost full</a></li>
-
-							</ul>
-							{% endif %}
-
-						</li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="lnr lnr-question-circle"></i> <span>Ayuda</span>
-								<i class="icon-submenu lnr lnr-chevron-down"></i></a>
-							<ul class="dropdown-menu">
-								<li><a href="#">Uso Basico</a></li>
-							</ul>
-						</li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="{% if foto_perfil != '' %} {{foto_perfil.url}} {% endif %}"
-								 class="img-circle" alt="Avatar"> <span>{{Usuario}}</span> <i class="icon-submenu lnr lnr-chevron-down"></i></a>
-							<ul class="dropdown-menu">
-								<li><a href="{% url 'perfil_user' %}"><i class="lnr lnr-user"></i> <span>Mi Perfil</span></a></li>
-								<li><a href="{% url 'cambiar_password' %}"><i class="lnr lnr-cog"></i> <span>Cambiar contraseña</span></a></li>
-								<li><a href="{% url 'salir' %}"><i class="lnr lnr-exit"></i> <span>Salir</span></a></li>
-							</ul>
-						</li>
-						<!-- <li>
-							<a class="update-pro" href="https://www.themeineed.com/downloads/klorofil-pro-bootstrap-admin-dashboard-template/?utm_source=klorofil&utm_medium=template&utm_campaign=KlorofilPro" title="Upgrade to Pro" target="_blank"><i class="fa fa-rocket"></i> <span>UPGRADE TO PRO</span></a>
-						</li> -->
-					</ul>
+				<a href="{% url 'control_escolar:index' %}" class="logo">
+					<img src="{% static 'img/image10.png' %}" alt="navbar brand" class="navbar-brand">
+				</a>
+				<button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse"
+					data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon">
+						<i class="icon-menu"></i>
+					</span>
+				</button>
+				<button class="topbar-toggler more"><i class="icon-options-vertical"></i></button>
+				<div class="nav-toggle">
+					<button class="btn btn-toggle toggle-sidebar">
+						<i class="icon-menu"></i>
+					</button>
 				</div>
 			</div>
-		</nav>
-		{% endblock navegacion %}
-		<!-- END NAVBAR -->
-		<!-- LEFT SIDEBAR -->
-		{% block barra_lateral %}
-		{% if maestro %}
-		<div id="sidebar-nav" class="sidebar">
-			<div class="sidebar-scroll">
-				<nav>
-					<ul class="nav">
-						<li><a href="{% url 'control_escolar:index' %}" class="active"><i class="lnr lnr-home"></i> <span>Dashboard</span></a></li>
-						<li><a href="{% url 'control_escolar:maestro_create_aula' %}" class="{% if activate == 'aula' %}active{% endif %}"><i
-								 class="lnr lnr-layers"></i> <span>Aula</span></a></li>
-						<li>
-							<a href="#subPages" data-toggle="collapse" class="collapsed {% if activate == 'materia' %}active{% endif %}"><i
-								 class="lnr lnr-book"></i> <span>Materia</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
-							<div id="subPages" class="collapse ">
-								<ul class="nav">
-									<li><a href="{% url 'control_escolar:maestro_materias' %}" class="{% if activate == 'materia' %}active{% endif %}"><i
-											 class="lnr lnr-plus-circle"></i>Crear</a></li>
-									<li><a href="{% url 'control_escolar:maestro_documento' %}" class="{% if activate == 'materia' %}active{% endif %}"><i
-											 class="lnr lnr-file-add"></i>Archivos</a></li>
-								</ul>
-							</div>
-						</li>
-						<li><a href="{% url 'control_escolar:maestro_unidad' %}" class="{% if activate == 'unidad' %}active{% endif %}"><i
-								 class="lnr lnr-license"></i> <span>Unidades</span></a></li>
-						<li><a href="{% url 'control_escolar:maestro_tarea_crear' %}" class="{% if activate == 'tarea' %}active{% endif %}"><i
-								 class="lnr lnr-briefcase"></i> <span>Tareas</span></a></li>
+			<!-- End Logo Header -->
 
-						<li>
-							<a href="#sub_blog" data-toggle="collapse" class="collapsed {% if activate == 'blog' %}active{% endif %}"><i
-								 class="lnr lnr-text-align-left"></i> <span>Blog</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
-							<div id="sub_blog" class="collapse ">
-								<ul class="nav">
-									<li><a href="{% url 'control_escolar:maestro_blog_list' %}" class=""><i class="lnr lnr-list"></i>Ver</a></li>
-									<li><a href="{% url 'control_escolar:maestro_blog_crear' %}" class=""><i class="lnr lnr-plus-circle"></i>Crear</a></li>
+			<!-- Navbar Header -->
+			<nav class="navbar navbar-header navbar-expand-lg" data-background-color="blue2">
 
-								</ul>
-							</div>
-						</li>
-						<li><a href="{% url 'control_escolar:maestro_tarea_entregada_list' %}" class="{% if activate == 'calificar' %}active{% endif %}"><i
-								 class="lnr lnr lnr-pencil"></i> <span>Calificar</span></a></li>
-						<!-- <li><a href="{% url 'control_escolar:maestro_priomediar' %}" class="{% if activate == 'promediar' %}active{% endif %}"><i
-								 class="lnr lnr-spell-check"></i> <span>Promediar</span></a></li> -->
-
-						<li>
-							<a href="#sub_promediar" data-toggle="collapse" class="collapsed {% if activate == 'promediar' %}active{% endif %}"><i
-								 class="lnr lnr-spell-check"></i> <span>Promediar</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
-							<div id="sub_promediar" class="collapse ">
-								<ul class="nav">
-									<li><a href="{% url 'control_escolar:maestro_priomediar' %}" class=""><i class="lnr lnr-list"></i>Unidad</a></li>
-									<li><a href="{% url 'control_escolar:maestro_priomediar_materia' %}" class=""><i class="lnr lnr-book"></i>Materia</a></li>
-								</ul>
-							</div>
-							<li><a href="" class=""><i class="glyphicon glyphicon-book"></i> <span>Biblioteca</span></a></li>
-						</li>
-					</ul>
-				</nav>
-			</div>
-		</div>
-		{% endif %}
-
-		{% if alumno %}
-		<div id="sidebar-nav" class="sidebar">
-			<div class="sidebar-scroll">
-				<nav>
-					<ul class="nav">
-						<li><a href="{% url 'control_escolar:alumno_blog' %}" class="{% if activate == 'blog' %}active{% endif %}"><i
-								 class="glyphicon glyphicon-list-alt"></i> <span>Blog</span></a></li>
-						<li>
-							<a href="#subPages" data-toggle="collapse" class="collapsed {% if activate == 'materia' %}active{% endif %}"><i
-								 class="lnr lnr-book"></i> <span>Materia</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
-							<div id="subPages" class="collapse ">
-								<ul class="nav">
-									<li><a data-toggle="modal" data-target="#alu_inscribir"><i class="lnr lnr-plus-circle"></i>Inscribirme</a></li>
-									<li><a href="{% url 'control_escolar:alumno_materia_list' %}" class="{% if activate == 'materia' %}active{% endif %}"><i
-											 class="lnr lnr-file-add"></i>Ver</a></li>
-								</ul>
-							</div>
-						</li>
-
-						<li><a href="{% url 'control_escolar:alumno_tarea_create' %}" class="{% if activate == 'TareaAlumno' %}active{% endif %}"><i
-								 class="glyphicon glyphicon-edit"></i> <span>Tareas</span></a></li>
-
-						<li><a href="{% url 'control_escolar:alumno_calificaciones_alu' %}" class="{% if activate == 'calificacion' %}active{% endif %}"><i
-								 class="glyphicon glyphicon-education"></i> <span>Calificaciones</span></a></li>
-						<li><a href="" class=""><i class="glyphicon glyphicon-book"></i> <span>Biblioteca</span></a></li>
-					</ul>
-				</nav>
-			</div>
-		</div>
-		{% endif %}
-		{% endblock barra_lateral %}
-		<!-- END LEFT SIDEBAR -->
-		<!-- MAIN -->
-		<div class="main">
-			<!-- MAIN CONTENT -->
-			<div class="main-content">
 				<div class="container-fluid">
-					<!-- OVERVIEW -->
-					<div class="panel panel-headline">
+					<div class="collapse" id="search-nav">
+						<!-- <form class="navbar-left navbar-form nav-search mr-md-3">
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<button type="submit" class="btn btn-search pr-1">
+										<i class="fa fa-search search-icon"></i>
+									</button>
+								</div>
+								<input type="text" placeholder="Search ..." class="form-control">
+							</div>
+						</form> -->
+					</div>
+					<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
+						<li class="nav-item toggle-nav-search hidden-caret">
+							<a class="nav-link" data-toggle="collapse" href="#search-nav" role="button"
+								aria-expanded="false" aria-controls="search-nav">
+								<i class="fa fa-search"></i>
+							</a>
+						</li>
+
+
+
+						<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
+							<li class="nav-item toggle-nav-search hidden-caret">
+								<a class="nav-link" data-toggle="collapse" href="#search-nav" role="button"
+									aria-expanded="false" aria-controls="search-nav">
+									<i class="fa fa-search"></i>
+								</a>
+							</li>
+
+
+
+
+							<li class="nav-item dropdown hidden-caret">
+								<a class="nav-link dropdown-toggle" href="#" id="messageDropdown" role="button"
+									data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<i class="fa fa-envelope"></i>
+									<div id="num_not"></div>
+								</a>
+								<ul class="dropdown-menu messages-notif-box animated fadeIn"
+									aria-labelledby="messageDropdown">
+									<li>
+										<div class="dropdown-title d-flex justify-content-between align-items-center">
+											Mensajes
+
+										</div>
+									</li>
+									<li>
+										<div class="message-notif-scroll scrollbar-outer">
+											<div class="notif-center">
+												<div id="msn"></div>
+											</div>
+										</div>
+									</li>
+									<li>
+										<a class="see-all" href="javascript:void(0);">Ultimos 2 dias<i
+												class="fa fa-angle-right"></i> </a>
+									</li>
+								</ul>
+							</li>
+
+
+
+							<li class="nav-item dropdown hidden-caret">
+								<a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button"
+									data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<i class="fa fa-bell"></i>
+									<span class="notification">4</span>
+								</a>
+								<ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
+									<li>
+										<div class="dropdown-title">You have 4 new notification</div>
+									</li>
+									<li>
+										<div class="notif-scroll scrollbar-outer">
+											<div class="notif-center">
+												<a href="#">
+													<div class="notif-icon notif-primary"> <i
+															class="fa fa-user-plus"></i> </div>
+													<div class="notif-content">
+														<span class="block">
+															New user registered
+														</span>
+														<span class="time">5 minutes ago</span>
+													</div>
+												</a>
+												<a href="#">
+													<div class="notif-icon notif-success"> <i class="fa fa-comment"></i>
+													</div>
+													<div class="notif-content">
+														<span class="block">
+															Rahmad commented on Admin
+														</span>
+														<span class="time">12 minutes ago</span>
+													</div>
+												</a>
+												<a href="#">
+													<div class="notif-img">
+														<img src="#" alt="Img Profile">
+													</div>
+													<div class="notif-content">
+														<span class="block">
+															Reza send messages to you
+														</span>
+														<span class="time">12 minutes ago</span>
+													</div>
+												</a>
+												<a href="#">
+													<div class="notif-icon notif-danger"> <i class="fa fa-heart"></i>
+													</div>
+													<div class="notif-content">
+														<span class="block">
+															Farrah liked Admin
+														</span>
+														<span class="time">17 minutes ago</span>
+													</div>
+												</a>
+											</div>
+										</div>
+									</li>
+									<li>
+										<a class="see-all" href="javascript:void(0);">See all notifications<i
+												class="fa fa-angle-right"></i> </a>
+									</li>
+								</ul>
+							</li>
+
+							<li class="nav-item dropdown hidden-caret">
+								<a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"
+									aria-expanded="false">
+									<div class="avatar-sm">
+										<img src="{% if foto_perfil != '' %} {{foto_perfil.url}} {% else %}{% static 'anonimo.png' %}{% endif %}" alt="..."
+											class="avatar-img rounded-circle">
+									</div>
+								</a>
+								<ul class="dropdown-menu dropdown-user animated fadeIn">
+									<div class="dropdown-user-scroll scrollbar-outer">
+										<li>
+											<div class="user-box">
+												<div class="avatar-lg"><img
+														src="{% if foto_perfil != '' %} {{foto_perfil.url}} {% else %}{% static 'anonimo.png' %}{% endif %}"
+														alt="image profile" class="avatar-img rounded"></div>
+												<div class="u-text">
+													<h4>{{Usuario}}</h4>
+													<p class="text-muted">{{Usuario.email}}</p><a
+														href="{% url 'perfil_user' %}"
+														class="btn btn-xs btn-secondary btn-sm">Ver perfil</a>
+												</div>
+											</div>
+										</li>
+										<li>
+											<div class="dropdown-divider"></div>
+											<a class="dropdown-item" href="{% url 'perfil_user' %}">Ver perfil</a>
+											<a class="dropdown-item" href="{% url 'cambiar_password' %}">Cambiar
+												password</a>
+											<div class="dropdown-divider"></div>
+											<a class="dropdown-item" href="{% url 'salir' %}">Salir</a>
+										</li>
+									</div>
+								</ul>
+							</li>
+						</ul>
+				</div>
+			</nav>
+			<!-- End Navbar -->
+		</div>
+
+		<!-- Sidebar -->
+		<div class="sidebar sidebar-style-2">
+			<div class="sidebar-wrapper scrollbar scrollbar-inner">
+				<div class="sidebar-content">
+					<div class="user">
+						<div class="avatar-sm float-left mr-2">
+							<img src="{% if foto_perfil != '' %} {{foto_perfil.url}} {% else %}{% static 'anonimo.png' %}{% endif %}" alt="..."
+								class="avatar-img rounded-circle">
+						</div>
+						<div class="info">
+							<a data-toggle="collapse" href="#collapseExample" aria-expanded="true">
+								<span>
+									{{Usuario}}
+									{% if Usuario.is_maestro %}
+									<span class="user-level">Maestro</span>
+									{% else %}
+									<span class="user-level">Alumno</span>
+									{% endif %}
+									<span class="caret"></span>
+								</span>
+							</a>
+						</div>
+					</div>
+					<ul class="nav nav-primary">
+						<!-- URL PARA MAESTROS -->
+						{% if maestro %}
+						<li class="nav-section">
+							<span class="sidebar-mini-icon">
+								<i class="fa fa-ellipsis-h"></i>
+							</span>
+							<h4 class="text-section">Conf</h4>
+						</li>
+
+						<li class="nav-item {% if activate == 'aula' %}active{% endif %}">
+							<a href="{% url 'control_escolar:maestro_create_aula' %}">
+								<i class="fas fa-hotel"></i>
+								<p>Aula</p>
+							</a>
+						</li>
+						<li class="nav-item {% if activate == 'materia' %}active{% endif %}">
+							<a data-toggle="collapse" href="#li_materia">
+								<i class="fas fa-book-reader"></i>
+								<p>Materia</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="li_materia">
+								<ul class="nav nav-collapse">
+									<li>
+										<a href="{% url 'control_escolar:maestro_materias' %}">
+											<span class="sub-item">Crear</span>
+										</a>
+										<a href="{% url 'control_escolar:maestro_documento' %}">
+											<span class="sub-item">Documentos</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="nav-item {% if activate == 'unidad' %}active{% endif %}">
+							<a href="{% url 'control_escolar:maestro_unidad' %}">
+								<i class="fas fa-list-alt"></i>
+								<p>Unidades</p>
+							</a>
+						</li>
+						<li class="nav-item {% if activate == 'tarea' %}active{% endif %}">
+							<a href="{% url 'control_escolar:maestro_tarea_crear' %}">
+								<i class="fas fa-pencil-ruler"></i>
+								<p>Tareas</p>
+							</a>
+						</li>
+						<li class="nav-item {% if activate == 'blog' %}active{% endif %}">
+							<a data-toggle="collapse" href="#li_blog">
+								<i class="fas fa-pen-square"></i>
+								<p>Blog</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="li_blog">
+								<ul class="nav nav-collapse">
+									<li>
+										<a href="{% url 'control_escolar:maestro_blog_list' %}">
+											<span class="sub-item">Ver</span>
+										</a>
+										<a href="{% url 'control_escolar:maestro_blog_crear' %}">
+											<span class="sub-item">Crear</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						<li class="nav-item {% if activate == 'calificar' %}active{% endif %}">
+							<a href="{% url 'control_escolar:maestro_tarea_entregada_list' %}">
+								<i class="far fa-check-circle"></i>
+								<p>Calificar</p>
+							</a>
+						</li>
+						<li class="nav-item {% if activate == 'promediar' %}active{% endif %}">
+							<a data-toggle="collapse" href="#li_promediar">
+								<i class="far fa-thumbs-up"></i>
+								<p>Promediar</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="li_promediar">
+								<ul class="nav nav-collapse">
+									<li>
+										<a href="{% url 'control_escolar:maestro_priomediar' %}">
+											<span class="sub-item">Unidad</span>
+										</a>
+										<a href="{% url 'control_escolar:maestro_priomediar_materia' %}">
+											<span class="sub-item">Materia</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						{% endif %}
+						<!-- FIN URL MAESTROS -->
+
+						<!-- URLS PARA ALUMNOS -->
+						{% if alumno %}
+						<li class="nav-item {% if activate == 'blog' %}active{% endif %}">
+							<a href="{% url 'control_escolar:alumno_blog' %}">
+								<i class="fab fa-blogger"></i>
+								<p>Blogs</p>
+							</a>
+						</li>
+
+						<li class="nav-item {% if activate == 'materia' %}active{% endif %}">
+							<a data-toggle="collapse" href="#li_mat_al">
+								<i class="fas fa-book-reader"></i>
+								<p>Materia</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse" id="li_mat_al">
+								<ul class="nav nav-collapse">
+									<li>
+										<a href="{% url 'control_escolar:alumno_materia_list' %}">
+											<span class="sub-item">Ver</span>
+										</a>
+										<a data-toggle="modal" data-target="#alu_inscribir">
+											<span class="sub-item">Inscribirme</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+
+						<li class="nav-item {% if activate == 'TareaAlumno' %}active{% endif %}">
+							<a href="{% url 'control_escolar:alumno_tarea_create' %}">
+								<i class="fas fa-pencil-ruler"></i>
+								<p>Tareas</p>
+							</a>
+						</li>
+						<li class="nav-item {% if activate == 'calificacion' %}active{% endif %}">
+							<a href="{% url 'control_escolar:alumno_calificaciones_alu' %}">
+								<i class="fas fa-tasks"></i>
+								<p>Calificaciones</p>
+							</a>
+						</li>
+
+
+						{% endif %}
+						<!-- FIN URLS ALUMNOS -->
+
+						<li class="nav-item">
+							<a href="#" disabled title="Proximamente">
+								<i class="fas fa-book"></i>
+								<p>Biblioteca</p>
+							</a>
+						</li>
+						<li class="nav-item {% if activate == 'Chat' %}active{% endif %}">
+							<a href="{% url 'chat:index' %}"
+								title="Chat">
+								<i class="far fa-paper-plane"></i>
+								<p>Chat</p>
+							</a>
+						</li>
+						<br>
+						<li class="mx-4 mt-2">
+							<a href="#" class="btn btn-primary btn-block"><span class="btn-label mr-2"> <i
+										class="fa fa-heart"></i> </span>Donar</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- End Sidebar -->
+
+		<div class="main-panel">
+			<div class="content">
+				<div class="page-inner">
+					{% block indicadores %}
+					<div class="page-header">
+						<h4 class="page-title">Dashboard</h4>
+						<ul class="breadcrumbs">
+							<li class="nav-home">
+								<a href="#">
+									<i class="flaticon-home"></i>
+								</a>
+							</li>
+							<li class="separator">
+								<i class="flaticon-right-arrow"></i>
+							</li>
+							<li class="nav-item">
+								<a href="#">inicio</a>
+							</li>
+							<li class="separator">
+								<i class="flaticon-right-arrow"></i>
+							</li>
+							<li class="nav-item">
+								<a href="#">Principal</a>
+							</li>
+						</ul>
+					</div>
+					{% endblock indicadores %}
+
+					<div class="page-category">
 						{% block contenido %}
 
 
-
-						{% if maestro %}
-
-						<div class="panel-heading">
-							<h3 class="panel-title">Ultima Entrada</h3>
-							<p class="panel-subtitle">{{Usuario.last_login}}</p>
-
-							<div class="row">
-								<div class="col-md-9">
-									<div id="my-chart" class="ct-chart"></div>
-								</div>
-								<div class="col-md-3">
-									<div class="weekly-summary text-right">
-										<span class="number">{{total_tareas_m}}</span> <span class="percentage"><i class="fa fa-caret-up text-success"></i>
-											12%</span>
-										<span class="info-label">Total Tareas</span>
-									</div>
-									<div class="weekly-summary text-right">
-										<span class="number">{{total_tareas_entregadas_mes}}</span> <span class="percentage"><i class="fa fa-caret-up text-success"></i>
-											23%</span>
-										<span class="info-label">Entregadas ultimos 30 dias</span>
-									</div>
-									<div class="weekly-summary text-right">
-										<span class="number">{{total_tareas_entregadas}}</span> <span class="percentage"><i class="fa fa-caret-down text-danger"></i>
-											8%</span>
-										<span class="info-label">Total Entregadas</span>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						{% endif %}
-
-						{% if alumno %}
-
-						{% endif %}
 						{% endblock contenido %}
-					</div>
 
-					<div class="modal fade" id="alu_inscribir" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-					 aria-hidden="true">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="exampleModalLabel">Unirme a una Materia</h5>
-									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-										<span aria-hidden="true">&times;</span>
-									</button>
-								</div>
-								<div class="modal-body">
-									<form action="{% url 'control_escolar:alumno_registrar' %}" method="post">
-										{% csrf_token %}
-										<label for="id_regis_alumno">Codigo proporcionado por el maestro</label>
-										<input type="number" id="id_regis_alumno" name="regis_materia" class="form-control" placeholder="Codigo Materia"
-										 aria-describedby="basic-addon1">
-										<input class="btn btn-primary" type="submit" value="Ingresar">
-									</form>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerra</button>
+
+						<div class="modal fade" id="alu_inscribir" tabindex="-1" role="dialog"
+							aria-labelledby="exampleModalLabel" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="exampleModalLabel">Unirme a una Materia</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body">
+										<form action="{% url 'control_escolar:alumno_registrar' %}" method="post">
+											{% csrf_token %}
+											<label for="id_regis_alumno">Codigo proporcionado por el maestro</label>
+											<input type="number" id="id_regis_alumno" name="regis_materia"
+												class="form-control" placeholder="Codigo Materia"
+												aria-describedby="basic-addon1">
+											<input class="btn btn-primary" type="submit" value="Ingresar">
+										</form>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary"
+											data-dismiss="modal">Cerra</button>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
 
+					</div>
 				</div>
 			</div>
-			<!-- END MAIN CONTENT -->
+			<footer class="footer">
+				<div class="container-fluid">
+					<nav class="pull-left">
+						<ul class="nav">
+							<li class="nav-item">
+								<a class="nav-link" href="https://www.themekita.com">
+									ThemeKita
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="#">
+									Help
+								</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="#">
+									Licenses
+								</a>
+							</li>
+						</ul>
+					</nav>
+					<div class="copyright ml-auto">
+						2019, creado <i class="fa fa-heart heart text-danger"></i> por <a
+							href="https://www.facebook.com/marioestebanh">@esteban</a>
+					</div>
+				</div>
+			</footer>
 		</div>
-		<!-- END MAIN -->
-		<div class="clearfix"></div>
-		{% block footer %}
-		<footer>
-			<div class="container-fluid">
-				<p class="copyright">&copy; 2019 <a href="#" target="_blank">Sensei</a>. All Rights Reserved.</p>
-			</div>
-		</footer>
-		{% endblock footer %}
+
 	</div>
-	<!-- END WRAPPER -->
-	<!-- Javascript -->
-	<script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-	 crossorigin="anonymous"></script>
-	<script src="{% static 'assets/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
-	<script src="{% static 'assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js' %}"></script>
-	<script src="{% static 'assets/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js' %}"></script>
-	<script src="{% static 'assets/vendor/chartist/js/chartist.min.js' %}"></script>
-	<script src="{% static 'assets/scripts/klorofil-common.js' %}"></script>
+	<!--   Core JS Files   -->
+	<script src="{% static 'overlay-admin/assets/js/core/jquery.3.2.1.min.js' %}"></script>
+	<script src="{% static 'overlay-admin/assets/js/core/popper.min.js' %}"></script>
+	<script src="{% static 'overlay-admin/assets/js/core/bootstrap.min.js' %}"></script>
+
+	<!-- jQuery UI -->
+	<script src="{% static 'overlay-admin/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
+	<script src="{% static 'overlay-admin/assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js' %}">
+	</script>
+
+	<!-- jQuery Scrollbar -->
+	<script src="{% static 'overlay-admin/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js' %}"></script>
+
+
+	<!-- Chart JS -->
+	<script src="{% static 'overlay-admin/assets/js/plugin/chart.js/chart.min.js' %}"></script>
+
+	<!-- jQuery Sparkline -->
+	<script src="{% static 'overlay-admin/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js' %}"></script>
+
+	<!-- Chart Circle -->
+	<script src="{% static 'overlay-admin/assets/js/plugin/chart-circle/circles.min.js' %}"></script>
+
+	<!-- Datatables -->
+	<script src="{% static 'overlay-admin/assets/js/plugin/datatables/datatables.min.js' %}"></script>
+
+	<!-- Bootstrap Notify -->
+	<script src="{% static 'overlay-admin/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js' %}"></script>
+
+	<!-- jQuery Vector Maps -->
+	<script src="{% static 'overlay-admin/assets/js/plugin/jqvmap/jquery.vmap.min.js' %}"></script>
+	<script src="{% static 'overlay-admin/assets/js/plugin/jqvmap/maps/jquery.vmap.world.js' %}"></script>
+
+	<!-- Sweet Alert -->
+	<script src="{% static 'overlay-admin/assets/js/plugin/sweetalert/sweetalert.min.js' %}"></script>
+
+	<!-- Atlantis JS -->
+	<script src="{% static 'overlay-admin/assets/js/atlantis.min.js' %}"></script>
+
 	<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/alertify.min.js"></script>
+
 	{% block script %}
 
-	<script>
-		/* Add a basic data series with six labels and values */
-		var data = {
-			labels: ['1', '2', '3', '4', '5', '6'],
-			series: [{
-				data: [1, 2, 3, 5, 8, 13]
-			}]
-		};
-
-		/* Set some base options (settings will override the default settings in Chartist.js *see default settings*). We are adding a basic label interpolation function for the xAxis labels. */
-		var options = {
-			axisX: {
-				labelInterpolationFnc: function (value) {
-					return 'Calendar Week ' + value;
-				}
-			}
-		};
-
-		/* Now we can specify multiple responsive settings that will override the base settings based on order and if the media queries match. In this example we are changing the visibility of dots and lines as well as use different label interpolations for space reasons. */
-		var responsiveOptions = [
-			['screen and (min-width: 641px) and (max-width: 1024px)', {
-				showPoint: false,
-				axisX: {
-					labelInterpolationFnc: function (value) {
-						return 'Week ' + value;
-					}
-				}
-			}],
-			['screen and (max-width: 640px)', {
-				showLine: false,
-				axisX: {
-					labelInterpolationFnc: function (value) {
-						return 'W' + value;
-					}
-				}
-			}]
-		];
-
-		/* Initialize the chart with the above settings */
-		new Chartist.Line('#my-chart', data, options, responsiveOptions);
-	</script>
 	{% endblock script %}
+
+
+	{% block notificacion %}
+	{% if Usuario.is_maestro %}
+	<script>
+
+	var roomName = '{{Usuario}}';
+
+    var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/' + roomName + '/');
+
+    chatSocket.onmessage = function (e) {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        var user = data['user'];
+        var user_send = data['user_send'];
+
+		if (user_send != '{{Usuario}}') {
+			$.notify({
+			// options
+			icon: 'icon-cursor',
+			message: user+': envio un nuevo mensaje'
+
+		}, {
+			// settings
+			type: 'success',
+			placement: {
+				from: "bottom",
+				align: "right"
+			},
+		});
+		}
+
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+</script>
+	{% endif %}
+	{% endblock notificacion %}
+
+
+
+	<script>
+		$.ajax({
+			method: "GET",
+			url: "{% url 'control_escolar:msn_maestro_blog' %}",
+			dataType: "json",
+
+			success: function (data) {
+
+				number_msn = data.number_coment;
+				data = data.coment;
+				var string = '';
+				$.each(data, function (i, item) {
+					var fecha = new Date(item.comentario_creado);
+					string += '<a href="#">' +
+						'<div class="notif-content">' +
+						'<span class="subject">' + item.comentario_comentado_by__first_name + ' ' + item
+						.comentario_comentado_by__last_name +
+						'</span>' +
+						'<span class="block">' +
+						item.comentario_comentario +
+						'</span>' +
+						'<span class="time">' + fecha.getDate() + '/' + fecha.getMonth() + '/' + fecha
+						.getFullYear() + '  -  ' + fecha.getHours() + ':' + fecha.getMinutes() + ':' +
+						fecha.getSeconds() + '</span>' +
+						'</div>' +
+						'</a>'
+
+				});
+				$('#msn').html(string);
+
+
+				if (number_msn > 0) {
+					$('#num_not').html('<span class="notification">' + number_msn + '</span>');
+				}
+			},
+			error: function (data) {
+				console.log('An error occurred.');
+
+				console.log(data);
+			},
+		});
+	</script>
 </body>
 
 </html>

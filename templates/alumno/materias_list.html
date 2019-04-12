@@ -1,14 +1,40 @@
 {% extends 'admin/base_sensei.html'%}
+{% block indicadores %}
+<div class="page-header">
+    <h4 class="page-title">Materia</h4>
+    <ul class="breadcrumbs">
+      <li class="nav-home">
+        <a href="#">
+          <i class="flaticon-home"></i>
+        </a>
+      </li>
+      <li class="separator">
+        <i class="flaticon-right-arrow"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">Materia</a>
+      </li>
+      <li class="separator">
+        <i class="flaticon-right-arrow"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">Mis materias</a>
+      </li>
+    </ul>
+</div>
+{% endblock indicadores %}
+
 {% block contenido %}
 {% for materia in object_list %}
-<div class="col-md-6">
-    <div class="metric">
-        <span class="icon"><i class="fa fa-download"></i></span>
-        <p>
-            <span class="title">{{materia.materia_aula}}</span>
-            <span class="number">{{materia.materia_nombre}}</span>
-            <p><a class="btn btn-primary" href="{% url 'control_escolar:doc_materia_alu' materia.materia_id %}" role="button">Documentos</a></p>
-        </p>
+<div class="col-md-4">
+    <div class="card card-dark bg-secondary-gradient">
+        <div class="card-body bubble-shadow">
+            <h1>Materia </h1>
+            <h5 class="op-8">{{materia.materia_nombre}}</h5>
+            <div class="pull-right">
+                <a href="{% url 'control_escolar:doc_materia_alu' materia.materia_id %}" title="Documentos"><button type="button" class="btn btn-icon btn-round btn-primary"><i class="fas fa-file-download"></i></button></a>
+            </div>
+        </div>
     </div>
 </div>
 {% endfor %}

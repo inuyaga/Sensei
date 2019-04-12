@@ -1,4 +1,29 @@
 {% extends 'admin/base_sensei.html'%}
+
+{% block indicadores %}
+<div class="page-header">
+    <h4 class="page-title">Blog</h4>
+    <ul class="breadcrumbs">
+      <li class="nav-home">
+        <a href="#">
+          <i class="flaticon-home"></i>
+        </a>
+      </li>
+      <li class="separator">
+        <i class="flaticon-right-arrow"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">Blog</a>
+      </li>
+      <li class="separator">
+        <i class="flaticon-right-arrow"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">Listado</a>
+      </li>
+    </ul>
+</div>
+{% endblock indicadores %}
 {% block contenido %}
 <style>
     .center {
@@ -11,21 +36,41 @@
 <div class="row justify-content-md-center">
 
     {% for blog in object_list %}
-    <div class="card col-md-6 col-md-offset-3">
-        <img src="{{blog.blog_imagen.url}}" width="600" height="250" class="card-img-top" alt="...">
-        <div class="card-body">
-            <h5 class="card-title">{{blog.blog_titulo}}</h5>
-            <p class="card-text">{{blog.blog_descripcion}}</p>
-            {% if maestro %}
-            <a class="btn btn-primary btn-sm" href="{% url 'control_escolar:maestro_blog_update' blog.blog_id %}" role="button"><span class="lnr lnr-pencil"></span></a>
-            <a class="btn btn-danger btn-sm" href="{% url 'control_escolar:maestro_blog_delete' blog.blog_id %}" role="button"><span class="lnr lnr-trash"></span></a>
-            {% endif %}
-            <a class="btn btn-info btn-sm" href="{% url 'control_escolar:maestro_blog_detalle' blog.blog_id %}" role="button"><span class="lnr lnr-eye"></span></a>
-            <p class="card-text"><small class="text-muted">Creado {{blog.blog_creado}}</small></p>
-            <p class="card-text"><small class="text-muted">Actualizado {{blog.blog_ultima_actualizacion}}</small></p>
+
+    <div class="col-md-4">
+            <div class="card card-post card-round">
+                <img class="card-img-top" src="{{blog.blog_imagen.url}}" alt="Card image cap">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="avatar">
+                            <img src="{% if blog.blog_pertenece.foto_perfil != '' %} {{blog.blog_pertenece.foto_perfil.url}} {% endif %}" alt="..." class="avatar-img rounded-circle">
+                        </div>
+                        <div class="info-post ml-2">
+                            <p class="username">{{blog.blog_pertenece}}</p>
+                            <p class="date text-muted">{{blog.blog_creado}}</p>
+                        </div>
+                    </div>
+                    <div class="separator-solid"></div>
+                    <p class="card-category text-info mb-1"><a href="#">Maestr@</a></p>
+                    <p class="card-category text-info mb-1">Actualizado {{blog.blog_ultima_actualizacion}}</p>
+                    <h3 class="card-title">
+                        <a href="#">
+                                {{blog.blog_titulo}}
+                        </a>
+                    </h3>
+                    <p class="card-text">{{blog.blog_descripcion}}</p>
+                    <a href="{% url 'control_escolar:maestro_blog_detalle' blog.blog_id %}" class="btn btn-primary btn-rounded btn-sm">Seguir leyendo</a>
+                    {% if maestro %}
+                    <a href="{% url 'control_escolar:maestro_blog_update' blog.blog_id %}" class="btn btn-info btn-rounded btn-sm"><i class="fas fa-pen-square"></i></a>
+                    <a href="{% url 'control_escolar:maestro_blog_delete' blog.blog_id %}" class="btn btn-danger btn-rounded btn-sm"><i class="fas fa-trash"></i></a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    </div>
     {% endfor %}
+
+
+
 </div>
 
 

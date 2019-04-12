@@ -20,8 +20,8 @@ class Documento(models.Model):
 
 class Materia(models.Model):
     materia_id = models.AutoField(primary_key=True)
-    materia_nombre = models.CharField('Nombre', max_length=150)
     materia_aula=models.ForeignKey(Aula, verbose_name='Aula', on_delete=models.CASCADE)
+    materia_nombre = models.CharField('Nombre', max_length=150)
     materia_archivos=models.ManyToManyField(Documento, verbose_name="Archivos")
     materia_registro_alumnnos=models.ManyToManyField(Usuario, verbose_name="Registro_materia")
     materia_creado = models.DateTimeField(auto_now_add=True)
@@ -75,7 +75,7 @@ class Blog(models.Model):
     blog_id=models.AutoField(primary_key=True)
     blog_titulo =models.CharField('Titulo', max_length=250)
     blog_descripcion =models.CharField('Descripcion', max_length=500)
-    blog_contenido=models.TextField('Contenido')
+    blog_contenido=models.TextField('Contenido', blank=True, null=True)
     blog_imagen = models.ImageField('Imagen Blog', upload_to='img_blogs/')
     blog_creado=models.DateTimeField('Creado en', auto_now_add=True)
     blog_ultima_actualizacion=models.DateTimeField('Ultima Actualizacion', auto_now=True)

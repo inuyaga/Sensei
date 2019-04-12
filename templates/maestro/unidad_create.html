@@ -1,5 +1,31 @@
 {% extends 'admin/base_sensei.html'%}
+
+{% block indicadores %}
+<div class="page-header">
+    <h4 class="page-title">Unidad</h4>
+    <ul class="breadcrumbs">
+      <li class="nav-home">
+        <a href="#">
+          <i class="flaticon-home"></i>
+        </a>
+      </li>
+      <li class="separator">
+        <i class="flaticon-right-arrow"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">Unidad</a>
+      </li>
+      <li class="separator">
+        <i class="flaticon-right-arrow"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">Nueva unidad</a>
+      </li>
+    </ul>
+</div>
+{% endblock indicadores %}
 {% block contenido %}
+<div class="row">
 <div class="col-md-3">
     <label for="Aula">Aula</label>
     <select class="custom-select form-control" id="Aula">
@@ -17,6 +43,7 @@
 <div class="col-md-3">
     <br>
     <button type="button" class="btn btn-primary" id="btn_nuevo" disabled data-toggle="modal" data-target="#nuevo_unidad">Nuevo</button>
+</div>
 </div>
 
 <div class="row">

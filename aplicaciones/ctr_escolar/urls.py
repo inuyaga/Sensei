@@ -5,7 +5,7 @@ MateriaDelete, DocumentoCreate, DocumentoUpdate, DocumentoDelete, UnidadCreate, 
 UnidadUpdate, TareaCreate, JsonTareas, TareaDelete, TareaUpdate, BlogCreate, BolgList, BlogUpdate, BlogDelete, \
 BlogDetalle, InscripcionCreate, MateriaAlumnoList, DocumentMateriaAlumnoList, BoligAlumnoList, TareaAlumnoCreate, \
 ListTareaAlumno, TareaEntregadaList, TareaEntregadaUpdate, PromediarCreate, PromediarMateria, CalificacionesVer, \
-ComentarioCreate, MateriaListaAlumno, DownloadExcel
+ComentarioCreate, MateriaListaAlumno, DownloadExcel, ResponseMaestroAjax
 app_name='control_escolar'
 urlpatterns = [
     path('',index.as_view(), name='index'),
@@ -52,9 +52,6 @@ urlpatterns = [
     path('maestro/promediar/materia/', PromediarMateria.as_view(), name='maestro_priomediar_materia'),
 
 
-
-
-
     path('alumno/registro/', InscripcionCreate.as_view(), name='alumno_registrar'),
     path('alumno/materias/', MateriaAlumnoList.as_view(), name='alumno_materia_list'),
     path('alumno/materias/documentos/<int:pk>/', DocumentMateriaAlumnoList.as_view(), name='doc_materia_alu'),
@@ -63,5 +60,13 @@ urlpatterns = [
 
     path('alumno/tarea/script/', ListTareaAlumno.as_view(), name='alumno_tarea_scrip'),
     path('alumno/calificaciones/', CalificacionesVer.as_view(), name='alumno_calificaciones_alu'),
+
+
+
+    path('maestro/msn/comentarios/', ResponseMaestroAjax.as_view(), name='msn_maestro_blog'),
+
+
+
+
 
 ]

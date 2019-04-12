@@ -1,46 +1,71 @@
 {% extends 'admin/base_sensei.html'%}
+{% block indicadores %}
+<div class="page-header">
+    <h4 class="page-title">Calificar</h4>
+    <ul class="breadcrumbs">
+        <li class="nav-home">
+            <a href="#">
+                <i class="flaticon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Calificar</a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Calificar Materia</a>
+        </li>
+    </ul>
+</div>
+{% endblock indicadores %}
 {% block contenido %}
 <h1>{{msn}}</h1>
-<div class="row">
     {% if materias %}
     {% else %}
     <form action="" method="GET">
-        <div class="col-md-3">
-            <label for="materia">Aula</label>
-            <select class="custom-select form-control" id="" name="aula">
-                <option selected disabled>Elije una opcion</option>
-                {% for aula in aulas %}
-                <option value="{{aula.id}}">{{aula.aula_nombre}}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-1">
-            <br>
-            <button type="submit" title="Buscar" class="btn btn-success"><span class="glyphicon glyphicon-search"
-                    aria-hidden="true"></span></button>
+        <div class="row">
+            <div class="col-md-3">
+                <label for="materia">Aula</label>
+                <select class="custom-select form-control" id="" name="aula">
+                    <option selected disabled>Elije una opcion</option>
+                    {% for aula in aulas %}
+                    <option value="{{aula.id}}">{{aula.aula_nombre}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-1">
+                <br>
+                <button type="submit" title="Buscar" class="btn btn-success"><i class="fas fa-search"></i></button>
+            </div>
         </div>
     </form>
     {% endif %}
     {% if materias %}
     <form action="" method="GET">
-        <div class="col-md-3">
-            <label for="materia">Materia</label>
-            <select class="custom-select form-control" id="" name="materia">
-                <option selected disabled>Elije una opcion</option>
-                {% for materia in materias %}
-                <option value="{{materia.materia_id}}">{{materia.materia_nombre}}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-1">
-            <br>
-            <button title="Promediar" type="submit" class="btn btn-success"><span class="glyphicon glyphicon-ok"
-                    aria-hidden="true"></span></button>
+        <div class="row">
+            <div class="col-md-3">
+                <label for="materia">Materia</label>
+                <select class="custom-select form-control" id="" name="materia">
+                    <option selected disabled>Elije una opcion</option>
+                    {% for materia in materias %}
+                    <option value="{{materia.materia_id}}">{{materia.materia_nombre}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-1">
+                <br>
+                <button title="Promediar" type="submit" class="btn btn-success"><i class="fas fa-check-circle"></i></button>
+            </div>
         </div>
     </form>
     {% endif %}
 
-</div>
+
 
 <div class="row">
     <table class="table">

@@ -40,8 +40,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'aplicaciones.usuario',
     'aplicaciones.ctr_escolar',
+    'channels',
+    'aplicaciones.chat',
 ]
 AUTH_USER_MODEL = 'usuario.User'
+
+ASGI_APPLICATION = "Sensei.routing.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -84,6 +97,7 @@ DATABASES = {
         'PASSWORD': 'S1st3m45',
         'HOST': 'localhost',
         'PORT': '3306',
+        'CONN_MAX_AGE': 3600,
     }
 }
 

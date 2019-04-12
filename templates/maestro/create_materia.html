@@ -1,24 +1,50 @@
 {% extends 'admin/base_sensei.html'%}
+{% block indicadores %}
+<div class="page-header">
+    <h4 class="page-title">Materia</h4>
+    <ul class="breadcrumbs">
+      <li class="nav-home">
+        <a href="#">
+          <i class="flaticon-home"></i>
+        </a>
+      </li>
+      <li class="separator">
+        <i class="flaticon-right-arrow"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">Materia</a>
+      </li>
+      <li class="separator">
+        <i class="flaticon-right-arrow"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">Nueva Materia</a>
+      </li>
+    </ul>
+</div>
+{% endblock indicadores %}
 {% block contenido %}
 
 <form action="" method="post">
   {% csrf_token %}
-  <div class="col-md-3">
-    {{form.materia_aula.label}}
-    {{form.materia_aula.errors}}
-    {{form.materia_aula}}
+  <div class="row">
+    {% for input in form %}
+    <div class="col-md-3">
+      {{input.label}}
+      {{input.errors}}
+      {{input}}
+    </div>
+    {% endfor %}
+
+    <div class="col-md-3">
+      <br>
+      <button type="submit" class="btn btn-outline-success">Guardar</button>
+    </div>
   </div>
-  <div class="col-md-3">
-      {{form.materia_nombre.label}}
-      {{form.materia_nombre.errors}}
-      {{form.materia_nombre}}
-  </div>
-  <br>
-  <button type="submit" class="btn btn-outline-success">Guardar</button>
 </form>
 
-<table class="table">
-  <thead class="thead-dark">
+<table class="table table-head-bg-info table-hover">
+  <thead>
     <tr>
       <th scope="col">#</th>
       <th scope="col">Nombre</th>
@@ -35,11 +61,14 @@
       <td>{{materia.materia_aula}}</td>
       <td>{{materia.materia_creado}}</td>
       <td>
-        <a class="btn btn-pill btn-primary" title="Editar" href="{% url 'control_escolar:maestro_materias_update' materia.materia_id %}"
-          role="button"><i class="cui-pencil"></i>
-          <a class="btn btn-pill btn-danger" title="Eliminar" href="{% url 'control_escolar:maestro_materias_delete' materia.materia_id %}"
-            role="button"><i class="cui-circle-x"></i>
-            <a class="btn btn-pill btn-success" title="Descargar lista" href="{% url 'control_escolar:maestro_materias_list_alumno' materia.materia_id %}" role="button"><i class="glyphicon glyphicon-list"></i>
+        <a class="btn btn-pill btn-primary" title="Editar"
+          href="{% url 'control_escolar:maestro_materias_update' materia.materia_id %}" role="button">
+          <i class="fas fa-pen-square"></i>
+          <a class="btn btn-pill btn-danger" title="Eliminar"
+            href="{% url 'control_escolar:maestro_materias_delete' materia.materia_id %}" role="button"><i class="fas fa-trash"></i>
+            <a class="btn btn-pill btn-info" title="Descargar lista"
+              href="{% url 'control_escolar:maestro_materias_list_alumno' materia.materia_id %}" role="button"><i
+                class="fas fa-clipboard-list"></i>
       </td>
     </tr>
     {% endfor %}

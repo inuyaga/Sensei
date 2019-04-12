@@ -1,12 +1,38 @@
 {% extends 'admin/base_sensei.html'%}
+{% block indicadores %}
+<div class="page-header">
+    <h4 class="page-title">Perfil</h4>
+    <ul class="breadcrumbs">
+      <li class="nav-home">
+        <a href="#">
+          <i class="flaticon-home"></i>
+        </a>
+      </li>
+      <li class="separator">
+        <i class="flaticon-right-arrow"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">Perfil</a>
+      </li>
+      <li class="separator">
+        <i class="flaticon-right-arrow"></i>
+      </li>
+      <li class="nav-item">
+        <a href="#">Editar Perfil</a>
+      </li>
+    </ul>
+</div>
+{% endblock indicadores %}
+
 {% block contenido %}
-<!-- LEFT COLUMN -->
+{% comment %} <!-- LEFT COLUMN -->
 <div class="profile-left">
     <!-- PROFILE HEADER -->
     <div class="profile-header">
         <div class="overlay"></div>
         <div class="profile-main">
-            <img src="{% if foto_perfil != '' %} {{foto_perfil.url}} {% endif %}" width="90" height="90" class="img-circle" alt="Avatar">
+            <img src="{% if foto_perfil != '' %} {{foto_perfil.url}} {% endif %}" width="90" height="90"
+                class="img-circle" alt="Avatar">
             <h3 class="name">{{nombre}}</h3>
             <span class="online-status status-available">Disponible</span>
         </div>
@@ -39,7 +65,8 @@
             <h4 class="heading">Acerca de mi</h4>
             <p>{{Usuario.acerca_de_mi}}</p>
         </div>
-        <div class="text-center"><a href="{% url 'perfil_user_update' id %}" class="btn btn-primary">Editar Perfil</a></div>
+        <div class="text-center"><a href="{% url 'perfil_user_update' id %}" class="btn btn-primary">Editar Perfil</a>
+        </div>
     </div>
     <!-- END PROFILE DETAIL -->
 </div>
@@ -119,5 +146,61 @@
 
     </div>
     <!-- END TABBED CONTENT -->
+</div> {% endcomment %}
+
+
+{% load static %}
+
+
+<div class="col-md-12">
+    <div class="card card-profile">
+        <div class="card-header" style="background-image: url('{% static 'overlay-admin/assets/img/blogpost.jpg' %}')">
+            <div class="profile-picture">
+                <div class="avatar avatar-xl">
+                    <img src="{% if foto_perfil != '' %} {{foto_perfil.url}} {% endif %}" alt="..."
+                        class="avatar-img rounded-circle">
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="user-profile text-center">
+                <div class="name">{{Usuario.get_full_name}}</div>
+                <div class="job">{% if Usuario.is_maestro %}<span class="user-level">Maestro</span>{% else %}<span
+                        class="user-level">Alumno</span>{% endif %}</div>
+                <div class="desc">{{Usuario.acerca_de_mi}}</div>
+                <div class="social-media">
+                    <a class="btn btn-info btn-twitter btn-sm btn-link" href="#">
+                        <span class="btn-label just-icon"><i class="flaticon-twitter"></i> </span>
+                    </a>
+                    <a class="btn btn-danger btn-sm btn-link" rel="publisher" href="#">
+                        <span class="btn-label just-icon"><i class="flaticon-google-plus"></i> </span>
+                    </a>
+                    <a class="btn btn-primary btn-sm btn-link" rel="publisher" href="#">
+                        <span class="btn-label just-icon"><i class="flaticon-facebook"></i> </span>
+                    </a>
+
+                </div>
+                <div class="view-profile">
+                    <a href="{% url 'perfil_user_update' id %}" class="btn btn-secondary btn-block">Editar perfil</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="row user-stats text-center">
+                <div class="col">
+                    <div class="number">{{email}}</div>
+                    <div class="title">Correo</div>
+                </div>
+                <div class="col">
+                    <div class="number">{{Usuario.fecha_nacimiento}}</div>
+                    <div class="title">Fecha nacimiento</div>
+                </div>
+                <div class="col">
+                    <div class="number">{{Usuario.telefono}}</div>
+                    <div class="title">Telefono</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock contenido %}
