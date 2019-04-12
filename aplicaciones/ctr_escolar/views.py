@@ -1329,7 +1329,7 @@ class TareaAlumnoCreate(LoginRequiredMixin, AjaxableResponseMixinTareaAlumno, Cr
     redirect_field_name = 'redirect_to'
     model = TareaDocumento
     form_class = TareaDocumentoFrom
-    template_name = 'alumno/tarea_create.html'
+    template_name = 'alumno/tarea_create.html' 
     success_url = reverse_lazy('control_escolar:alumno_tarea_create')
 
     def get_form_kwargs(self):

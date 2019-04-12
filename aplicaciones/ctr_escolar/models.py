@@ -9,7 +9,7 @@ class Aula(models.Model):
     aula_creacion = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.aula_nombre
+        return self.aula_nombre 
 class Documento(models.Model):
     doc_id=models.AutoField(primary_key=True)
     doc_nombre = models.CharField('Nombre', max_length=100)
