@@ -1,0 +1,28 @@
+{% extends 'admin/base_sensei.html'%}
+{% block contenido %}
+
+{% endblock contenido %}
+{% block script %}
+<script src="https://www.gstatic.com/firebasejs/5.10.1/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyCyubVtnIhxQyH0z6BBQtxjqIJD7FoX8Dk",
+      authDomain: "chatsensei-16d08.firebaseapp.com",
+      databaseURL: "https://chatsensei-16d08.firebaseio.com",
+      projectId: "chatsensei-16d08",
+      storageBucket: "chatsensei-16d08.appspot.com",
+      messagingSenderId: "747484276412"
+    };
+    firebase.initializeApp(config);
+
+
+    var db = firebase.database();  
+$('#enviar').on('click', function(){
+    var mensaje = $('#message').val();
+    db.ref('mensajes').set({
+        mensaje: mensaje
+    });
+});
+  </script>
+{% endblock script %} 

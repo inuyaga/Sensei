@@ -237,5 +237,38 @@ function ActualizarTarea() {
 }
 
 
+function delete_tarea(id_tarea) {
+
+    $.ajax({
+        url: '/maestro/Tarea/delete/' + id_tarea,
+        type: 'GET',
+        success: function (data) {
+            alertify.confirm('¡Esta seguro de eliminar!', data, function () {
+                $.ajax({
+                    type: 'POST',
+                    url: '/maestro/Tarea/delete/' + id_tarea +'/',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+                    success: function (data) {
+
+                    },
+                    error: function (data) {
+                        console.log('An error occurred.');
+                        console.log(data);
+                        alertify.error('Un error al intentar guardar');
+                    },
+                });
+                alertify.success('Ok')
+            }, function () {
+                alertify.error('Cancelar')
+            });
+
+
+        }
+    });
+
+}
+
 </script>
 {% endblock script %}

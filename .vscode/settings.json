@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "sensei_env/bin/python",
+    "python.pythonPath": "env_sensei/bin/python",
     "python.linting.pylintArgs": ["--reports", "12", "--disable-msg", "I0011"],
 }

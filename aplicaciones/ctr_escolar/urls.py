@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin 
 from django.urls import path
 from aplicaciones.ctr_escolar import views as view_ctr
 app_name='control_escolar'
@@ -43,8 +43,9 @@ urlpatterns = [
 
     path('maestro/tarea/calificar/', view_ctr.TareaEntregadaList.as_view(), name='maestro_tarea_entregada_list'),
     path('maestro/tarea/entregada/<int:pk>/', view_ctr.TareaEntregadaUpdate.as_view(), name='maestro_tarea_entregada_update'),
-
-    path('maestro/promediar/unidad/', view_ctr.PromediarCreate.as_view(), name='maestro_priomediar'),
+ 
+    path('maestro/promediar/unidad/', view_ctr.PromediarCreate.as_view(), name='maestro_priomediar'), 
+    path('maestro/promd/unidad/', view_ctr.PromediarUnidad.as_view(), name='maestro_priomediar_set'), 
     path('maestro/promediar/materia/', view_ctr.PromediarMateria.as_view(), name='maestro_priomediar_materia'),
 
 
@@ -61,8 +62,7 @@ urlpatterns = [
 
     path('maestro/msn/comentarios/', view_ctr.ResponseMaestroAjax.as_view(), name='msn_maestro_blog'),
 
-
-
+    path('maestro/get/materias/', view_ctr.MateriaGet.as_view(), name='get_materias'), 
 
 
 ]

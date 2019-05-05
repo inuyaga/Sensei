@@ -615,7 +615,7 @@ class AjaxableResponseMixinTarea:
                 '<td>'+tarea.get_tarea_tipo_display() +'</td>' \
                 '<td>' \
                 '<a class="btn btn-info" onclick="get_update_tarea('+str(tarea.tarea_id)+')" role="button"><span class="fas fa-pen-square"></span></a>' \
-                '<a class="btn btn-danger" href="'+str(reverse_lazy('control_escolar:maestro_tarea_delete',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="fas fa-trash"></span></a>' \
+                '<a class="btn btn-danger" onclick="delete_tarea('+str(tarea.tarea_id)+')" href="#" role="button"><span class="fas fa-trash"></span></a>' \
                 '</tr>'
             tipo_set=form.instance.tarea_tipo
             if tipo_set=='PARA CALIFICAR':
@@ -646,7 +646,7 @@ class TareaCreate(LoginRequiredMixin, AjaxableResponseMixinTarea, CreateView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     model = Tarea
-    form_class = TareaForm
+    form_class = TareaForm 
     template_name = 'maestro/tarea_crear.html'
     success_url = reverse_lazy('control_escolar:maestro_tarea_crear')
 
@@ -701,7 +701,7 @@ class JsonTareas(TemplateView):
                 '<td>'+tarea.get_tarea_tipo_display() +'</td>' \
                 '<td>' \
                 '<a class="btn btn-info" onclick="get_update_tarea('+str(tarea.tarea_id)+')" role="button"><span class="fas fa-pen-square"></span></a>' \
-                '<a class="btn btn-danger" href="'+str(reverse_lazy('control_escolar:maestro_tarea_delete',kwargs={'pk': tarea.tarea_id}))+'" role="button"><span class="fas fa-trash"></span></a>' \
+                '<a class="btn btn-danger" onclick="delete_tarea('+str(tarea.tarea_id)+')" href="#" role="button"><span class="fas fa-trash"></span></a>' \
                 '</tr>'
 
 
@@ -721,14 +721,14 @@ class TareaDelete(LoginRequiredMixin, DeleteView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     model = Tarea
-    template_name = 'eliminaciones.html'
+    template_name = 'eliminacionesjs.html'
     success_url = reverse_lazy('control_escolar:maestro_tarea_crear')
 
-    def dispatch(self, *args, **kwargs):
-        if self.request.user.is_authenticated:
-            if self.request.user.is_alumno:
-                return redirect('/')
-        return super().dispatch(*args, **kwargs)
+    # def dispatch(self, *args, **kwargs):
+    #     if self.request.user.is_authenticated:
+    #         if self.request.user.is_alumno:
+    #             return redirect('/')
+    #     return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -1063,8 +1063,68 @@ class TareaEntregadaUpdate(LoginRequiredMixin, UpdateView):
         context['activate'] = 'calificar'
 
         return context
+class MateriaGet(View):
+    def get(self, request, *args, **kwargs):
+        aula=request.GET.get('aula')
+        materia=request.GET.get('materia')
 
-class PromediarCreate(LoginRequiredMixin, TemplateView):
+        materias=Materia.objects.filter(materia_aula=aula).values('materia_id','materia_nombre')
+        unidades=Unidad.objects.filter(unidad_materia=materia).values()
+
+        materia_list=list(materias)
+        unidad_list=list(unidades)
+        
+        data={
+            'materia':materia_list,
+            'unidades':unidad_list
+        }
+        return JsonResponse(data)
+
+class PromediarUnidad(View):
+    def get(self, request, *args, **kwargs):
+        aula = self.request.GET.get('aula')
+        materia = self.request.GET.get('materia')
+        unidad = self.request.GET.get('unidad')
+        
+        if unidad != None:
+            unidad_q=Unidad.objects.get(unidad_id=unidad)
+            materia_q=Materia.objects.get(materia_id=unidad_q.unidad_materia.materia_id)
+            # context['alumnos'] = materia_q.materia_registro_alumnnos.all()
+            total_tareas = Tarea.objects.filter(tarea_unidad=unidad).count()
+            for al in materia_q.materia_registro_alumnnos.all():
+                entrego = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad=unidad, tareaDocumento_pertenece=al).count()
+                falta_califica = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad=unidad, tareaDocumento_pertenece=al, tareaDocumento_status = False).count()
+                Suma_tareas = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad=unidad, tareaDocumento_pertenece=al).aggregate(suma_total=Sum('tareaDocumento_calificacion'))
+                if Suma_tareas['suma_total'] == None:
+                    Suma_tareas['suma_total'] = 0
+                calificacion = Suma_tareas['suma_total']/ total_tareas
+                CalificacionUnidad.objects.filter(calU_unidadID=unidad_q.unidad_id,calU_materiaID=materia_q.materia_id,calU_pertenece=al).delete()
+                calficar = CalificacionUnidad(
+                    calU_Materia_nombre = materia_q.materia_nombre,
+                    calU_unidadNombre=unidad_q.unidad_nombre,
+                    calU_unidadID=unidad_q.unidad_id,
+                    calU_materiaID=materia_q.materia_id,
+                    calU_calificacion=calificacion,
+                    calU_entrego=str(entrego)+' de '+str(total_tareas) ,
+                    calU_pertenece=al,
+                    calU_falta_calificar=falta_califica,
+                )
+                calficar.save()
+            calificaciones = CalificacionUnidad.objects.filter(calU_unidadID=unidad).values(
+                'calU_Materia_nombre',
+                'calU_unidadNombre',
+                'calU_calificacion', 
+                'calU_entrego',
+                'calU_falta_calificar',
+                'calU_pertenece__first_name',
+                'calU_pertenece__last_name',
+                )
+            cali_list=list(calificaciones)
+        data={
+            'calificaciones':cali_list,
+        }
+        return JsonResponse(data)
+class PromediarCreate(LoginRequiredMixin, TemplateView): 
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     template_name = 'maestro/promediar.html'
@@ -1084,49 +1144,10 @@ class PromediarCreate(LoginRequiredMixin, TemplateView):
         context['Usuario'] = self.request.user
         context['activate'] = 'promediar'
         context['aulas'] = Aula.objects.filter(aula_pertenece=self.request.user)
-        context['msn'] = 'Elija un Aula'
-
-
-
-
-        if self.request.method == 'GET':
-            aula = self.request.GET.get('aula')
-            materia = self.request.GET.get('materia')
-            unidad = self.request.GET.get('unidad')
-            context['materias'] = Materia.objects.filter(materia_aula=aula)
-            context['unidades'] = Unidad.objects.filter(unidad_materia=materia)
-            if aula != None:
-                context['msn'] = 'Elija un Materia'
-            if materia != None:
-                context['msn'] = 'Elija una unidad'
-            if unidad != None:
-                unidad_q=Unidad.objects.get(unidad_id=unidad)
-                materia_q=Materia.objects.get(materia_id=unidad_q.unidad_materia.materia_id)
-                # context['alumnos'] = materia_q.materia_registro_alumnnos.all()
-                total_tareas = Tarea.objects.filter(tarea_unidad=unidad).count()
-                for al in materia_q.materia_registro_alumnnos.all():
-                    entrego = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad=unidad, tareaDocumento_pertenece=al).count()
-                    falta_califica = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad=unidad, tareaDocumento_pertenece=al, tareaDocumento_status = False).count()
-                    Suma_tareas = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad=unidad, tareaDocumento_pertenece=al).aggregate(suma_total=Sum('tareaDocumento_calificacion'))
-                    if Suma_tareas['suma_total'] == None:
-                        Suma_tareas['suma_total'] = 0
-                    calificacion = Suma_tareas['suma_total']/ total_tareas
-                    CalificacionUnidad.objects.filter(calU_unidadID=unidad_q.unidad_id,calU_materiaID=materia_q.materia_id,calU_pertenece=al).delete()
-                    calficar = CalificacionUnidad(
-                        calU_Materia_nombre = materia_q.materia_nombre,
-                        calU_unidadNombre=unidad_q.unidad_nombre,
-                        calU_unidadID=unidad_q.unidad_id,
-                        calU_materiaID=materia_q.materia_id,
-                        calU_calificacion=calificacion,
-                        calU_entrego=str(entrego)+' de '+str(total_tareas) ,
-                        calU_pertenece=al,
-                        calU_falta_calificar=falta_califica,
-                    )
-                    calficar.save()
-                context['alumnos'] = CalificacionUnidad.objects.filter(calU_unidadID=unidad)
-
+        context['msn'] = 'Elija un Aula'       
 
         return context
+    
 class PromediarMateria(LoginRequiredMixin, TemplateView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'

@@ -7,6 +7,7 @@
 	<title>Dashboard</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
 	<link rel="icon" href="{% static 'overlay-admin/assets/img/icon.ico' %}" type="image/x-icon" />
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 	<!-- Fonts and icons -->
 	<script src="{% static 'overlay-admin/assets/js/plugin/webfont/webfont.min.js' %}"></script>
@@ -129,7 +130,7 @@
 
 
 
-							<li class="nav-item dropdown hidden-caret">
+							<!-- <li class="nav-item dropdown hidden-caret">
 								<a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button"
 									data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 									<i class="fa fa-bell"></i>
@@ -191,7 +192,7 @@
 												class="fa fa-angle-right"></i> </a>
 									</li>
 								</ul>
-							</li>
+							</li> --fin -->
 
 							<li class="nav-item dropdown hidden-caret">
 								<a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"
@@ -263,7 +264,7 @@
 							<span class="sidebar-mini-icon">
 								<i class="fa fa-ellipsis-h"></i>
 							</span>
-							<h4 class="text-section">Conf</h4>
+							<h4 class="text-section">Menu</h4>
 						</li>
 
 						<li class="nav-item {% if activate == 'aula' %}active{% endif %}">
@@ -556,6 +557,7 @@
 	<script src="{% static 'overlay-admin/assets/js/atlantis.min.js' %}"></script>
 
 	<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/alertify.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 	{% block script %}
 

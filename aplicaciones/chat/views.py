@@ -92,3 +92,6 @@ class MarcarMensajes(TemplateView):
         data['actualizado']=True
 
         return JsonResponse(data)
+
+class Firebase(TemplateView):
+    template_name = 'chat/chat_firebase.html'

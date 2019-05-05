@@ -1,0 +1,34 @@
+
+
+{% block titulo %}
+<title>Eliminación</title>
+{% endblock titulo %}
+{% block contenido %}
+<div class="container">
+  <form method="post">
+    {% csrf_token %}
+    <div class="alert alert-danger" role="alert">
+      Esta seguro de eliminar {{ object }}?.
+    </div>
+    
+  </form>
+</div>
+
+<table>
+  <tr>
+    <th>Nombre</th>
+    <th>Cantidad</th>
+  </tr>
+  {% for model_name, object_count in model_count %}
+    <tr>
+      <td>{{ model_name|capfirst }}</td>
+      <td>{{ object_count }}</td>
+    </tr>
+  {% endfor %}
+</table>
+<p>
+  <ul>
+    {{ deletable_objects|unordered_list }}
+  </ul>
+</p>
+{% endblock %}

@@ -3,113 +3,96 @@
 <div class="page-header">
     <h4 class="page-title">Promediar</h4>
     <ul class="breadcrumbs">
-      <li class="nav-home">
-        <a href="#">
-          <i class="flaticon-home"></i>
-        </a>
-      </li>
-      <li class="separator">
-        <i class="flaticon-right-arrow"></i>
-      </li>
-      <li class="nav-item">
-        <a href="#">Promediar</a>
-      </li>
-      <li class="separator">
-        <i class="flaticon-right-arrow"></i>
-      </li>
-      <li class="nav-item">
-        <a href="#">Cierre total de la materia</a>
-      </li>
+        <li class="nav-home">
+            <a href="#">
+                <i class="flaticon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Promediar</a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Cierre total de la materia</a>
+        </li>
     </ul>
 </div>
 {% endblock indicadores %}
 
 {% block contenido %}
-<h1>{{msn}}</h1>
-    {% if materias or unidades %}
-    {% else %}
-    <form action="" method="GET">
-            <div class="row">
+
+<div id="app">
+
+    <div class="row">
         <div class="col-md-3">
             <label for="materia">Aula</label>
-            <select class="custom-select form-control" id="" name="aula">
-                <option selected disabled>Elije una opcion</option>
+            <select class="custom-select form-control" v-model="aula" @change="onChange($event)" name="aula">
+                <option disabled value="0">Elija un aula</option>
                 {% for aula in aulas %}
                 <option value="{{aula.id}}">{{aula.aula_nombre}}</option>
                 {% endfor %}
             </select>
         </div>
-        <div class="col-md-1">
-            <br>
-            <button type="submit" title="Buscar" class="btn btn-success"><i class="fas fa-search"></i></button>
-        </div>
-        </div>
-    </form>
-    {% endif %}
-    {% if materias %}
-    <form action="" method="GET">
-            <div class="row">
+
         <div class="col-md-3">
             <label for="materia">Materia</label>
-            <select class="custom-select form-control" id="" name="materia">
-                <option selected disabled>Elije una opcion</option>
-                {% for materia in materias %}
-                <option value="{{materia.materia_id}}">{{materia.materia_nombre}}</option>
-                {% endfor %}
+            <select class="custom-select form-control" @change="onChangueMateria($event)" v-model="materia_selected">
+                <option disabled value="0">Elija una materia</option>
+                <option v-for="option in materia" v-bind:value="option.materia_id">[[option.materia_nombre]]</option>
             </select>
         </div>
-        <div class="col-md-1">
-            <br>
-            <button title="Buscar" type="submit" class="btn btn-success"><i class="fas fa-search"></i></button>
+
+        <div class="col-md-3"> 
+            <label for="materia">Unidades</label>
+            <select class="custom-select form-control" @change="onChangueUnidad($event)" v-model="unidad_selected">
+                <option disabled value="0">Elija una unidad</option>
+                <option v-for="option in unidades" v-bind:value="option.unidad_id">[[option.unidad_nombre]]</option>
+            </select>
         </div>
-        </div>
-    </form>
-    {% endif %}
-    {% if unidades %}
-    <form action="" method="GET">
-            <div class="row">
         <div class="col-md-3">
-            <label for="materia">Unidad</label>
-            <select class="custom-select form-control" id="" name="unidad">
-                <option selected disabled>Elije una opcion</option>
-                {% for unidad in unidades %}
-                <option value="{{unidad.unidad_id}}">{{unidad.unidad_nombre}}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-1">
             <br>
-            <button title="Promediar" type="submit" class="btn btn-success"><i class="fas fa-check-circle"></i></button>
+            <button type="button" v-bind:disabled="disable_button" @click="PromediarUnidad" class="btn btn-success">Promediar</button>
+            <button type="button" title="Descargar PDF" v-bind:disabled="disable_buttonPDF" @click="DowloadPDF" class="btn btn-primary btn-sm"><i class="material-icons">library_books</i></button>
         </div>
-        </div>
-    </form>
-    {% endif %}
+    </div>
 
-
-<div class="row">
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Materia</th>
-                <th scope="col">Unidad</th>
-                <th scope="col">Alumno</th>
-                <th scope="col">Entrego</th>
-                <th scope="col">Falta calificar</th>
-                <th scope="col">Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for alumno in alumnos %}
-            <tr>
-                <th scope="row">{{alumno.calU_Materia_nombre}}</th>
-                <td>{{alumno.calU_unidadNombre}}</td>
-                <td>{{alumno.calU_pertenece.first_name}} {{alumno.calU_pertenece.last_name}}</td>
-                <td>{{alumno.calU_entrego}}</td>
-                <td>{{alumno.calU_falta_calificar}}</td>
-                <td>{{alumno.calU_calificacion}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="container">
+        <table class="table" id="unidad-table">
+            <thead>
+                <tr>
+                    <th scope="col">Materia</th>
+                    <th scope="col">Unidad</th>
+                    <th scope="col">Alumno</th>
+                    <th scope="col">Historico</th>
+                    <th scope="col">Por calificar</th>
+                    <th scope="col">Promedio</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in calificaciones">
+                    <td>[[item.calU_Materia_nombre]]</td>
+                    <td>[[item.calU_unidadNombre]]</td>
+                    <td>[[item.calU_pertenece__first_name]] [[item.calU_pertenece__last_name]]</td>
+                    <td>[[item.calU_entrego]]</td>
+                    <td>[[item.calU_falta_calificar]]</td>
+                    <td>[[item.calU_calificacion]]</td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
 </div>
+
 {% endblock contenido %}
+{% block script %}
+{% load static %}
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/jspdf-autotable@3.1.1/dist/jspdf.plugin.autotable.js"></script>
+<script src="{% static 'JS/calificar.js' %}"></script>
+{% endblock script %}
