@@ -4,7 +4,7 @@
 
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title>Dashboard</title>
+	<title>Sensei | Dashboard</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
 	<link rel="icon" href="{% static 'overlay-admin/assets/img/icon.ico' %}" type="image/x-icon" />
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -129,12 +129,11 @@
 							</li>
 
 
-
+							<!-- incio chat -->
 							<!-- <li class="nav-item dropdown hidden-caret">
 								<a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button"
 									data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									<i class="fa fa-bell"></i>
-									<span class="notification">4</span>
+									<i class="fas fa-user-friends"></i>
 								</a>
 								<ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
 									<li>
@@ -192,13 +191,15 @@
 												class="fa fa-angle-right"></i> </a>
 									</li>
 								</ul>
-							</li> --fin -->
+							</li>  -->
+
+							<!-- fin user login -->
 
 							<li class="nav-item dropdown hidden-caret">
 								<a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"
 									aria-expanded="false">
 									<div class="avatar-sm">
-										<img src="{% if foto_perfil != '' %} {{foto_perfil.url}} {% else %}{% static 'anonimo.png' %}{% endif %}" alt="..."
+										<img src="{% if user.foto_perfil != '' %} {{user.foto_perfil.url}} {% else %}{% static 'anonimo.png' %}{% endif %}" alt="..."
 											class="avatar-img rounded-circle">
 									</div>
 								</a>
@@ -207,11 +208,11 @@
 										<li>
 											<div class="user-box">
 												<div class="avatar-lg"><img
-														src="{% if foto_perfil != '' %} {{foto_perfil.url}} {% else %}{% static 'anonimo.png' %}{% endif %}"
+														src="{% if user.foto_perfil != '' %} {{user.foto_perfil.url}} {% else %}{% static 'anonimo.png' %}{% endif %}"
 														alt="image profile" class="avatar-img rounded"></div>
 												<div class="u-text">
-													<h4>{{Usuario}}</h4>
-													<p class="text-muted">{{Usuario.email}}</p><a
+													<h4>{{user}}</h4>
+													<p class="text-muted">{{user.email}}</p><a
 														href="{% url 'perfil_user' %}"
 														class="btn btn-xs btn-secondary btn-sm">Ver perfil</a>
 												</div>
@@ -234,20 +235,20 @@
 			<!-- End Navbar -->
 		</div>
 
-		<!-- Sidebar -->
+		<!-- Sidebar --> 
 		<div class="sidebar sidebar-style-2">
 			<div class="sidebar-wrapper scrollbar scrollbar-inner">
 				<div class="sidebar-content">
 					<div class="user">
 						<div class="avatar-sm float-left mr-2">
-							<img src="{% if foto_perfil != '' %} {{foto_perfil.url}} {% else %}{% static 'anonimo.png' %}{% endif %}" alt="..."
+							<img src="{% if user.foto_perfil != '' %} {{user.foto_perfil.url}} {% else %}{% static 'anonimo.png' %}{% endif %}" alt="..."
 								class="avatar-img rounded-circle">
 						</div>
 						<div class="info">
 							<a data-toggle="collapse" href="#collapseExample" aria-expanded="true">
 								<span>
-									{{Usuario}}
-									{% if Usuario.is_maestro %}
+									{{user}}
+									{% if user.is_maestro %}
 									<span class="user-level">Maestro</span>
 									{% else %}
 									<span class="user-level">Alumno</span>
@@ -259,7 +260,7 @@
 					</div>
 					<ul class="nav nav-primary">
 						<!-- URL PARA MAESTROS -->
-						{% if maestro %}
+						{% if user.is_maestro %}
 						<li class="nav-section">
 							<span class="sidebar-mini-icon">
 								<i class="fa fa-ellipsis-h"></i>
@@ -326,7 +327,7 @@
 						<li class="nav-item {% if activate == 'calificar' %}active{% endif %}">
 							<a href="{% url 'control_escolar:maestro_tarea_entregada_list' %}">
 								<i class="far fa-check-circle"></i>
-								<p>Calificar</p>
+								<p>Calificar</p> 
 							</a>
 						</li>
 						<li class="nav-item {% if activate == 'promediar' %}active{% endif %}">
@@ -352,7 +353,7 @@
 						<!-- FIN URL MAESTROS -->
 
 						<!-- URLS PARA ALUMNOS -->
-						{% if alumno %}
+						{% if user.is_alumno %} 
 						<li class="nav-item {% if activate == 'blog' %}active{% endif %}">
 							<a href="{% url 'control_escolar:alumno_blog' %}">
 								<i class="fab fa-blogger"></i>
@@ -403,13 +404,7 @@
 								<p>Biblioteca</p>
 							</a>
 						</li>
-						<li class="nav-item {% if activate == 'Chat' %}active{% endif %}">
-							<a href="{% url 'chat:index' %}"
-								title="Chat">
-								<i class="far fa-paper-plane"></i>
-								<p>Chat</p>
-							</a>
-						</li>
+						
 						<br>
 						<li class="mx-4 mt-2">
 							<a href="#" class="btn btn-primary btn-block"><span class="btn-label mr-2"> <i
@@ -453,6 +448,119 @@
 						{% block contenido %}
 
 
+						<div class="panel-header bg-primary-gradient">
+							<div class="page-inner py-5">
+								<div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+									<div>
+										<h2 class="text-white pb-2 fw-bold">Principal</h2>
+										<h5 class="text-white op-7 mb-2">Sensei</h5>
+									</div>
+									<!-- <div class="ml-md-auto py-2 py-md-0">
+										<a href="#" class="btn btn-white btn-border btn-round mr-2">Manage</a>
+										<a href="#" class="btn btn-secondary btn-round">Add Customer</a>
+									</div> -->
+								</div>
+							</div>
+						</div>
+						<div class="page-inner mt--5">
+							<div class="row mt--2">
+								<div class="col-md-12">
+									<div class="card full-height">
+										<div class="card-body">
+											<div class="card-title">Estadisticas de Tareas</div>
+											<div class="card-category">Información global</div>
+											<div class="d-flex flex-wrap justify-content-around pb-2 pt-4">
+												<div class="px-2 pb-2 pb-md-0 text-center">
+													<div id="circles-1"></div>
+													<h6 class="fw-bold mt-3 mb-0">Tareas vencidas</h6>
+												</div>
+												<div class="px-2 pb-2 pb-md-0 text-center">
+													<div id="circles-2"></div>
+													<h6 class="fw-bold mt-3 mb-0">Tareas Calificadas</h6>
+												</div>
+												<div class="px-2 pb-2 pb-md-0 text-center">
+													<div id="circles-3"></div>
+													<h6 class="fw-bold mt-3 mb-0">Subscribers</h6>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- <div class="col-md-6">
+									<div class="card full-height">
+										<div class="card-body">
+											<div class="card-title">Total income & spend statistics</div>
+											<div class="row py-3">
+												<div class="col-md-4 d-flex flex-column justify-content-around">
+													<div>
+														<h6 class="fw-bold text-uppercase text-success op-8">Total Income</h6>
+														<h3 class="fw-bold">$9.782</h3>
+													</div>
+													<div>
+														<h6 class="fw-bold text-uppercase text-danger op-8">Total Spend</h6>
+														<h3 class="fw-bold">$1,248</h3>
+													</div>
+												</div>
+												<div class="col-md-8">
+													<div id="chart-container">
+														<canvas id="totalIncomeChart"></canvas>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div> -->
+							</div>
+
+
+
+
+
+							<div class="row row-card-no-pd">
+								<div class="col-md-12">
+									<div class="card">
+										<div class="card-header">
+											<div class="card-head-row card-tools-still-right">
+												<h4 class="card-title">Proximas Tareas</h4>
+												<!-- <div class="card-tools">
+													<button class="btn btn-icon btn-link btn-primary btn-xs"><span class="fa fa-angle-down"></span></button>
+													<button class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card"><span class="fa fa-sync-alt"></span></button>
+													<button class="btn btn-icon btn-link btn-primary btn-xs"><span class="fa fa-times"></span></button>
+												</div> -->
+											</div>
+											<p class="card-category"></p>
+										</div>
+										<div class="card-body">
+											<div class="row">
+												<div class="col-md-12">
+													<div class="table-responsive table-hover table-sales">
+														<table class="table">
+															<tbody>
+																{% for item in proximas_tareas %}
+																<tr>
+																		<td>{{item.tarea_nombre}}</td>															
+																		<td class="text-right">{{item.tarea_fecha_termino}}</td>
+																		<td class="text-right">{{item.get_tarea_tipo_display}}</td>
+																		<td class="text-right">{{item.tarea_unidad.unidad_materia}}</td>
+																	</tr>
+																{% endfor %}
+															</tbody>
+														</table>
+													</div>
+												</div>
+												<div class="col-md-6">
+													<div class="mapcontainer">
+														<div id="map-example" class="vmap"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+							
+
 						{% endblock contenido %}
 
 
@@ -487,6 +595,114 @@
 					</div>
 				</div>
 			</div>
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="{% static 'chatN.css' %}"> 
+
+
+<div class="row bootstrap snippets">
+    <div class="col-md-3 col-sm-6 position-fixed" style="bottom:30px; right:0px;">
+      <!-- DIRECT CHAT SUCCESS -->
+      <div class="box box-success direct-chat direct-chat-success" id="chat_container">
+        <div class="box-header with-border">
+          <h3 class="box-title">
+              <div class="avatar avatar-online">
+                  <img src="{% if user.foto_perfil != '' %} {{user.foto_perfil.url}} {% else %}{% static 'anonimo.png' %}{% endif %}" alt="..." class="avatar-img rounded-circle">
+                </div>
+            Chat Sensei </h3>
+    
+          <div class="box-tools pull-right">
+            <!-- <span data-toggle="tooltip" title="3 New Messages" class="badge bg-green">3</span> -->
+            <!-- <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i> -->
+            </button>
+            <!-- <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle">
+              <i class="fa fa-comments"></i></button> -->
+            <button type="button" class="btn btn-box-tool" onclick="cerrar_ventana()" data-widget="remove"><i class="fa fa-times"></i></button>
+          </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body"> 
+          <!-- Conversations are loaded here -->
+          <div class="direct-chat-messages" id="box-body">
+            <!-- Message. Default to the left -->
+            <div class="direct-chat-msg">
+              <div class="direct-chat-info clearfix">
+                <span class="direct-chat-name pull-left">Alexander Pierce</span>
+                <span class="direct-chat-timestamp pull-right">23 Jan 2:00 pm</span>
+              </div>
+              <!-- /.direct-chat-info -->
+              <img class="direct-chat-img" src="https://bootdey.com/img/Content/user_1.jpg" alt="Message User Image"><!-- /.direct-chat-img -->
+              <div class="direct-chat-text">
+                Is this template really for free? That's unbelievable!
+              </div>
+              <!-- /.direct-chat-text -->
+            </div>
+            <!-- /.direct-chat-msg -->
+    
+            <!-- Message to the right -->
+            <div class="direct-chat-msg right">
+              <div class="direct-chat-info clearfix">
+                <span class="direct-chat-name pull-right">{{user.get_full_name}}</span>
+                <span class="direct-chat-timestamp pull-left">23 Jan 2:05 pm</span>
+              </div>
+              <!-- /.direct-chat-info -->
+              <img class="direct-chat-img" src="/static/anonimo.png" alt="Message User Image"><!-- /.direct-chat-img -->
+              <div class="direct-chat-text">
+                You better believe it!
+              </div>
+              <!-- /.direct-chat-text -->
+            </div>
+            <!-- /.direct-chat-msg -->
+          </div>
+          <!--/.direct-chat-messages-->
+    
+        
+          <!-- /.direct-chat-pane -->
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+          
+            <div class="input-group">
+              <input type="text" name="message" id="message" placeholder="Escriba su mensaje" class="form-control">
+                  <span class="input-group-btn">
+                    <button type="submit" onclick="enviar_msn()" class="btn btn-success btn-flat">Enviar</button>
+                  </span> 
+            </div>
+          
+        </div>
+        <!-- /.box-footer-->
+      </div>
+      <!--/.direct-chat -->
+
+      <div id="icons_chat" class="position-fixed" style="bottom:70px; right:0px;">
+          <button type="button" class="btn btn-icon btn-round btn-default" onclick="open_chat()">
+              <i class="fa fa-comments"></i>
+            </button>
+      </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 			<footer class="footer">
 				<div class="container-fluid">
 					<nav class="pull-left">
@@ -559,50 +775,123 @@
 	<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/alertify.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
+	<script>
+			var user="{{user}}"
+			var user_foto="{% if user.foto_perfil != '' %} {{user.foto_perfil.url}} {% else %}{% static 'anonimo.png' %}{% endif %}"
+			var user_name_full="{{user.get_full_name}}"
+			</script>
+			<!-- The core Firebase JS SDK is always required and must be listed first -->
+			
+			<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
+			<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+			<script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-firestore.js"></script>
+			<script src="{% static 'JS/chat_firebase.js' %}"></script>
+
 	{% block script %}
+
+	<script>
+			var PORCENTAJE_CIRCULO1=({{tareas_pasadas}}/{{total_tareas}})*100 
+			var PORCENTAJE_CIRCULO2=({{tareas_calificadas}}/{{tareas_entragadas_total}})*100 
+			PORCENTAJE_CIRCULO1=Math.round(PORCENTAJE_CIRCULO1)
+			PORCENTAJE_CIRCULO2=Math.round(PORCENTAJE_CIRCULO2)
+			Circles.create({
+				id:'circles-1',
+				radius:45,
+				value:{{tareas_pasadas}},
+				maxValue:{{total_tareas}},
+				width:7,
+				text: PORCENTAJE_CIRCULO1+'%',
+				colors:['#f1f1f1', '#FF9E27'],
+				duration:400,
+				wrpClass:'circles-wrp',
+				textClass:'circles-text',
+				styleWrapper:true,
+				styleText:true
+			})
+		
+			Circles.create({
+				id:'circles-2',
+				radius:45,
+				value:{{tareas_calificadas}},
+				maxValue:{{tareas_entragadas_total}},
+				width:7,
+				text: PORCENTAJE_CIRCULO2+'%',
+				colors:['#f1f1f1', '#2BB930'],
+				duration:400,
+				wrpClass:'circles-wrp',
+				textClass:'circles-text',
+				styleWrapper:true,
+				styleText:true
+			})
+		
+			Circles.create({
+				id:'circles-3',
+				radius:45,
+				value:40,
+				maxValue:100,
+				width:7,
+				text: 12,
+				colors:['#f1f1f1', '#F25961'],
+				duration:400,
+				wrpClass:'circles-wrp',
+				textClass:'circles-text',
+				styleWrapper:true,
+				styleText:true
+			})
+		
+			var totalIncomeChart = document.getElementById('totalIncomeChart').getContext('2d');
+		
+			var mytotalIncomeChart = new Chart(totalIncomeChart, {
+				type: 'bar',
+				data: {
+					labels: ["S", "M", "T", "W", "T", "F", "S", "S", "M", "T"],
+					datasets : [{
+						label: "Total Income",
+						backgroundColor: '#ff9e27',
+						borderColor: 'rgb(23, 125, 255)',
+						data: [6, 4, 9, 5, 4, 6, 4, 3, 8, 10],
+					}],
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					legend: {
+						display: false,
+					},
+					scales: {
+						yAxes: [{
+							ticks: {
+								display: false //this will remove only the label
+							},
+							gridLines : {
+								drawBorder: false,
+								display : false
+							}
+						}],
+						xAxes : [ {
+							gridLines : {
+								drawBorder: false,
+								display : false
+							}
+						}]
+					},
+				}
+			});
+		
+			$('#lineChart').sparkline([105,103,123,100,95,105,115], {
+				type: 'line',
+				height: '70',
+				width: '100%',
+				lineWidth: '2',
+				lineColor: '#ffa534',
+				fillColor: 'rgba(255, 165, 52, .14)'
+			});
+		</script>
 
 	{% endblock script %}
 
 
-	{% block notificacion %}
-	{% if Usuario.is_maestro %}
-	<script>
-
-	var roomName = '{{Usuario}}';
-
-    var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/' + roomName + '/');
-
-    chatSocket.onmessage = function (e) {
-        var data = JSON.parse(e.data);
-        var message = data['message'];
-        var user = data['user'];
-        var user_send = data['user_send'];
-
-		if (user_send != '{{Usuario}}') {
-			$.notify({
-			// options
-			icon: 'icon-cursor',
-			message: user+': envio un nuevo mensaje'
-
-		}, {
-			// settings
-			type: 'success',
-			placement: {
-				from: "bottom",
-				align: "right"
-			},
-		});
-		}
-
-    };
-
-    chatSocket.onclose = function (e) {
-        console.error('Chat socket closed unexpectedly');
-    };
-
-</script>
-	{% endif %}
-	{% endblock notificacion %}
+	
 
 
 
@@ -648,6 +937,9 @@
 			},
 		});
 	</script>
+
+
+
 </body>
 
 </html>

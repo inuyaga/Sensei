@@ -39,12 +39,32 @@ class index(LoginRequiredMixin, TemplateView):
     template_name = 'admin/base_sensei.html'
 
     def get_context_data(self, **kwargs):
+        from datetime import datetime,timedelta
+        hoy = datetime.now()#fecha actual
+        dias = timedelta(days=10)
+        hoy_mas_10_dias = hoy+dias
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         context['maestro'] = self.request.user.is_maestro
         context['alumno'] = self.request.user.is_alumno
         context['foto_perfil'] = self.request.user.foto_perfil
-        context['Usuario'] = self.request.user
+        context['Usuario'] = self.request.user 
+        if self.request.user.is_maestro:
+            context['proximas_tareas'] = Tarea.objects.filter(tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user, tarea_fecha_termino__range=(hoy, hoy_mas_10_dias)).order_by('tarea_fecha_termino')[:10]
+            
+            context['total_tareas'] = Tarea.objects.filter(tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user).count()
+            context['tareas_pasadas'] = Tarea.objects.filter(tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user, tarea_fecha_termino__lt=hoy).count()
+           
+            context['tareas_entragadas_total'] = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user).count()
+            context['tareas_calificadas'] = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user, tareaDocumento_status=True).count()
+        else:
+            context['proximas_tareas'] = Tarea.objects.filter(tarea_unidad__unidad_materia__materia_registro_alumnnos=self.request.user, tarea_fecha_termino__range=(hoy, hoy_mas_10_dias)).order_by('tarea_fecha_termino')[:10]
+            
+            context['total_tareas'] = Tarea.objects.filter(tarea_unidad__unidad_materia__materia_registro_alumnnos=self.request.user).count()
+            context['tareas_pasadas'] = Tarea.objects.filter(tarea_unidad__unidad_materia__materia_registro_alumnnos=self.request.user, tarea_fecha_termino__lt=hoy).count()
+           
+            context['tareas_entragadas_total'] = TareaDocumento.objects.filter(tareaDocumento_pertenece=self.request.user).count()
+            context['tareas_calificadas'] = TareaDocumento.objects.filter(tareaDocumento_pertenece=self.request.user, tareaDocumento_status=True).count()
 
         return context
 
@@ -146,7 +166,7 @@ class MateriaCreate(LoginRequiredMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(MateriaCreate, self).get_form_kwargs()
-        kwargs.update({'user': self.request.user})
+        kwargs.update({'user': self.request.user}) 
         return kwargs
 
     def dispatch(self, *args, **kwargs):
@@ -463,7 +483,7 @@ class UnidadCreate(LoginRequiredMixin, AjaxableResponseMixin, CreateView):
     redirect_field_name = 'redirect_to'
     model = Unidad
     form_class = UnidadForm
-    template_name = 'maestro/unidad_create.html'
+    template_name = 'maestro/unidad_create.html' 
     success_url = reverse_lazy('control_escolar:maestro_documento')
 
     def dispatch(self, *args, **kwargs):
@@ -555,6 +575,29 @@ class UnidadDelete(TemplateView):
         )
 
         return json
+
+class UnidadDeleteView(DeleteView):
+    model=Unidad
+    template_name = 'eliminacionesjs.html'
+    success_url = reverse_lazy('control_escolar:maestro_tarea_crear')
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        context['maestro'] = self.request.user.is_maestro
+        context['alumno'] = self.request.user.is_alumno
+        context['foto_perfil'] = self.request.user.foto_perfil
+        context['Usuario'] = self.request.user
+        context['activate'] = 'tarea'
+
+
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+
+        return context
+        
 class UnidadUpdate(TemplateView):
 
     def post(self, request, *args, **kwargs):
@@ -647,7 +690,7 @@ class TareaCreate(LoginRequiredMixin, AjaxableResponseMixinTarea, CreateView):
     redirect_field_name = 'redirect_to'
     model = Tarea
     form_class = TareaForm 
-    template_name = 'maestro/tarea_crear.html'
+    template_name = 'maestro/tarea_crear.html' 
     success_url = reverse_lazy('control_escolar:maestro_tarea_crear')
 
     def get_form_kwargs(self):
@@ -717,6 +760,7 @@ class JsonTareas(TemplateView):
         )
 
         return json
+
 class TareaDelete(LoginRequiredMixin, DeleteView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
@@ -724,11 +768,7 @@ class TareaDelete(LoginRequiredMixin, DeleteView):
     template_name = 'eliminacionesjs.html'
     success_url = reverse_lazy('control_escolar:maestro_tarea_crear')
 
-    # def dispatch(self, *args, **kwargs):
-    #     if self.request.user.is_authenticated:
-    #         if self.request.user.is_alumno:
-    #             return redirect('/')
-    #     return super().dispatch(*args, **kwargs)
+    
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -1168,18 +1208,19 @@ class PromediarMateria(LoginRequiredMixin, TemplateView):
         context['Usuario'] = self.request.user
         context['activate'] = 'promediar'
         context['aulas'] = Aula.objects.filter(aula_pertenece=self.request.user)
-        context['msn'] = 'Elija un Aula'
+        context['msn'] = '<ol><h1><li>Elija un aula</li></h1></ol>'
 
         if self.request.method == 'GET':
             aula = self.request.GET.get('aula')
             materia = self.request.GET.get('materia')
             context['materias'] = Materia.objects.filter(materia_aula=aula)
-            if aula != None:
-                context['msn'] = 'Elija un Materia'
+            if aula != None: 
+                context['msn'] = '<ol start="2"><h1><li>Elija una Materia</li></h1></ol>'
             if materia != None:
-                context['msn'] = 'Elija una aula'
                 # OBTENEMOS EL OBJECTO DE MATERIA
                 materia_q=Materia.objects.get(materia_id=materia)
+                context['msn'] = '<ol><h1><li>Elija un aula</li></h1></ol>'
+                context['materia_txt'] = materia_q.materia_nombre
                 total_unidades_materia=Unidad.objects.filter(unidad_materia=materia).count()
                 for cal_al in materia_q.materia_registro_alumnnos.all():
                     suma_total_unidades_alumno=CalificacionUnidad.objects.filter(calU_materiaID=materia, calU_pertenece=cal_al).aggregate(suma_total=Sum('calU_calificacion'))
@@ -1406,24 +1447,33 @@ class ListTareaAlumno(LoginRequiredMixin, View):
         from django.core.exceptions import ObjectDoesNotExist
         tipo_post = request.POST.get('tipo_post')
         contenido='';
+        coment='';
         tipo_msn=''
         fecha_actual = datetime.now().date()
 
-        if tipo_post == 'tareas':
+        if tipo_post == 'tareas': 
             UnidadID = request.POST.get('UnidadID')
             tareas = Tarea.objects.filter(tarea_unidad=UnidadID)
             for tarea in tareas:
                 temporal=''
+                entregado=False
                 try:
                     documento=TareaDocumento.objects.get(tareaDocumento_pertenece=self.request.user,tareaDocumento_Tarea=tarea)
-                    temporal=documento.tareaDocumento_calificacion
+                    temporal='<span class="badge badge-primary">'+str(documento.tareaDocumento_calificacion)+'</span>'
+                    entregado=True
+                    coment=documento.tareaDocumento_comentario_maestro
+                    if coment == None:
+                        coment=''
                 except ObjectDoesNotExist:
-                    temporal='No entregado'
+                    temporal='<span class="badge badge-warning">No entregado</span>'
+                    entregado=False
+                    coment=''
                 
                 tipo_msn='tarea'
                 contenido += '<tr>' \
                 '<td>'+tarea.tarea_nombre +'</td>' \
                 '<td>'+tarea.tarea_descripcion +'</td>' \
+                '<td>'+coment+'</td>' \
                 '<td>'+str(localize(tarea.tarea_fecha_inicio)) +'</td>' \
                 '<td>'+str(localize(tarea.tarea_fecha_termino)) +'</td>' \
                 '<td>'+str(temporal)+'</td>' \
@@ -1431,9 +1481,20 @@ class ListTareaAlumno(LoginRequiredMixin, View):
                 '<td>'
                 fecha_tarea=datetime.strptime(str(tarea.tarea_fecha_termino), "%Y-%m-%d")
                 if fecha_actual <= fecha_tarea.date() :
-                    contenido += '<button type="button" onclick="entregar('+str(tarea.tarea_id)+')"  data-toggle="modal" data-target="#Tarea_modal" class="btn btn-default" aria-label="Left Align"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>Entregar</button> </tr>'
+                    if tarea.tarea_tipo == 'PARA CALIFICAR':
+                        contenido +='<span class="badge badge-secondary" title="No es necesario entregar">No es necesario entregar</span>'
+                    else:
+                        if entregado:
+                            contenido +='<span class="badge badge-success">Entregado</span>'
+                        else:
+                            contenido += '<button type="button" onclick="entregar('+str(tarea.tarea_id)+')"  data-toggle="modal" data-target="#Tarea_modal" class="btn btn-default" aria-label="Left Align"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>Entregar</button> </tr>'                          
+
                 else:
-                    contenido += '<div class="alert alert-danger" role="alert">Tiempo de entrega agotado</div></tr>'
+                    if entregado:
+                        contenido +='<span class="badge badge-success">Entregado</span>'
+                    else:
+                        contenido += '<span class="badge badge-danger">Tiempo de entrega agotado</span></tr>'
+                    
 
 
 

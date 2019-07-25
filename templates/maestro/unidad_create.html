@@ -4,46 +4,47 @@
 <div class="page-header">
     <h4 class="page-title">Unidad</h4>
     <ul class="breadcrumbs">
-      <li class="nav-home">
-        <a href="#">
-          <i class="flaticon-home"></i>
-        </a>
-      </li>
-      <li class="separator">
-        <i class="flaticon-right-arrow"></i>
-      </li>
-      <li class="nav-item">
-        <a href="#">Unidad</a>
-      </li>
-      <li class="separator">
-        <i class="flaticon-right-arrow"></i>
-      </li>
-      <li class="nav-item">
-        <a href="#">Nueva unidad</a>
-      </li>
+        <li class="nav-home">
+            <a href="#">
+                <i class="flaticon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Unidad</a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Nueva unidad</a>
+        </li>
     </ul>
 </div>
 {% endblock indicadores %}
 {% block contenido %}
 <div class="row">
-<div class="col-md-3">
-    <label for="Aula">Aula</label>
-    <select class="custom-select form-control" id="Aula">
-        <option selected disabled>Elija una opcion</option>
-        {% for aula in list_aula %}
-        <option value="{{aula.id}}">{{aula.aula_nombre}}</option>
-        {% endfor %}
-    </select>
-</div>
-<div class="col-md-3">
-    <label for="materia">Materia</label>
-    <select class="custom-select form-control" id="id_materia">
-    </select>
-</div>
-<div class="col-md-3">
-    <br>
-    <button type="button" class="btn btn-primary" id="btn_nuevo" disabled data-toggle="modal" data-target="#nuevo_unidad">Nuevo</button>
-</div>
+    <div class="col-md-3">
+        <label for="Aula">Aula</label>
+        <select class="custom-select form-control" id="Aula">
+            <option selected disabled>Elija una opcion</option>
+            {% for aula in list_aula %}
+            <option value="{{aula.id}}">{{aula.aula_nombre}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label for="materia">Materia</label>
+        <select class="custom-select form-control" id="id_materia">
+        </select>
+    </div>
+    <div class="col-md-3">
+        <br>
+        <button type="button" class="btn btn-primary" id="btn_nuevo" disabled data-toggle="modal"
+            data-target="#nuevo_unidad">Nuevo</button>
+    </div>
 </div>
 
 <div class="row">
@@ -66,7 +67,8 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="nuevo_unidad" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="nuevo_unidad" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -187,36 +189,48 @@
     });
 
     function eliminar_unidad(id) {
-        alertify.confirm('Eliminar', 'Desea eliminar esta Unidad?', function () {
 
-            $.ajax({
-                type: "POST",
-                url: "{% url 'control_escolar:maestro_unidad_delete' %}",
-                data: {
-                    csrfmiddlewaretoken: '{{ csrf_token }}',
-                    id_unidad: id,
-                    id_materia: $("#id_materia option:selected").val(),
-                },
-                success: function (data) {
-                    var contenido = data.content.contenido
-                    var tipo_mensaje = data.content.tipo_mensaje
-                    if (tipo_mensaje == 'materia') {
-                        $('#contenido_tabla').html(contenido)
-                        alertify.success('Ok')
+        $.ajax({
+            url: '/maestro/unidad/delete/detalle/' + id + '/',
+            type: 'GET',
+            success: function (data) {
+                alertify.confirm('¡Esta seguro de eliminar!', data, function () {
 
-                    } else {
-                        //   alertify.error(message);
-                    }
-                },
-                error: function (data) {
-                    console.log('An error occurred.');
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'control_escolar:maestro_unidad_delete' %}",
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            id_unidad: id,
+                            id_materia: $("#id_materia option:selected").val(),
+                        },
+                        success: function (data) {
+                            var contenido = data.content.contenido
+                            var tipo_mensaje = data.content.tipo_mensaje
+                            if (tipo_mensaje == 'materia') {
+                                $('#contenido_tabla').html(contenido)
+                                alertify.success('Ok')
 
-                    console.log(data);
-                },
-            });
-        }, function () {
-            alertify.error('Cancel')
+                            } else {
+                                //   alertify.error(message);
+                            }
+                        },
+                        error: function (data) {
+                            console.log('An error occurred.');
+
+                            console.log(data);
+                        },
+                    });
+
+                }, function () {
+                    alertify.error('Cancelar')
+                });
+
+
+            }
         });
+
+
     }
 
     function update_unidad(id) {
@@ -252,7 +266,7 @@
 
         }, function () {
             alertify.error('Cancel')
-        }).set('labels', {ok:'Guardar', cancel:'Cancelar'});
+        }).set('labels', { ok: 'Guardar', cancel: 'Cancelar' });
     }
 </script>
 {% endblock script %}

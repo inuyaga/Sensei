@@ -4,11 +4,11 @@
     <div class="form-group">
         <input class="form-control" type="month" name="mes" required>
     </div>
-    <button type="submit" class="btn btn-primary" title="Descargar Lista"><span class="lnr lnr-arrow-down-circle"></span></button>
+    <button type="submit" class="btn btn-primary btn-sm" title="Descargar Lista"><i class="material-icons">arrow_downward</i></button>
     <input type="text" class="invisible" value="{{id_mteria}}" name="id_materia">
 </form>
 <h3>Lista de Alumnos</h3>
-{% for lista in lista_alumno %}
+{% for lista in lista_alumno %} 
 <li>{{lista.first_name}} {{lista.last_name}}</li>
 {% endfor %}
  {% endblock contenido %}

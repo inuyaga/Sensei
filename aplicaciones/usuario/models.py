@@ -8,5 +8,5 @@ class User(AbstractUser):
     telefono=models.BigIntegerField('Telefono', null=True, blank=True)
     acerca_de_mi=models.CharField('Acerca de mi', max_length=1000, default='.....')
     class Meta:
-        db_table = 'auth_user'
+        db_table = 'auth_user' 
 # Create your models here.

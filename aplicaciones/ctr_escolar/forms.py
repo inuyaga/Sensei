@@ -24,6 +24,7 @@ class MateriaForm(forms.ModelForm):
         id_user = kwargs.pop('user')
         super(MateriaForm, self).__init__(*args, **kwargs)
         self.fields['materia_aula'].queryset=Aula.objects.filter(aula_pertenece=id_user)
+        self.fields['materia_archivos'].queryset=Documento.objects.filter(doc_pertenece=id_user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
         self.fields['materia_archivos'].widget.attrs.update({'class': 'form-check-input'})
@@ -53,7 +54,7 @@ class DocumentoCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         id_user = kwargs.pop('user')
         super(DocumentoCreateForm, self).__init__(*args, **kwargs)
-        # self.fields['materia_aula'].queryset=Aula.objects.filter(aula_pertenece=id_user)
+        # self.fields['doc_pertenece'].queryset=Documento.objects.filter(doc_pertenece=id_user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 

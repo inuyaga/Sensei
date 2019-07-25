@@ -4,23 +4,23 @@
 <div class="page-header">
     <h4 class="page-title">Tarea</h4>
     <ul class="breadcrumbs">
-      <li class="nav-home">
-        <a href="#">
-          <i class="flaticon-home"></i>
-        </a>
-      </li>
-      <li class="separator">
-        <i class="flaticon-right-arrow"></i>
-      </li>
-      <li class="nav-item">
-        <a href="#">Tarea</a>
-      </li>
-      <li class="separator">
-        <i class="flaticon-right-arrow"></i>
-      </li>
-      <li class="nav-item">
-        <a href="#">Nueva tarea</a>
-      </li>
+        <li class="nav-home">
+            <a href="#">
+                <i class="flaticon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Tarea</a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Nueva tarea</a>
+        </li>
     </ul>
 </div>
 {% endblock indicadores %}
@@ -44,13 +44,15 @@
     </div>
     <div class="col-md-3">
         <br>
-        <button type="button" class="btn btn-primary" id="btn_nuevo" disabled data-toggle="modal" data-target="#nuevo_tarea">Nuevo</button>
+        <button type="button" class="btn btn-primary" id="btn_nuevo" disabled data-toggle="modal"
+            data-target="#nuevo_tarea">Nuevo</button>
     </div>
 </div>
 
 
 <!-- Modal -->
-<div class="modal fade" id="nuevo_tarea" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="nuevo_tarea" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -63,7 +65,7 @@
                 <form action="" method="post" id="form_tarea">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <button type="submit" class="btn btn-outline-success">Guardar</button>
+                    <button type="submit" class="btn btn-outline-success">Añadir</button>
                     <button type="button" onclick="ActualizarTarea()" class="btn btn-secondary">Actualizar</button>
                 </form>
             </div>
@@ -96,6 +98,7 @@
 {% load static %}
 
 <script>
+    
     var ID_TAREA
     $('#id_materia').on('change', function () {
         // $("#id_unidad_materia").val(this.value);
@@ -112,7 +115,7 @@
             },
             success: function (data) {
                 var contenido = data.content.contenido
-                var tipo_mensaje = data.content.tipo_mensaje 
+                var tipo_mensaje = data.content.tipo_mensaje
                 if (tipo_mensaje == 'materia') {
                     $('#id_unidad').html(contenido)
 
@@ -134,10 +137,10 @@
         $("#id_tarea_unidad").val(this.value);
 
         $.post("{% url 'control_escolar:maestro_tarea_json' %}", {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                UnidadID: this.value,
-                tipo_post: 'tareas',
-            },
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            UnidadID: this.value,
+            tipo_post: 'tareas',
+        },
             function (data, status) {
                 var message = data.content.contenido;
                 $('#contenido_tabla').html(message);
@@ -176,30 +179,30 @@
     });
 
 
-function get_update_tarea(id_tarea) {
- 
-    $.ajax({
-        url: '/maestro/Tarea/update/'+id_tarea+'/',
-        type: 'GET',
-        success: function (data) {
-            // alertify.alert('Alert Title', data);
-            console.log(data)
-            var valor=data[0]
-            $.each(valor, function(i, item) {
-                $('#id_'+i).val(item)
-                            
-            });
-            $('#btn_nuevo').click();
-            ID_TAREA=id_tarea;
-        }
-    });
+    function get_update_tarea(id_tarea) {
 
-}
+        $.ajax({
+            url: '/maestro/Tarea/update/' + id_tarea + '/',
+            type: 'GET',
+            success: function (data) {
+                // alertify.alert('Alert Title', data);
+                console.log(data)
+                var valor = data[0]
+                $.each(valor, function (i, item) {
+                    $('#id_' + i).val(item)
 
-function ActualizarTarea() {
-    $.ajax({
+                });
+                $('#btn_nuevo').click();
+                ID_TAREA = id_tarea;
+            }
+        });
+
+    }
+
+    function ActualizarTarea() {
+        $.ajax({
             type: 'POST',
-            url: '/maestro/Tarea/updateCamio/'+ID_TAREA+'/'+$('#id_unidad').val()+'/',
+            url: '/maestro/Tarea/updateCamio/' + ID_TAREA + '/' + $('#id_unidad').val() + '/',
             data: $('#form_tarea').serialize(),
             success: function (data) {
                 alertify.success('Listo');
@@ -210,19 +213,19 @@ function ActualizarTarea() {
                 $('#id_tarea_tipo').val('')
                 var filas;
                 $('#contenido_tabla').html('')
-                $.each(data.Tareas, function(i, item) {
-                filas='<tr>'+
-                        '<th scope="row">'+item.tarea_nombre+'</th>'+
-                        '<td>'+item.tarea_descripcion+'</td>'+
-                        '<td>'+item.tarea_fecha_inicio+'</td>'+
-                        '<td>'+item.tarea_fecha_termino+'</td>'+
-                        '<td>'+item.tarea_tipo+'</td>'+
-                        '<td>'+
-                            '<a class="btn btn-info" onclick="get_update_tarea('+item.tarea_id+')" role="button"><span class="fas fa-pen-square"></span></a>'+
-                            '<a class="btn btn-danger" href="/maestro/Tarea/delete/'+item.tarea_id+'/" role="button"><span class="fas fa-trash"></span></a>'+
-                        '</td>'+
-                      '</tr>';                  
-                $('#contenido_tabla').append(filas)
+                $.each(data.Tareas, function (i, item) {
+                    filas = '<tr>' +
+                        '<th>' + item.tarea_nombre + '</th>' +
+                        '<td>' + item.tarea_descripcion + '</td>' +
+                        '<td>' + get_fecha(item.tarea_fecha_inicio)+ '</td>' +
+                        '<td>' + get_fecha(item.tarea_fecha_termino)+ '</td>' +
+                        '<td>' + item.tarea_tipo + '</td>' +
+                        '<td>' +
+                        '<a class="btn btn-info" onclick="get_update_tarea(' + item.tarea_id + ')" role="button"><span class="fas fa-pen-square"></span></a>' +
+                        '<a class="btn btn-danger" href="#" onclick="delete_tarea(' + item.tarea_id + ')" role="button"><span class="fas fa-trash"></span></a>' +
+                        '</td>' +
+                        '</tr>';
+                    $('#contenido_tabla').append(filas)
                 });
 
                 console.log(data);
@@ -233,42 +236,61 @@ function ActualizarTarea() {
                 alertify.error('Un error al intentar guardar');
             },
         });
-    
+
+    }
+
+function get_fecha(date) {
+    var options = {year: "numeric", month: "long", day: "numeric"};
+    var parts = date.split('-');
+    var fecha = new Date(parts[0], parts[1] - 1, parts[2])
+    fecha=fecha.toLocaleDateString("es-mx", options)
+    return fecha
 }
+    function delete_tarea(id_tarea) {
+
+        $.ajax({
+            url: '/maestro/Tarea/delete/' + id_tarea,
+            type: 'GET',
+            success: function (data) {
+                alertify.confirm('¡Esta seguro de eliminar!', data, function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/maestro/Tarea/delete/' + id_tarea + '/',
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            tipo_post: 'tareas',
+                            UnidadID: $('#id_unidad').val(),
+                        },
+                        success: function (data) {
+
+                            $.post("{% url 'control_escolar:maestro_tarea_json' %}", {
+                                csrfmiddlewaretoken: '{{ csrf_token }}',
+                                UnidadID: $('#id_unidad').val(),
+                                tipo_post: 'tareas',
+                            },
+                                function (data, status) {
+                                    var message = data.content.contenido;
+                                    $('#contenido_tabla').html(message);
+                                });
 
 
-function delete_tarea(id_tarea) {
-
-    $.ajax({
-        url: '/maestro/Tarea/delete/' + id_tarea,
-        type: 'GET',
-        success: function (data) {
-            alertify.confirm('¡Esta seguro de eliminar!', data, function () {
-                $.ajax({
-                    type: 'POST',
-                    url: '/maestro/Tarea/delete/' + id_tarea +'/',
-                    data: {
-                        csrfmiddlewaretoken: '{{ csrf_token }}',
-                    },
-                    success: function (data) {
-
-                    },
-                    error: function (data) {
-                        console.log('An error occurred.');
-                        console.log(data);
-                        alertify.error('Un error al intentar guardar');
-                    },
+                        },
+                        error: function (data) {
+                            console.log('An error occurred.');
+                            console.log(data);
+                            alertify.error('Un error al intentar guardar');
+                        },
+                    });
+                    alertify.success('Ok')
+                }, function () {
+                    alertify.error('Cancelar')
                 });
-                alertify.success('Ok')
-            }, function () {
-                alertify.error('Cancelar')
-            });
 
 
-        }
-    });
+            }
+        });
 
-}
+    }
 
 </script>
 {% endblock script %}

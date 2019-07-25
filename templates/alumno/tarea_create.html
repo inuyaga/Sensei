@@ -18,51 +18,54 @@
     </div>
 </div>
 <table class="table">
-        <thead>
-          <tr>
+    <thead>
+        <tr>
             <th scope="col">Nombre</th>
             <th scope="col">Descripcion</th>
+            <th scope="col">Comentario docente</th>
             <th scope="col">Inicio</th>
             <th scope="col">Fin</th>
             <th scope="col">Calificacion</th>
+            <th scope="col">Tipo</th>
             <th scope="col">Accion</th>
-          </tr>
-        </thead>
-        <tbody id="contenido_tabla">
+        </tr>
+    </thead>
+    <tbody id="contenido_tabla">
 
-        </tbody>
-      </table>
+    </tbody>
+</table>
 
-    <!-- Modal -->
-<div class="modal fade" id="Tarea_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
+<!-- Modal -->
+<div class="modal fade" id="Tarea_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <form action="" method="post" enctype="multipart/form-data" id="forms_tarea">
                     {% csrf_token %}
                     {{ form.as_p }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    <button type="submit" id="btn_form" class="btn btn-primary">Guardar</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn_modal_close" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="submit" id="btn_form" class="btn btn-primary">Guardar</button>
                 </form>
             </div>
-          </div>
         </div>
-      </div>
+    </div>
+</div>
 
 {% endblock contenido %}
 
 {% block script %}
 
 <script>
-$('#id_materia').on('change', function () {
+    $('#id_materia').on('change', function () {
         // $("#id_unidad_materia").val(this.value);
         $("#btn_nuevo").attr("disabled", true);
         $('#contenido_tabla').html('');
@@ -100,10 +103,10 @@ $('#id_materia').on('change', function () {
         $("#id_tarea_unidad").val(this.value);
 
         $.post("{% url 'control_escolar:alumno_tarea_scrip' %}", {
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                UnidadID: this.value,
-                tipo_post: 'tareas',
-            },
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            UnidadID: this.value,
+            tipo_post: 'tareas',
+        },
             function (data, status) {
                 var message = data.content.contenido;
                 $('#contenido_tabla').html(message);
@@ -111,12 +114,12 @@ $('#id_materia').on('change', function () {
     });
 
 
-function entregar(id) {
-    $('#id_tareaDocumento_Tarea').val(id)
-}
+    function entregar(id) {
+        $('#id_tareaDocumento_Tarea').val(id)
+    }
 
 
-var frm = $('#forms_tarea');
+    var frm = $('#forms_tarea');
 
     frm.submit(function (e) {
 
@@ -128,15 +131,25 @@ var frm = $('#forms_tarea');
             type: frm.attr('method'),
             url: frm.attr('action'),
             data: formData,
-            cache:false,
+            cache: false,
             contentType: false,
             processData: false,
             success: function (data) {
-                var message = data.content.cont
+                var message = data.content.cont 
                 var tipo = data.content.tipo
                 if (tipo) {
                     alertify.success(message);
-                }else{
+                    $.post("{% url 'control_escolar:alumno_tarea_scrip' %}", {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        UnidadID: $('#id_unidad').val(),
+                        tipo_post: 'tareas',
+                    },
+                        function (data, status) {
+                            var message = data.content.contenido;
+                            $('#contenido_tabla').html(message);
+                            $('#btn_modal_close').click();
+                        });
+                } else {
                     alertify.error(message);
                 }
 

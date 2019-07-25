@@ -24,8 +24,11 @@
 </div>
 {% endblock indicadores %}
 {% block contenido %}
-<h1>{{msn}}</h1>
-    {% if materias %}
+
+<h1>{{msn|safe}}</h1>
+
+
+    {% if materias %} 
     {% else %}
     <form action="" method="GET">
         <div class="row">
@@ -42,6 +45,17 @@
                 <br>
                 <button type="submit" title="Buscar" class="btn btn-success"><i class="fas fa-search"></i></button>
             </div>
+            {% if view.request.GET.materia != None %}
+            <div class="col-md-1">
+                    <br>
+                    <button type="button" onclick="dowLoadPDF()" title="Descargar pdf" class="btn btn-default"><i class="icon-arrow-down-circle"></i></button>
+                </div>
+            <div class="col-md-5">
+                    <br>
+                    <h3 id="materia_h3">{{materia_txt}}</h3>
+                </div>
+            {% endif %}
+            
         </div>
     </form>
     {% endif %}
@@ -50,7 +64,7 @@
         <div class="row">
             <div class="col-md-3">
                 <label for="materia">Materia</label>
-                <select class="custom-select form-control" id="" name="materia">
+                <select class="custom-select form-control" id="select_materia" name="materia">
                     <option selected disabled>Elije una opcion</option>
                     {% for materia in materias %}
                     <option value="{{materia.materia_id}}">{{materia.materia_nombre}}</option>
@@ -68,7 +82,7 @@
 
 
 <div class="row">
-    <table class="table">
+    <table class="table" id="tabla_materia">
         <thead>
             <tr>
                 <th scope="col">Materia</th>
@@ -88,3 +102,11 @@
     </table>
 </div>
 {% endblock contenido %}
+
+{% block script %}
+{% load static %}
+<!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/jspdf-autotable@3.1.1/dist/jspdf.plugin.autotable.js"></script>
+<script src="{% static 'JS/calificar_materia.js' %}"></script>
+{% endblock script %}
