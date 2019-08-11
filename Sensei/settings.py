@@ -82,12 +82,11 @@ WSGI_APPLICATION = 'Sensei.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Sensei',
+        'NAME': 'sensei_desarrollo',
         'USER': 'externo',
         'PASSWORD': '0102261218',
-        'HOST': '192.168.1.228',
-        'PORT': '3306',
-        'CONN_MAX_AGE': 3600,
+        'HOST': '201.163.99.83',
+        'PORT': '3307',
     }
 }
 
