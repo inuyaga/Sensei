@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator, MaxValueValidator
 Usuario = get_user_model()
 
 # Create your models here.
@@ -39,13 +40,14 @@ class Unidad(models.Model):
         return self.unidad_nombre
 
 class Tarea(models.Model):
-    tarea_id=models.AutoField(primary_key=True)
+    tarea_id=models.AutoField(primary_key=True) 
     tarea_nombre = models.CharField('Nombre', max_length=400)
     tarea_descripcion = models.CharField('Descripcion', max_length=800)
     tarea_fecha_inicio = models.DateField('Fecha de inicio')
     tarea_fecha_termino = models.DateField('Fecha de Final')
     TIPO_TAREA=(('ENTREGA', 'ENTREGA'), ('PARA CALIFICAR','PARA CALIFICAR'))
     tarea_tipo=models.CharField('Tipo de tarea', max_length=20, choices=TIPO_TAREA)
+    tarea_porcentaje=models.IntegerField('Valor en %', validators=[MinValueValidator(1),MaxValueValidator(100)], default=1)
     tarea_unidad=models.ForeignKey(Unidad, verbose_name='Unidad', on_delete=models.CASCADE)
     def __str__(self):
         return self.tarea_nombre

@@ -85,6 +85,7 @@
             <th scope="col">Inicio</th>
             <th scope="col">Termino</th>
             <th scope="col">Tipo</th>
+            <th scope="col">Valor</th>
             <th scope="col">Accion</th>
         </tr>
     </thead>
@@ -169,6 +170,7 @@
                 $('#id_tarea_fecha_inicio').val('')
                 $('#id_tarea_fecha_termino').val('')
                 $('#id_tarea_tipo').val('')
+                $('#id_tarea_porcentaje').val('')
             },
             error: function (data) {
                 console.log('An error occurred.');
@@ -186,11 +188,10 @@
             type: 'GET',
             success: function (data) {
                 // alertify.alert('Alert Title', data);
-                console.log(data)
+                
                 var valor = data[0]
                 $.each(valor, function (i, item) {
                     $('#id_' + i).val(item)
-
                 });
                 $('#btn_nuevo').click();
                 ID_TAREA = id_tarea;
@@ -211,6 +212,7 @@
                 $('#id_tarea_fecha_inicio').val('')
                 $('#id_tarea_fecha_termino').val('')
                 $('#id_tarea_tipo').val('')
+                $('#id_tarea_porcentaje').val('')
                 var filas;
                 $('#contenido_tabla').html('')
                 $.each(data.Tareas, function (i, item) {
@@ -220,6 +222,7 @@
                         '<td>' + get_fecha(item.tarea_fecha_inicio)+ '</td>' +
                         '<td>' + get_fecha(item.tarea_fecha_termino)+ '</td>' +
                         '<td>' + item.tarea_tipo + '</td>' +
+                        '<td>' + item.tarea_porcentaje + '</td>' +
                         '<td>' +
                         '<a class="btn btn-info" onclick="get_update_tarea(' + item.tarea_id + ')" role="button"><span class="fas fa-pen-square"></span></a>' +
                         '<a class="btn btn-danger" href="#" onclick="delete_tarea(' + item.tarea_id + ')" role="button"><span class="fas fa-trash"></span></a>' +

@@ -25,7 +25,7 @@ urlpatterns = [
     path('maestro/unidad/delete/detalle/<int:pk>/', view_ctr.UnidadDeleteView.as_view(), name='maestro_unidad_delete_detalle'),
     path('maestro/unidad/update', view_ctr.UnidadUpdate.as_view(), name='maestro_unidad_update'), 
     path('maestro/consulta/json/', view_ctr.Consultas_json.as_view(), name='consultas_json'),
-
+ 
 
     path('maestro/Tarea/', view_ctr.TareaCreate.as_view(), name='maestro_tarea_crear'),
     path('maestro/Tarea/json', view_ctr.JsonTareas.as_view(), name='maestro_tarea_json'),

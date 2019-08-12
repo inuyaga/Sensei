@@ -688,7 +688,7 @@ class AjaxableResponseMixinTarea:
 class TareaCreate(LoginRequiredMixin, AjaxableResponseMixinTarea, CreateView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
-    model = Tarea
+    model = Tarea 
     form_class = TareaForm 
     template_name = 'maestro/tarea_crear.html' 
     success_url = reverse_lazy('control_escolar:maestro_tarea_crear')
@@ -742,6 +742,7 @@ class JsonTareas(TemplateView):
                 '<td>'+str(localize(tarea.tarea_fecha_inicio)) +'</td>' \
                 '<td>'+str(localize(tarea.tarea_fecha_termino)) +'</td>' \
                 '<td>'+tarea.get_tarea_tipo_display() +'</td>' \
+                '<td>'+str(tarea.tarea_porcentaje) +'%</td>' \
                 '<td>' \
                 '<a class="btn btn-info" onclick="get_update_tarea('+str(tarea.tarea_id)+')" role="button"><span class="fas fa-pen-square"></span></a>' \
                 '<a class="btn btn-danger" onclick="delete_tarea('+str(tarea.tarea_id)+')" href="#" role="button"><span class="fas fa-trash"></span></a>' \
@@ -814,7 +815,7 @@ class AjaxMixinTareaUpdate:
         # call form.save() for example).
         response = super().form_valid(form)
         if self.request.is_ajax():
-            tareas=Tarea.objects.filter(tarea_unidad=self.kwargs.get('id_unidad')).values('tarea_id','tarea_nombre','tarea_descripcion','tarea_fecha_inicio','tarea_fecha_termino','tarea_tipo','tarea_unidad')
+            tareas=Tarea.objects.filter(tarea_unidad=self.kwargs.get('id_unidad')).values('tarea_id','tarea_nombre','tarea_descripcion','tarea_fecha_inicio','tarea_fecha_termino','tarea_tipo','tarea_unidad', 'tarea_porcentaje')
             tarea_list=list(tareas)
 
             tipo_set=form.instance.tarea_tipo
@@ -856,7 +857,7 @@ class TareaUpdate(TemplateView):
     template_name = 'maestro/tarea_update.html'  
 
     def get(self, request, *args, **kwargs):
-        tarea=Tarea.objects.filter(tarea_id=kwargs.get('pk')).values('tarea_nombre','tarea_descripcion','tarea_fecha_inicio','tarea_fecha_termino','tarea_tipo','tarea_unidad')
+        tarea=Tarea.objects.filter(tarea_id=kwargs.get('pk')).values('tarea_nombre','tarea_descripcion','tarea_fecha_inicio','tarea_fecha_termino','tarea_tipo','tarea_unidad', 'tarea_porcentaje')
         tarea_list=list(tarea)
         return JsonResponse(tarea_list, safe=False)
 
