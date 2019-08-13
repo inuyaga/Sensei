@@ -1,6 +1,8 @@
 {% extends 'admin/base_sensei.html'%}
 
 {% block indicadores %}
+{% load static %}
+
 <div class="page-header">
     <h4 class="page-title">Tarea</h4>
     <ul class="breadcrumbs">
@@ -44,7 +46,7 @@
     </div>
     <div class="col-md-3">
         <br>
-        <button type="button" class="btn btn-primary" id="btn_nuevo" disabled data-toggle="modal"
+        <button type="button" class="btn btn-primary" id="btn_nuevo" onclick="accion_btn_nuevo()" disabled data-toggle="modal"
             data-target="#nuevo_tarea">Nuevo</button>
     </div>
 </div>
@@ -65,8 +67,8 @@
                 <form action="" method="post" id="form_tarea">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <button type="submit" class="btn btn-outline-success">Añadir</button>
-                    <button type="button" onclick="ActualizarTarea()" class="btn btn-secondary">Actualizar</button>
+                    <button id="btn_crear" type="submit" class="btn btn-outline-success">Añadir</button>
+                    <button id="btn_actualizar" type="button" onclick="ActualizarTarea()" class="btn btn-secondary">Actualizar</button>
                 </form>
             </div>
             <div class="modal-footer">
@@ -99,7 +101,12 @@
 {% load static %}
 
 <script>
-    
+
+
+    function accion_btn_nuevo() {
+        $("#btn_crear").attr("disabled", false);
+        $("#btn_actualizar").attr("disabled", true);
+    }
     var ID_TAREA
     $('#id_materia').on('change', function () {
         // $("#id_unidad_materia").val(this.value);
@@ -154,6 +161,7 @@
     var frm = $('#form_tarea');
 
     frm.submit(function (e) {
+        $("#btn_crear").attr("disabled", true);
 
         e.preventDefault();
 
@@ -163,7 +171,9 @@
             data: frm.serialize(),
             success: function (data) {
                 var message = data.content.cont
-                alertify.success('Listo');
+                var acepted = data.content.acepted
+                if (acepted == true) {
+                    alertify.success('Listo');
                 $('#contenido_tabla').html(message)
                 $('#id_tarea_nombre').val('')
                 $('#id_tarea_descripcion').val('')
@@ -171,18 +181,24 @@
                 $('#id_tarea_fecha_termino').val('')
                 $('#id_tarea_tipo').val('')
                 $('#id_tarea_porcentaje').val('')
+                $("#btn_crear").attr("disabled", false);
+                }else{
+                    alertify.error('El porcentaje no debe superar el 100%');
+                    $("#btn_crear").attr("disabled", false);
+                }
+                
             },
             error: function (data) {
                 console.log('An error occurred.');
                 console.log(data);
                 alertify.error('Un error al intentar guardar');
+                $("#btn_crear").attr("disabled", false);
             },
         });
     });
 
 
-    function get_update_tarea(id_tarea) {
-
+    function get_update_tarea(id_tarea) {        
         $.ajax({
             url: '/maestro/Tarea/update/' + id_tarea + '/',
             type: 'GET',
@@ -195,48 +211,60 @@
                 });
                 $('#btn_nuevo').click();
                 ID_TAREA = id_tarea;
+                $("#btn_crear").attr("disabled", true);
+                $("#btn_actualizar").attr("disabled", false);    
             }
         });
 
     }
 
     function ActualizarTarea() {
+        $("#btn_actualizar").attr("disabled", true);
         $.ajax({
             type: 'POST',
             url: '/maestro/Tarea/updateCamio/' + ID_TAREA + '/' + $('#id_unidad').val() + '/',
             data: $('#form_tarea').serialize(),
             success: function (data) {
-                alertify.success('Listo');
-                $('#id_tarea_nombre').val('')
-                $('#id_tarea_descripcion').val('')
-                $('#id_tarea_fecha_inicio').val('')
-                $('#id_tarea_fecha_termino').val('')
-                $('#id_tarea_tipo').val('')
-                $('#id_tarea_porcentaje').val('')
-                var filas;
-                $('#contenido_tabla').html('')
-                $.each(data.Tareas, function (i, item) {
-                    filas = '<tr>' +
-                        '<th>' + item.tarea_nombre + '</th>' +
-                        '<td>' + item.tarea_descripcion + '</td>' +
-                        '<td>' + get_fecha(item.tarea_fecha_inicio)+ '</td>' +
-                        '<td>' + get_fecha(item.tarea_fecha_termino)+ '</td>' +
-                        '<td>' + item.tarea_tipo + '</td>' +
-                        '<td>' + item.tarea_porcentaje + '</td>' +
-                        '<td>' +
-                        '<a class="btn btn-info" onclick="get_update_tarea(' + item.tarea_id + ')" role="button"><span class="fas fa-pen-square"></span></a>' +
-                        '<a class="btn btn-danger" href="#" onclick="delete_tarea(' + item.tarea_id + ')" role="button"><span class="fas fa-trash"></span></a>' +
-                        '</td>' +
-                        '</tr>';
-                    $('#contenido_tabla').append(filas)
-                });
+                var acepted = data.estado
+                if (acepted == true) {
+                    alertify.success('Listo');
+                    $('#id_tarea_nombre').val('')
+                    $('#id_tarea_descripcion').val('')
+                    $('#id_tarea_fecha_inicio').val('')
+                    $('#id_tarea_fecha_termino').val('')
+                    $('#id_tarea_tipo').val('')
+                    $('#id_tarea_porcentaje').val('')
+                    $("#btn_actualizar").attr("disabled", false);
+                    var filas;
+                    $('#contenido_tabla').html('')
+                    $.each(data.Tareas, function (i, item) {
+                        filas = '<tr>' +
+                            '<th>' + item.tarea_nombre + '</th>' +
+                            '<td>' + item.tarea_descripcion + '</td>' +
+                            '<td>' + get_fecha(item.tarea_fecha_inicio)+ '</td>' +
+                            '<td>' + get_fecha(item.tarea_fecha_termino)+ '</td>' +
+                            '<td>' + item.tarea_tipo + '</td>' +
+                            '<td>' + item.tarea_porcentaje + '</td>' +
+                            '<td>' +
+                            '<a class="btn btn-info" onclick="get_update_tarea(' + item.tarea_id + ')" role="button"><span class="fas fa-pen-square"></span></a>' +
+                            '<a class="btn btn-danger" href="#" onclick="delete_tarea(' + item.tarea_id + ')" role="button"><span class="fas fa-trash"></span></a>' +
+                            '</td>' +
+                            '</tr>';
+                        $('#contenido_tabla').append(filas)
+                    });
 
-                console.log(data);
+                    console.log(data);
+                }else{
+                    alertify.error('El porcentaje no debe superar el 100%');
+                    $("#btn_crear").attr("disabled", false);
+                }
+                
             },
             error: function (data) {
                 console.log('An error occurred.');
                 console.log(data);
                 alertify.error('Un error al intentar guardar');
+                $("#btn_actualizar").attr("disabled", false);
             },
         });
 

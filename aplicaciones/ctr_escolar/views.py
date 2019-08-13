@@ -12,9 +12,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.shortcuts import render_to_response
 from datetime import datetime, date, timedelta
-from django.db.models import Sum
+from django.db.models import Sum, FloatField
 import pytz
-from django.utils import timezone
+from django.utils import timezone 
 
 from django.core import serializers
 
@@ -644,41 +644,55 @@ class AjaxableResponseMixinTarea:
 
     def form_valid(self, form):
         from django.utils.formats import localize
-        response = super().form_valid(form)
+        
         contenido=''
+        bandera=False
         if self.request.is_ajax():
-
             tareas = Tarea.objects.filter(tarea_unidad=form.instance.tarea_unidad.unidad_id)
-            for tarea in tareas:
-                contenido += '<tr>' \
-                '<td>'+tarea.tarea_nombre +'</td>' \
-                '<td>'+tarea.tarea_descripcion +'</td>' \
-                '<td>'+localize(tarea.tarea_fecha_inicio) +'</td>' \
-                '<td>'+localize(tarea.tarea_fecha_termino) +'</td>' \
-                '<td>'+tarea.get_tarea_tipo_display() +'</td>' \
-                '<td>' \
-                '<a class="btn btn-info" onclick="get_update_tarea('+str(tarea.tarea_id)+')" role="button"><span class="fas fa-pen-square"></span></a>' \
-                '<a class="btn btn-danger" onclick="delete_tarea('+str(tarea.tarea_id)+')" href="#" role="button"><span class="fas fa-trash"></span></a>' \
-                '</tr>'
-            tipo_set=form.instance.tarea_tipo
-            if tipo_set=='PARA CALIFICAR':
-                unida=Unidad.objects.get(unidad_id=form.instance.tarea_unidad.unidad_id)
-                idmateria=unida.unidad_materia.materia_id
-                materia=Materia.objects.get(materia_id=idmateria)
-                tarea = form.save(commit=False)
-                tarea.save()
-                for id_user in materia.materia_registro_alumnnos.all():
-                    doc=TareaDocumento(tareaDocumento_archivo='s/n',tareaDocumento_comentario_alumno='s/n' ,tareaDocumento_pertenece=id_user ,tareaDocumento_Tarea=tarea)
-                    doc.save()
+            get_sum_porcentaje_tarea=Tarea.objects.filter(tarea_unidad=form.instance.tarea_unidad.unidad_id).aggregate(total_porcentaje=Sum('tarea_porcentaje'))
+            get_sum_porcentaje_tarea=0 if get_sum_porcentaje_tarea['total_porcentaje'] == None else get_sum_porcentaje_tarea['total_porcentaje']
+            porcentaje_input_form=form.instance.tarea_porcentaje
+            total = get_sum_porcentaje_tarea + porcentaje_input_form
+            if total <= 100:
+                response = super().form_valid(form)
+                bandera=True
+                for tarea in tareas:
+                    contenido += '<tr>' \
+                    '<td>'+tarea.tarea_nombre +'</td>' \
+                    '<td>'+tarea.tarea_descripcion +'</td>' \
+                    '<td>'+localize(tarea.tarea_fecha_inicio) +'</td>' \
+                    '<td>'+localize(tarea.tarea_fecha_termino) +'</td>' \
+                    '<td>'+tarea.get_tarea_tipo_display() +'</td>' \
+                    '<td>'+str(tarea.tarea_porcentaje) +'%</td>' \
+                    '<td>' \
+                    '<a class="btn btn-info" onclick="get_update_tarea('+str(tarea.tarea_id)+')" role="button"><span class="fas fa-pen-square"></span></a>' \
+                    '<a class="btn btn-danger" onclick="delete_tarea('+str(tarea.tarea_id)+')" href="#" role="button"><span class="fas fa-trash"></span></a>' \
+                    '</tr>'
+                tipo_set=form.instance.tarea_tipo
+                if tipo_set=='PARA CALIFICAR':
+                    unida=Unidad.objects.get(unidad_id=form.instance.tarea_unidad.unidad_id)
+                    idmateria=unida.unidad_materia.materia_id
+                    materia=Materia.objects.get(materia_id=idmateria)
+                    tarea = form.save(commit=False)
+                    tarea.save()
+                    for id_user in materia.materia_registro_alumnnos.all():
+                        doc=TareaDocumento(tareaDocumento_archivo='s/n',tareaDocumento_comentario_alumno='s/n' ,tareaDocumento_pertenece=id_user ,tareaDocumento_Tarea=tarea)
+                        doc.save()
+            else:
+                bandera=False
+
+
+            
 
 
             return JsonResponse(
                 {
                     'content':{
                         'cont': contenido,
+                        'acepted': bandera,
                     }
                 }
-            )
+                )
         else:
             return response 
 
@@ -813,25 +827,32 @@ class AjaxMixinTareaUpdate:
         # We make sure to call the parent's form_valid() method because
         # it might do some processing (in the case of CreateView, it will
         # call form.save() for example).
-        response = super().form_valid(form)
+        estado = False
         if self.request.is_ajax():
-            tareas=Tarea.objects.filter(tarea_unidad=self.kwargs.get('id_unidad')).values('tarea_id','tarea_nombre','tarea_descripcion','tarea_fecha_inicio','tarea_fecha_termino','tarea_tipo','tarea_unidad', 'tarea_porcentaje')
-            tarea_list=list(tareas)
-
-            tipo_set=form.instance.tarea_tipo
-            if tipo_set=='PARA CALIFICAR':
-                unida=Unidad.objects.get(unidad_id=form.instance.tarea_unidad.unidad_id)
-                idmateria=unida.unidad_materia.materia_id
-                materia=Materia.objects.get(materia_id=idmateria)
-                tarea = form.save(commit=False)
-                tarea.save()
-                for id_user in materia.materia_registro_alumnnos.all():
-                    doc=TareaDocumento(tareaDocumento_archivo='s/n',tareaDocumento_comentario_alumno='s/n' ,tareaDocumento_pertenece=id_user ,tareaDocumento_Tarea=tarea)
-                    doc.save()
+            get_tarea_id=Tarea.objects.get(tarea_id=self.kwargs.get('pk'))
+            get_sum_porcentaje_tarea=Tarea.objects.filter(tarea_unidad=form.instance.tarea_unidad.unidad_id).aggregate(total_porcentaje=Sum('tarea_porcentaje'))
+            get_sum_porcentaje_tarea=0 if get_sum_porcentaje_tarea['total_porcentaje'] == None else get_sum_porcentaje_tarea['total_porcentaje']
+            porcentaje_input_form=form.instance.tarea_porcentaje
+            total = (get_sum_porcentaje_tarea - get_tarea_id.tarea_porcentaje) + porcentaje_input_form
+            if total <= 100:
+                estado = True
+                response = super().form_valid(form)
+                tipo_set=form.instance.tarea_tipo
+                if tipo_set=='PARA CALIFICAR' and get_tarea_id.tarea_tipo == 'ENTREGA':
+                    unida=Unidad.objects.get(unidad_id=form.instance.tarea_unidad.unidad_id)
+                    idmateria=unida.unidad_materia.materia_id
+                    materia=Materia.objects.get(materia_id=idmateria)
+                    tarea = form.save(commit=False)
+                    tarea.save()
+                    for id_user in materia.materia_registro_alumnnos.all():
+                        doc=TareaDocumento(tareaDocumento_archivo='s/n',tareaDocumento_comentario_alumno='s/n' ,tareaDocumento_pertenece=id_user ,tareaDocumento_Tarea=tarea)
+                        doc.save()
 
             
+            tareas=Tarea.objects.filter(tarea_unidad=self.kwargs.get('id_unidad')).values('tarea_id','tarea_nombre','tarea_descripcion','tarea_fecha_inicio','tarea_fecha_termino','tarea_tipo','tarea_unidad', 'tarea_porcentaje')
+            tarea_list=list(tareas)
             data = {
-                'estado': True,
+                'estado': estado,
                 'Tareas': tarea_list,
             }
             return JsonResponse(data)

@@ -27,7 +27,7 @@ urlpatterns = [
     path('maestro/consulta/json/', view_ctr.Consultas_json.as_view(), name='consultas_json'),
  
 
-    path('maestro/Tarea/', view_ctr.TareaCreate.as_view(), name='maestro_tarea_crear'),
+    path('maestro/Tarea/', view_ctr.TareaCreate.as_view(), name='maestro_tarea_crear'), 
     path('maestro/Tarea/json', view_ctr.JsonTareas.as_view(), name='maestro_tarea_json'),
     path('maestro/Tarea/delete/<int:pk>/', view_ctr.TareaDelete.as_view(), name='maestro_tarea_delete'),
     path('maestro/Tarea/update/<int:pk>/', view_ctr.TareaUpdate.as_view(), name='maestro_tarea_update'), 
