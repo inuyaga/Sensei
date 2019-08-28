@@ -66,6 +66,7 @@
             <th scope="col">Creado</th>
             <th scope="col">Estado</th>
             <th scope="col">Calificacion</th>
+            <th scope="col">Porcentaje</th>
             <th scope="col">Accion</th>
         </tr>
     </thead>
@@ -77,7 +78,7 @@
             <td>{{calf.tareaDocumento_pertenece.first_name}} {{calf.tareaDocumento_pertenece.last_name}}</td>
             <td>{{calf.tareaDocumento_Tarea}}</td>
             <td>{{calf.tareaDocumento_Tarea.tarea_unidad.unidad_materia}}</td>
-            <td>{{calf.tareaDocumento_creado}}</td>
+            <td>{{calf.tareaDocumento_creado}}</td> 
             <td align="center">
 
                 {% if calf.tareaDocumento_status == True %}
@@ -89,6 +90,9 @@
             </td>
             <td>
                 {{calf.tareaDocumento_calificacion}}
+            </td>
+            <td>
+                {{calf.porcentaje_tarea}}% de {{calf.tareaDocumento_Tarea.tarea_porcentaje}}%
             </td>
             <td>
                 <a class="btn btn-primary btn-sm" href="{% url 'control_escolar:maestro_tarea_entregada_update' calf.tareaDocumento_id %}" role="button"><i class="la flaticon-check"></i></a>

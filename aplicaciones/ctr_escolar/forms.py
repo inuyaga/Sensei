@@ -2,7 +2,7 @@ from django import forms
 from aplicaciones.ctr_escolar.models import Aula, Materia, Documento, Unidad, Tarea, Blog, \
 TareaDocumento, ComentarioBlog
 from django.forms.widgets import CheckboxSelectMultiple
-
+from ajax_select.fields import AutoCompleteSelectMultipleField
 class AulaForm(forms.ModelForm):
     class Meta:
         model = Aula
@@ -19,15 +19,16 @@ class MateriaForm(forms.ModelForm):
         widgets = {
         'materia_archivos': forms.CheckboxSelectMultiple(attrs={'type': 'checkbox'}),
         }
-
+    materia_archivos = AutoCompleteSelectMultipleField('documentos_tags',required=False, help_text='Escriba el nombre del documento a agregar, y seleccione.')
+    
     def __init__(self, *args, **kwargs):
         id_user = kwargs.pop('user')
         super(MateriaForm, self).__init__(*args, **kwargs)
         self.fields['materia_aula'].queryset=Aula.objects.filter(aula_pertenece=id_user)
-        self.fields['materia_archivos'].queryset=Documento.objects.filter(doc_pertenece=id_user)
+        # self.fields['materia_archivos'].queryset=Documento.objects.filter(doc_pertenece=id_user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
-        self.fields['materia_archivos'].widget.attrs.update({'class': 'form-check-input'})
+        # self.fields['materia_archivos'].widget.attrs.update({'class': 'form-check-input'})
 
 class MateriaFormEdit(forms.ModelForm):
     class Meta:
@@ -36,15 +37,16 @@ class MateriaFormEdit(forms.ModelForm):
         widgets = {
         'materia_archivos': forms.CheckboxSelectMultiple(attrs={'type': 'checkbox'}),
         }
+    materia_archivos = AutoCompleteSelectMultipleField('documentos_tags',required=False, help_text='Escriba el nombre del documento a agregar, y seleccione.')
 
     def __init__(self, *args, **kwargs):
         id_user = kwargs.pop('user')
         super(MateriaFormEdit, self).__init__(*args, **kwargs)
         self.fields['materia_aula'].queryset=Aula.objects.filter(aula_pertenece=id_user)
-        self.fields['materia_archivos'].queryset=Documento.objects.filter(doc_pertenece=id_user)
+        # self.fields['materia_archivos'].queryset=Documento.objects.filter(doc_pertenece=id_user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
-        self.fields['materia_archivos'].widget.attrs.update({'class': 'form-check-input'})
+        # self.fields['materia_archivos'].widget.attrs.update({'class': 'form-check-input'})
 
 class DocumentoCreateForm(forms.ModelForm):
     class Meta:

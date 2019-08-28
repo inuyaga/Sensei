@@ -14,11 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.auth.views import LoginView, LogoutView
 from aplicaciones.usuario.views import CreateUser, PerfilList, PerfilUpdate, ChaguePasswordUser
+from ajax_select import urls as ajax_select_urls
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path('login/',LoginView.as_view(template_name='login_sensei.html'), name='login'),
@@ -28,5 +29,6 @@ urlpatterns = [
     path('perfil-usuario/', PerfilList.as_view(),name='perfil_user'),
     path('perfil-usuario/edit/<int:pk>/', PerfilUpdate.as_view(),name='perfil_user_update'),
     path('cambiar_pasworduser/', ChaguePasswordUser.as_view(),name='cambiar_password'),
+    re_path(r'^ajax_select/', include(ajax_select_urls)),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
  

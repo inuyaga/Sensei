@@ -24,7 +24,7 @@
 </div>
 {% endblock indicadores %}
 {% block contenido %}
-
+{{ form.media }}
 <form action="" method="post">
   {% csrf_token %}
   <div class="row">
@@ -33,6 +33,7 @@
       {{input.label}}
       {{input.errors}}
       {{input}}
+      <small class="form-text text-muted">{{input.help_text}}</small>
     </div>
     {% endfor %}
 

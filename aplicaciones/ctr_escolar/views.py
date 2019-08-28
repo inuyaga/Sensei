@@ -12,7 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.shortcuts import render_to_response
 from datetime import datetime, date, timedelta
-from django.db.models import Sum, FloatField
+from django.db.models import Sum, FloatField, F
 import pytz
 from django.utils import timezone 
 
@@ -1050,7 +1050,7 @@ class TareaEntregadaList(LoginRequiredMixin, ListView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     model = TareaDocumento
-    template_name = 'maestro/calificar_tarea.html'
+    template_name = 'maestro/calificar_tarea.html' 
 
     def dispatch(self, *args, **kwargs):
         if self.request.user.is_authenticated:
@@ -1156,10 +1156,10 @@ class PromediarUnidad(View):
             for al in materia_q.materia_registro_alumnnos.all():
                 entrego = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad=unidad, tareaDocumento_pertenece=al).count()
                 falta_califica = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad=unidad, tareaDocumento_pertenece=al, tareaDocumento_status = False).count()
-                Suma_tareas = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad=unidad, tareaDocumento_pertenece=al).aggregate(suma_total=Sum('tareaDocumento_calificacion'))
+                Suma_tareas = TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad=unidad, tareaDocumento_pertenece=al).aggregate(suma_total=Sum((F('tareaDocumento_Tarea__tarea_porcentaje') * F('tareaDocumento_calificacion'))/100, output_field=FloatField()))
                 if Suma_tareas['suma_total'] == None:
                     Suma_tareas['suma_total'] = 0
-                calificacion = Suma_tareas['suma_total']/ total_tareas
+                calificacion =round(Suma_tareas['suma_total'], 2)
                 CalificacionUnidad.objects.filter(calU_unidadID=unidad_q.unidad_id,calU_materiaID=materia_q.materia_id,calU_pertenece=al).delete()
                 calficar = CalificacionUnidad(
                     calU_Materia_nombre = materia_q.materia_nombre,
@@ -1365,6 +1365,7 @@ class DocumentMateriaAlumnoList(LoginRequiredMixin, ListView):
         context['foto_perfil'] = self.request.user.foto_perfil
         context['Usuario'] = self.request.user
         context['activate'] = 'materia'
+        context['color_list'] = ['list-group-item-primary', 'list-group-item-secondary', 'list-group-item-success', 'list-group-item-danger', 'list-group-item-warning', 'list-group-item-info', 'list-group-item-light', 'list-group-item-dark']
 
         return context
 
@@ -1413,7 +1414,7 @@ class TareaAlumnoCreate(LoginRequiredMixin, AjaxableResponseMixinTareaAlumno, Cr
     redirect_field_name = 'redirect_to'
     model = TareaDocumento
     form_class = TareaDocumentoFrom
-    template_name = 'alumno/tarea_create.html' 
+    template_name = 'alumno/tarea_create.html'  
     success_url = reverse_lazy('control_escolar:alumno_tarea_create')
 
     def get_form_kwargs(self):
@@ -1478,10 +1479,12 @@ class ListTareaAlumno(LoginRequiredMixin, View):
             tareas = Tarea.objects.filter(tarea_unidad=UnidadID)
             for tarea in tareas:
                 temporal=''
+                temporal_porcentaje=''
                 entregado=False
                 try:
                     documento=TareaDocumento.objects.get(tareaDocumento_pertenece=self.request.user,tareaDocumento_Tarea=tarea)
                     temporal='<span class="badge badge-primary">'+str(documento.tareaDocumento_calificacion)+'</span>'
+                    temporal_porcentaje="""{}% de {}%""".format(documento.porcentaje_tarea(), documento.tareaDocumento_Tarea.tarea_porcentaje)
                     entregado=True
                     coment=documento.tareaDocumento_comentario_maestro
                     if coment == None:
@@ -1499,6 +1502,7 @@ class ListTareaAlumno(LoginRequiredMixin, View):
                 '<td>'+str(localize(tarea.tarea_fecha_inicio)) +'</td>' \
                 '<td>'+str(localize(tarea.tarea_fecha_termino)) +'</td>' \
                 '<td>'+str(temporal)+'</td>' \
+                '<td>'+temporal_porcentaje+'</td>' \
                 '<td>'+tarea.tarea_tipo+'</td>' \
                 '<td>'
                 fecha_tarea=datetime.strptime(str(tarea.tarea_fecha_termino), "%Y-%m-%d")

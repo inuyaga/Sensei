@@ -27,7 +27,7 @@
 <ul class="list-group">
 {% for materia in object_list %}
 {% for doc in materia.materia_archivos.all %}
-  <a href="{{doc.doc_archivo.url}}" title="Click para descargar el documento" class="list-group-item list-group-item-action list-group-item-info">{{doc.doc_nombre}}</a>
+  <a href="{{doc.doc_archivo.url}}" title="Click para descargar el documento" class="list-group-item list-group-item-action {{color_list|random}}">{{doc.doc_nombre}}</a>
 {% endfor %}
 {% endfor %}
 </ul>
