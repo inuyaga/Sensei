@@ -39,7 +39,7 @@ urlpatterns = [
     path('maestro/blog/delete/<int:pk>/', view_ctr.BlogDelete.as_view(), name='maestro_blog_delete'),
     path('maestro/blog/detalle/<int:pk>/', view_ctr.BlogDetalle.as_view(), name='maestro_blog_detalle'),
 
-    path('comentar/blog/<int:pk>', view_ctr.ComentarioCreate.as_view(), name='comentar_blog'),
+    path('comentar/blog/<int:pk>', view_ctr.ComentarioCreate.as_view(), name='comentar_blog'),  
 
 
     path('maestro/select/aula/', view_ctr.SelectAula.as_view(), name='select_aula_master'),
@@ -51,6 +51,7 @@ urlpatterns = [
     path('maestro/tarea/entregada/<int:pk>/<int:id_tarea>/', view_ctr.TareaEntregadaUpdate.as_view(), name='maestro_tarea_entregada_update'),
  
     path('maestro/promediar/unidad/', view_ctr.PromediarCreate.as_view(), name='maestro_priomediar'), 
+    path('maestro/promediar/unidad/xls/', view_ctr.PromedioUnidadDetalle_xls.as_view(), name='maestro_priomediar_unidad_xls'), 
     path('maestro/promd/unidad/', view_ctr.PromediarUnidad.as_view(), name='maestro_priomediar_set'), 
     path('maestro/promediar/materia/', view_ctr.PromediarMateria.as_view(), name='maestro_priomediar_materia'),
 

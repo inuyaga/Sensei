@@ -669,7 +669,7 @@ class AjaxableResponseMixinTarea:
                     '<a class="btn btn-danger" onclick="delete_tarea('+str(tarea.tarea_id)+')" href="#" role="button"><span class="fas fa-trash"></span></a>' \
                     '</tr>'
                 tipo_set=form.instance.tarea_tipo
-                if tipo_set=='PARA CALIFICAR':
+                if tipo_set == 'PARA CALIFICAR':
                     unida=Unidad.objects.get(unidad_id=form.instance.tarea_unidad.unidad_id)
                     idmateria=unida.unidad_materia.materia_id
                     materia=Materia.objects.get(materia_id=idmateria)
@@ -1123,7 +1123,9 @@ class TareaEntregadaList(LoginRequiredMixin, ListView):
         queryset=queryset.filter(tareaDocumento_Tarea=self.kwargs.get('id_tarea'))
         cambios = False
         status=self.request.GET.get('estado')
-        if status != None:
+        if status == '2' or status == None:
+            pass
+        else:
             queryset=queryset.filter(tareaDocumento_status=status)
 
         # if self.request.method == 'GET':
@@ -1172,7 +1174,8 @@ class TareaEntregadaUpdate(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         url_new=reverse_lazy('control_escolar:maestro_tarea_entregada_list', kwargs={'id_tarea': self.kwargs.get('id_tarea')},)
         print(url_new)
-        return url_new
+        url_get=self.request.GET.urlencode()
+        return url_new+'?'+url_get
 
     def form_valid(self, form):
         form.instance.tareaDocumento_status = True
@@ -1255,6 +1258,50 @@ class PromediarUnidad(View):
             'calificaciones':cali_list,
         }
         return JsonResponse(data)
+
+class PromedioUnidadDetalle_xls(View):
+    def get(self, request , *args, **kwargs):
+        from openpyxl.utils import get_column_letter
+        import calendar
+        wb = Workbook()
+        ws=wb.active
+        # id_pedido=self.kwargs.get('pk')
+        # ped = Pedido.objects.get(ped_id_ped=id_pedido)
+
+        unidad_get=self.request.GET.get('unidad')
+
+        ws['A1'] = 'Materia: '+unidad_get.unidad_materia,materia_nombre+' Unidad: '+unidad_get.unidad_nombre
+        st=ws['A1']
+        st.font = Font(size=14, b=True, color="004ee0")
+        st.alignment = Alignment(horizontal='center')
+        ws.merge_cells('A1:F1')
+        # lista_alumno=unidad_get.unidad_materia.materia_registro_alumnnos.all()
+        # tareas_unidad_list=Tarea.objects.filter(tarea_unidad=unidad_get)
+        doc_alum=TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad=unidad_get).order_by('tareaDocumento_pertenece')
+        contador=3
+        for alumno in doc_alum:
+            ws.cell(row=contador, column=1).value = alumno.tareaDocumento_pertenece.get_full_name()
+            ws.cell(row=contador, column=2).value = alumno.tareaDocumento_Tarea.tarea_nombre
+            contador += 1
+
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    if cell.row != 1:
+                        dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+
+        for col, value in dims.items():
+            ws.column_dimensions[get_column_letter(col)].width = value+1
+
+
+        nombre_archivo='calificaciones.xls'
+        response = HttpResponse(content_type="application/ms-excel")
+        content = "attachment; filename = {0}".format(nombre_archivo)
+        response['Content-Disposition']=content
+        wb.save(response)
+        return response
+
 class PromediarCreate(LoginRequiredMixin, TemplateView): 
     login_url = '/login/'
     redirect_field_name = 'redirect_to'

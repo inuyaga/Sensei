@@ -17,7 +17,7 @@ class Documento(models.Model):
     doc_pertenece = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     doc_archivo=models.FileField('archivo', upload_to='documentos_meteria/')
     def __str__(self):
-        return self.doc_nombre
+        return self.doc_nombre 
 
 class Materia(models.Model):
     materia_id = models.AutoField(primary_key=True)

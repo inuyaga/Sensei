@@ -29,7 +29,7 @@
 <div id="app">
 
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label for="materia">Aula</label>
             <select class="custom-select form-control" v-model="aula" @change="onChange($event)" name="aula">
                 <option disabled value="0">Elija un aula</option>
@@ -39,7 +39,7 @@
             </select>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label for="materia">Materia</label>
             <select class="custom-select form-control" @change="onChangueMateria($event)" v-model="materia_selected">
                 <option disabled value="0">Elija una materia</option>
@@ -47,17 +47,24 @@
             </select>
         </div>
 
-        <div class="col-md-3"> 
+        
+
+        <div class="col-md-2"> 
             <label for="materia">Unidades</label>
-            <select class="custom-select form-control" @change="onChangueUnidad($event)" v-model="unidad_selected">
+            <select class="custom-select form-control" @change="onChangueUnidad($event)" v-model="unidad_selected" name="unidad_id">
                 <option disabled value="0">Elija una unidad</option>
                 <option v-for="option in unidades" v-bind:value="option.unidad_id">[[option.unidad_nombre]]</option>
             </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <br>
-            <button type="button" v-bind:disabled="disable_button" @click="PromediarUnidad" class="btn btn-success">Promediar</button>
-            <button type="button" title="Descargar PDF" v-bind:disabled="disable_buttonPDF" @click="DowloadPDF" class="btn btn-primary btn-sm"><i class="material-icons">library_books</i></button>
+        <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="button" title="Promediar" v-bind:disabled="disable_button" @click="PromediarUnidad" class="btn btn-success btn-sm"><i class="material-icons">assignment_turned_in</i></button>
+                <button type="button" title="Descargar PDF" v-bind:disabled="disable_buttonPDF" @click="DowloadPDF" class="btn btn-primary btn-sm"><i class="material-icons">library_books</i></button>
+                <button type="submit" title="xls Detalle" v-bind:disabled="disable_buttonPDF" class="btn btn-primary btn-sm"><i class="material-icons">library_books</i></button>
+        </div>
+            
+            
         </div>
     </div>
 

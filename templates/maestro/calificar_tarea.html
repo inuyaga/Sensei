@@ -5,27 +5,27 @@
     <h4 class="page-title">Calificar</h4>
     <ul class="breadcrumbs">
         <li class="nav-home">
-            <a href="#">
-                <i class="flaticon-home"></i>
+            <a href="{% url 'control_escolar:select_aula_master' %}">
+                <i class="flaticon-home"></i> 
             </a>
         </li>
         <li class="separator">
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">{{get_tarea.tarea_unidad.unidad_materia.materia_aula}}</a>
+            <a href="{% url 'control_escolar:select_materia_master' get_tarea.tarea_unidad.unidad_materia.materia_aula.id %}">{{get_tarea.tarea_unidad.unidad_materia.materia_aula}}</a>
         </li>
         <li class="separator">
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">{{get_tarea.tarea_unidad.unidad_materia}}</a>
+            <a href="{% url 'control_escolar:select_unidad_master' get_tarea.tarea_unidad.unidad_materia.materia_id %}">{{get_tarea.tarea_unidad.unidad_materia}}</a>
         </li>
         <li class="separator">
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-            <a href="#">{{get_tarea.tarea_unidad}}</a>
+            <a href="{% url 'control_escolar:select_tarea_master' get_tarea.tarea_unidad.unidad_id %}">{{get_tarea.tarea_unidad}}</a>
         </li>
         <li class="separator">
             <i class="flaticon-right-arrow"></i>
@@ -66,7 +66,7 @@
                 <th scope="col">Alumno</th>
                 <!-- <th scope="col">Tarea</th> -->
                 <!-- <th scope="col">Materia</th> -->
-                <th scope="col">Creado</th>
+                <!-- <th scope="col">Creado</th> -->
                 <!-- <th scope="col">Estado</th> -->
                 <th scope="col">Calificacion</th>
                 <th scope="col">Porcentaje</th>
@@ -76,13 +76,12 @@
         <tbody>
             {% for calf in object_list %}
             <tr>
-                <th scope="row"><a href="{{calf.tareaDocumento_archivo.url}}"><i
-                            class="la flaticon-tool"></i>Archivo</a></th>
+                <th scope="row"><a href="{{calf.tareaDocumento_archivo.url}}" target="_blank"><i class="la flaticon-tool"></i>Archivo</a></th>
                 <td><span class="badge badge-success" data-toggle="tooltip" data-placement="top" title="Comentario: {{calf.tareaDocumento_comentario_alumno}}">{{calf.tareaDocumento_comentario_alumno|truncatechars:15}}</span></td>
-                <td><span class="badge badge-secondary" data-toggle="tooltip" data-placement="top" title="Estudiante: {{calf.tareaDocumento_pertenece.get_full_name}}">{{calf.tareaDocumento_pertenece.get_full_name|truncatewords:3}}</span></td>
+                <td>{{calf.tareaDocumento_pertenece.get_full_name}}</td>
                 <!-- <td><small><span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="Tarea: {{calf.tareaDocumento_Tarea}}">{{calf.tareaDocumento_Tarea|truncatechars:3}}</span></small></td> -->
                 <!-- <td><span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="Materia: {{calf.tareaDocumento_Tarea.tarea_unidad.unidad_materia}}">{{calf.tareaDocumento_Tarea.tarea_unidad.unidad_materia|truncatechars:3}}</span></td> -->
-                <td><small><span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{{calf.tareaDocumento_creado}}">{{calf.tareaDocumento_creado}}</span></small></td>
+                <!-- <td><small><span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{{calf.tareaDocumento_creado}}">{{calf.tareaDocumento_creado}}</span></small></td> -->
                 <!-- <td align="center">
 
                     {% if calf.tareaDocumento_status == True %}
@@ -100,7 +99,7 @@
                 </td>
                 <td>
                     <a class="btn btn-primary btn-sm"
-                        href="{% url 'control_escolar:maestro_tarea_entregada_update' calf.tareaDocumento_id get_tarea.tarea_id %}"
+                        href="{% url 'control_escolar:maestro_tarea_entregada_update' calf.tareaDocumento_id get_tarea.tarea_id %}?{{view.request.GET.urlencode}}"
                         role="button"><i class="la flaticon-check"></i></a>
                 </td>
             </tr>
