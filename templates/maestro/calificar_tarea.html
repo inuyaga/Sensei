@@ -4,102 +4,109 @@
 <div class="page-header">
     <h4 class="page-title">Calificar</h4>
     <ul class="breadcrumbs">
-      <li class="nav-home">
-        <a href="#">
-          <i class="flaticon-home"></i>
-        </a>
-      </li>
-      <li class="separator">
-        <i class="flaticon-right-arrow"></i>
-      </li>
-      <li class="nav-item">
-        <a href="#">Calificar</a>
-      </li>
-      <li class="separator">
-        <i class="flaticon-right-arrow"></i>
-      </li>
-      <li class="nav-item">
-        <a href="#">Calificar tarea</a>
-      </li>
+        <li class="nav-home">
+            <a href="#">
+                <i class="flaticon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">{{get_tarea.tarea_unidad.unidad_materia.materia_aula}}</a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">{{get_tarea.tarea_unidad.unidad_materia}}</a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">{{get_tarea.tarea_unidad}}</a>
+        </li>
+        <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">{{get_tarea}}</a>
+        </li>
     </ul>
 </div>
 {% endblock indicadores %}
 
 
 {% block contenido %}
+{% load humanize %}
 <form action="" method="get">
     <div class="row">
         <div class="col-md-3">
             <label for="materia">Estado</label>
             <select class="custom-select form-control" id="estado" name="estado" required>
-                    <option selected disabled>Elige una opcion</option>
-                    <option value="2" {% if view.request.GET.estado == '2' %}selected{% endif %}>Todo</option>
-                    <option value="0" {% if view.request.GET.estado == '0' %}selected{% endif %}>Entregadas</option>
-                    <option value="1" {% if view.request.GET.estado == '1' %}selected{% endif %}>Calificadas</option>
-            </select>
-        </div>
-        
-        <div class="col-md-3">
-            <label for="materia">Materia</label>
-            <select class="custom-select form-control" id="materia" name="materia" required>
-                    <option selected disabled>Elige una opcion</option>
-                    {% for materia in materias %}
-                    <option value="{{materia.materia_id}}" {% if view.request.GET.materia == materia.materia_id|striptags %}selected{% endif %}>{{materia.materia_nombre}}</option>
-                    {% endfor %}
+                <option selected disabled>Elige una opcion</option>
+                <option value="2" {% if view.request.GET.estado == '2' %}selected{% endif %}>Todo</option>
+                <option value="0" {% if view.request.GET.estado == '0' %}selected{% endif %}>Entregadas</option>
+                <option value="1" {% if view.request.GET.estado == '1' %}selected{% endif %}>Calificadas</option>
             </select>
         </div>
         <div class="col-md-3">
             <br>
-                <button type="submit" class="btn btn-success"><i class="fas fa-search"></i></button>
+            <button type="submit" class="btn btn-success"><i class="fas fa-search"></i></button>
         </div>
     </div>
-    </form>
-    
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Archivo</th>
-            <th scope="col">Comentario</th>
-            <th scope="col">Alumno</th>
-            <th scope="col">Tarea</th>
-            <th scope="col">Materia</th>
-            <th scope="col">Creado</th>
-            <th scope="col">Estado</th>
-            <th scope="col">Calificacion</th>
-            <th scope="col">Porcentaje</th>
-            <th scope="col">Accion</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for calf in object_list %}
-        <tr>
-            <th scope="row"><a href="{{calf.tareaDocumento_archivo.url}}"><i class="la flaticon-tool"></i>Archivo</a></th>
-            <td>{{calf.tareaDocumento_comentario_alumno}}</td>
-            <td>{{calf.tareaDocumento_pertenece.first_name}} {{calf.tareaDocumento_pertenece.last_name}}</td>
-            <td>{{calf.tareaDocumento_Tarea}}</td>
-            <td>{{calf.tareaDocumento_Tarea.tarea_unidad.unidad_materia}}</td>
-            <td>{{calf.tareaDocumento_creado}}</td> 
-            <td align="center">
+</form>
+<div class="table-responsive-sm">
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th scope="col">Archivo</th>
+                <th scope="col">Comentario</th>
+                <th scope="col">Alumno</th>
+                <!-- <th scope="col">Tarea</th> -->
+                <!-- <th scope="col">Materia</th> -->
+                <th scope="col">Creado</th>
+                <!-- <th scope="col">Estado</th> -->
+                <th scope="col">Calificacion</th>
+                <th scope="col">Porcentaje</th>
+                <th scope="col">Accion</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for calf in object_list %}
+            <tr>
+                <th scope="row"><a href="{{calf.tareaDocumento_archivo.url}}"><i
+                            class="la flaticon-tool"></i>Archivo</a></th>
+                <td><span class="badge badge-success" data-toggle="tooltip" data-placement="top" title="Comentario: {{calf.tareaDocumento_comentario_alumno}}">{{calf.tareaDocumento_comentario_alumno|truncatechars:15}}</span></td>
+                <td><span class="badge badge-secondary" data-toggle="tooltip" data-placement="top" title="Estudiante: {{calf.tareaDocumento_pertenece.get_full_name}}">{{calf.tareaDocumento_pertenece.get_full_name|truncatewords:3}}</span></td>
+                <!-- <td><small><span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="Tarea: {{calf.tareaDocumento_Tarea}}">{{calf.tareaDocumento_Tarea|truncatechars:3}}</span></small></td> -->
+                <!-- <td><span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="Materia: {{calf.tareaDocumento_Tarea.tarea_unidad.unidad_materia}}">{{calf.tareaDocumento_Tarea.tarea_unidad.unidad_materia|truncatechars:3}}</span></td> -->
+                <td><small><span class="badge badge-info" data-toggle="tooltip" data-placement="top" title="{{calf.tareaDocumento_creado}}">{{calf.tareaDocumento_creado}}</span></small></td>
+                <!-- <td align="center">
 
-                {% if calf.tareaDocumento_status == True %}
-                <span class="badge badge-default" title="Calificado"><i class="icon-check"></i></span>
-                {% else %}
-                <span class="badge badge-warning" title="En espera por calificar"><i class="icon-clock"></i></span>
-                {% endif %} 
+                    {% if calf.tareaDocumento_status == True %}
+                    <span class="badge badge-default" title="Calificado"><i class="icon-check"></i></span>
+                    {% else %}
+                    <span class="badge badge-warning" title="En espera por calificar"><i class="icon-clock"></i></span>
+                    {% endif %}
 
-            </td>
-            <td>
-                {{calf.tareaDocumento_calificacion}}
-            </td>
-            <td>
-                {{calf.porcentaje_tarea}}% de {{calf.tareaDocumento_Tarea.tarea_porcentaje}}%
-            </td>
-            <td>
-                <a class="btn btn-primary btn-sm" href="{% url 'control_escolar:maestro_tarea_entregada_update' calf.tareaDocumento_id %}" role="button"><i class="la flaticon-check"></i></a>
-            </td>
-        </tr>
-        {% endfor %}
+                </td> -->
+                <td>
+                    {{calf.tareaDocumento_calificacion}}
+                </td>
+                <td>
+                   <span class="badge badge-info">{{calf.porcentaje_tarea}}% de {{calf.tareaDocumento_Tarea.tarea_porcentaje}}%</span>
+                </td>
+                <td>
+                    <a class="btn btn-primary btn-sm"
+                        href="{% url 'control_escolar:maestro_tarea_entregada_update' calf.tareaDocumento_id get_tarea.tarea_id %}"
+                        role="button"><i class="la flaticon-check"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
 
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 {% endblock contenido %}

@@ -931,7 +931,7 @@ class BolgList(LoginRequiredMixin, ListView):
 
 
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs): 
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         context['maestro'] = self.request.user.is_maestro
@@ -1045,6 +1045,66 @@ class ComentarioCreate(LoginRequiredMixin, CreateView):
         return redirect('/maestro/blog/detalle/'+str(self.kwargs['pk']))
 
 
+class SelectAula(TemplateView):
+    template_name = 'maestro/select_aula.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        context['maestro'] = self.request.user.is_maestro
+        context['alumno'] = self.request.user.is_alumno
+        context['foto_perfil'] = self.request.user.foto_perfil
+        context['Usuario'] = self.request.user
+        context['activate'] = 'calificar'
+        context['aula'] = Aula.objects.filter(aula_pertenece=self.request.user)
+        context['colors'] = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark']
+        
+        return context
+class SelectMateria(TemplateView):
+    template_name = 'maestro/select_materia.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        context['maestro'] = self.request.user.is_maestro
+        context['alumno'] = self.request.user.is_alumno
+        context['foto_perfil'] = self.request.user.foto_perfil
+        context['Usuario'] = self.request.user
+        context['activate'] = 'calificar'
+        context['materias'] = Materia.objects.filter(materia_aula=self.kwargs.get('aula'))
+        context['colors'] = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark']
+        
+        return context
+class SelectUnidad(TemplateView):
+    template_name = 'maestro/select_unidad.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        context['maestro'] = self.request.user.is_maestro
+        context['alumno'] = self.request.user.is_alumno
+        context['foto_perfil'] = self.request.user.foto_perfil
+        context['Usuario'] = self.request.user
+        context['activate'] = 'calificar'
+        context['unidades'] = Unidad.objects.filter(unidad_materia=self.kwargs.get('materia'))
+        context['colors'] = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark']
+        
+        return context
+class SelectTarea(TemplateView):
+    template_name = 'maestro/select_tarea.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        context['maestro'] = self.request.user.is_maestro
+        context['alumno'] = self.request.user.is_alumno
+        context['foto_perfil'] = self.request.user.foto_perfil
+        context['Usuario'] = self.request.user
+        context['activate'] = 'calificar'
+        context['Tareas'] = Tarea.objects.filter(tarea_unidad=self.kwargs.get('unidad'))
+        context['colors'] = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark']
+        
+        return context
 
 class TareaEntregadaList(LoginRequiredMixin, ListView):
     login_url = '/login/'
@@ -1060,25 +1120,29 @@ class TareaEntregadaList(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super(TareaEntregadaList, self).get_queryset()
-        queryset=queryset.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user)
+        queryset=queryset.filter(tareaDocumento_Tarea=self.kwargs.get('id_tarea'))
         cambios = False
-        if self.request.method == 'GET':
-            filter = self.request.GET.get('estado')
-            materia = self.request.GET.get('materia')
-            if filter == '0':
-                cambios = True
-                queryset=queryset.filter(tareaDocumento_status=False)
-            if filter == '1':
-                cambios = True
-                queryset=queryset.filter(tareaDocumento_status=True)
-            if filter == '2':
-                cambios = True
-                pass
-            if materia != None:
-                cambios = True
-                queryset=queryset.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_id=materia)
-            if cambios == False:
-                queryset=queryset.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user, tareaDocumento_status=False)
+        status=self.request.GET.get('estado')
+        if status != None:
+            queryset=queryset.filter(tareaDocumento_status=status)
+
+        # if self.request.method == 'GET':
+        #     filter = self.request.GET.get('estado')
+        #     materia = self.request.GET.get('materia')
+        #     if filter == '0':
+        #         cambios = True
+        #         queryset=queryset.filter(tareaDocumento_status=False)
+        #     if filter == '1':
+        #         cambios = True
+        #         queryset=queryset.filter(tareaDocumento_status=True)
+        #     if filter == '2':
+        #         cambios = True
+        #         pass
+        #     if materia != None:
+        #         cambios = True
+        #         queryset=queryset.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_id=materia)
+        #     if cambios == False:
+        #         queryset=queryset.filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_aula__aula_pertenece=self.request.user, tareaDocumento_status=False)
 
 
         return queryset
@@ -1091,7 +1155,7 @@ class TareaEntregadaList(LoginRequiredMixin, ListView):
         context['foto_perfil'] = self.request.user.foto_perfil
         context['Usuario'] = self.request.user
         context['activate'] = 'calificar'
-        context['materias'] = Materia.objects.filter(materia_aula__aula_pertenece=self.request.user)
+        context['get_tarea'] = Tarea.objects.get(tarea_id=self.kwargs.get('id_tarea'))
 
         return context
 
@@ -1104,6 +1168,11 @@ class TareaEntregadaUpdate(LoginRequiredMixin, UpdateView):
     form_class = TareaEntregadaEdit
     template_name = 'maestro/blog_create.html'
     success_url = reverse_lazy('control_escolar:maestro_tarea_entregada_list')
+
+    def get_success_url(self):
+        url_new=reverse_lazy('control_escolar:maestro_tarea_entregada_list', kwargs={'id_tarea': self.kwargs.get('id_tarea')},)
+        print(url_new)
+        return url_new
 
     def form_valid(self, form):
         form.instance.tareaDocumento_status = True

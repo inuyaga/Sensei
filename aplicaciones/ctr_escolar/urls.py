@@ -42,8 +42,13 @@ urlpatterns = [
     path('comentar/blog/<int:pk>', view_ctr.ComentarioCreate.as_view(), name='comentar_blog'),
 
 
-    path('maestro/tarea/calificar/', view_ctr.TareaEntregadaList.as_view(), name='maestro_tarea_entregada_list'),
-    path('maestro/tarea/entregada/<int:pk>/', view_ctr.TareaEntregadaUpdate.as_view(), name='maestro_tarea_entregada_update'),
+    path('maestro/select/aula/', view_ctr.SelectAula.as_view(), name='select_aula_master'),
+    path('maestro/select/<int:aula>/materia/', view_ctr.SelectMateria.as_view(), name='select_materia_master'),
+    path('maestro/select/aula/<int:materia>/unidad', view_ctr.SelectUnidad.as_view(), name='select_unidad_master'),
+    path('maestro/select/aula/materia/<int:unidad>', view_ctr.SelectTarea.as_view(), name='select_tarea_master'), 
+
+    path('maestro/tarea/calificar/<int:id_tarea>', view_ctr.TareaEntregadaList.as_view(), name='maestro_tarea_entregada_list'),
+    path('maestro/tarea/entregada/<int:pk>/<int:id_tarea>/', view_ctr.TareaEntregadaUpdate.as_view(), name='maestro_tarea_entregada_update'),
  
     path('maestro/promediar/unidad/', view_ctr.PromediarCreate.as_view(), name='maestro_priomediar'), 
     path('maestro/promd/unidad/', view_ctr.PromediarUnidad.as_view(), name='maestro_priomediar_set'), 

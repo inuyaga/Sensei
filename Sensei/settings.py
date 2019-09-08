@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.humanize',
     'ajax_select',  # <-   add the app
     'django.contrib.admin',
     'django.contrib.auth',
