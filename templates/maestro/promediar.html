@@ -27,7 +27,7 @@
 {% block contenido %}
 
 <div id="app">
-
+    <form action="{% url 'control_escolar:maestro_priomediar_unidad_xls' %}">
     <div class="row">
         <div class="col-md-2">
             <label for="materia">Aula</label>
@@ -37,7 +37,7 @@
                 <option value="{{aula.id}}">{{aula.aula_nombre}}</option>
                 {% endfor %}
             </select>
-        </div>
+        </div> 
 
         <div class="col-md-2">
             <label for="materia">Materia</label>
@@ -48,6 +48,8 @@
         </div>
 
         
+
+
 
         <div class="col-md-2"> 
             <label for="materia">Unidades</label>
@@ -61,12 +63,13 @@
         <div class="btn-group" role="group" aria-label="Basic example">
                 <button type="button" title="Promediar" v-bind:disabled="disable_button" @click="PromediarUnidad" class="btn btn-success btn-sm"><i class="material-icons">assignment_turned_in</i></button>
                 <button type="button" title="Descargar PDF" v-bind:disabled="disable_buttonPDF" @click="DowloadPDF" class="btn btn-primary btn-sm"><i class="material-icons">library_books</i></button>
-                <button type="submit" title="xls Detalle" v-bind:disabled="disable_buttonPDF" class="btn btn-primary btn-sm"><i class="material-icons">library_books</i></button>
+                <button type="submit" title="xls Detalle" v-bind:disabled="disable_buttonPDF" class="btn btn-secondary btn-sm"><i class="material-icons">insert_drive_file</i></button>
         </div>
             
             
         </div>
     </div>
+</form>
 
     <div class="container">
         <table class="table" id="unidad-table">

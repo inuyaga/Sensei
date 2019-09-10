@@ -1258,31 +1258,81 @@ class PromediarUnidad(View):
             'calificaciones':cali_list,
         }
         return JsonResponse(data)
-
+ 
 class PromedioUnidadDetalle_xls(View):
     def get(self, request , *args, **kwargs):
         from openpyxl.utils import get_column_letter
         import calendar
+        import random
+        from openpyxl.styles import PatternFill
+        from openpyxl.styles.borders import Border, Side 
+        
         wb = Workbook()
         ws=wb.active
         # id_pedido=self.kwargs.get('pk')
         # ped = Pedido.objects.get(ped_id_ped=id_pedido)
 
-        unidad_get=self.request.GET.get('unidad')
+        unidad_id=self.request.GET.get('unidad_id')
+        unidad_get=Unidad.objects.get(unidad_id=unidad_id)
+        tareas_count=Tarea.objects.filter(tarea_unidad=unidad_id).count()
 
-        ws['A1'] = 'Materia: '+unidad_get.unidad_materia,materia_nombre+' Unidad: '+unidad_get.unidad_nombre
+        ws['A1'] = "{} -- {}".format(unidad_get.unidad_materia.materia_nombre, unidad_get.unidad_nombre)
         st=ws['A1']
-        st.font = Font(size=14, b=True, color="004ee0")
+        st.font = Font(size=12, b=True, color="004ee0")
         st.alignment = Alignment(horizontal='center')
         ws.merge_cells('A1:F1')
-        # lista_alumno=unidad_get.unidad_materia.materia_registro_alumnnos.all()
-        # tareas_unidad_list=Tarea.objects.filter(tarea_unidad=unidad_get)
+        
+        #COLUMNAS EXCEL
+        ws['A2']='Alumno'
+        ws['B2']='Tarea'
+        ws['C2']='Calificacion'
+        ws['D2']='%'
         doc_alum=TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad=unidad_get).order_by('tareaDocumento_pertenece')
+        colors_rbga=['EFA8D3', 'BEABF6', 'F3B8F8', '6FE3F5', 'F4B2B2', 'FFB7D5', 'A7ABFA', '94F4B5', 'F7D896', 'D4D3D3', 'FFBCBC', 'F8CEA4', 'CEF683', 'C8FBC0', '87C8E2', 'A7C4FA', 'F49495', 'D4B1EB']
+        
+
+        thin_border = Border(left=Side(style='thin', color='FFFFFF'), 
+        right=Side(style='thin', color='FFFFFF'), 
+        top=Side(style='thin', color='FFFFFF'), 
+        bottom=Side(style='thin', color='FFFFFF')) 
+        
+
         contador=3
+        contador_tarea_reset=1
+        doc_count=0
+        tem_cont_ped = 0
         for alumno in doc_alum:
+            if alumno.tareaDocumento_pertenece.id != tem_cont_ped:
+                color_temporal_gen=random.choice(colors_rbga)  
+                contador += 1
+            tem_cont_ped=alumno.tareaDocumento_pertenece.id
+
+            ws.cell(row=contador, column=1).fill  = PatternFill(start_color=color_temporal_gen, end_color=color_temporal_gen, fill_type = 'solid')
+            ws.cell(row=contador, column=2).fill  = PatternFill(start_color=color_temporal_gen, end_color=color_temporal_gen, fill_type = 'solid')
+            ws.cell(row=contador, column=3).fill  = PatternFill(start_color=color_temporal_gen, end_color=color_temporal_gen, fill_type = 'solid')
+            ws.cell(row=contador, column=4).fill  = PatternFill(start_color=color_temporal_gen, end_color=color_temporal_gen, fill_type = 'solid')
+
+            ws.cell(row=contador, column=1).border  = thin_border
+            ws.cell(row=contador, column=2).border  = thin_border
+            ws.cell(row=contador, column=3).border  = thin_border
+            ws.cell(row=contador, column=4).border  = thin_border
+            
             ws.cell(row=contador, column=1).value = alumno.tareaDocumento_pertenece.get_full_name()
             ws.cell(row=contador, column=2).value = alumno.tareaDocumento_Tarea.tarea_nombre
+            ws.cell(row=contador, column=3).value = alumno.tareaDocumento_calificacion
+            calific_alumno= 0 if alumno.tareaDocumento_calificacion == None else alumno.tareaDocumento_calificacion
+            porcentaje=(alumno.tareaDocumento_Tarea.tarea_porcentaje * calific_alumno)/10
+            ws.cell(row=contador, column=4).value = "{}% de {}%".format(porcentaje, alumno.tareaDocumento_Tarea.tarea_porcentaje)
+            # ws.cell(row=contador, column=4).value = "{}% de {}%".format((alumno.tareaDocumento_Tarea.tarea_porcentaje * alumno.tareaDocumento_calificacion)/10, alumno.tareaDocumento_Tarea.tarea_porcentaje)
+            # if contador_tarea_reset == doc_count:
+            #     ws.cell(row=contador+1, column=2).value = 'Promedio'
+            #     ws.cell(row=contador+1, column=3).value = '=SUM(C{}:C{})/{}'.format(contador-(contador_tarea_reset-1),contador, tareas_count)
+            #     contador += 1
+            #     contador_tarea_reset = 1
+            
+            doc_count=TareaDocumento.objects.filter(tareaDocumento_Tarea__tarea_unidad=unidad_get, tareaDocumento_pertenece=alumno.tareaDocumento_pertenece).count()
             contador += 1
+            contador_tarea_reset += 1
 
         dims = {}
         for row in ws.rows:
@@ -1292,7 +1342,7 @@ class PromedioUnidadDetalle_xls(View):
                         dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
 
         for col, value in dims.items():
-            ws.column_dimensions[get_column_letter(col)].width = value+1
+            ws.column_dimensions[get_column_letter(col)].width = value+2
 
 
         nombre_archivo='calificaciones.xls'

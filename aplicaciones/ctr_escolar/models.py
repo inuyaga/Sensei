@@ -59,7 +59,7 @@ class TareaDocumento(models.Model):
     tareaDocumento_comentario_alumno=models.CharField('Comentario Alumno', max_length=500)
     tareaDocumento_comentario_maestro=models.CharField('Comentario Maestro', max_length=500, null=True, blank=True)
     tareaDocumento_creado=models.DateTimeField('Creado', auto_now_add=True)
-    tareaDocumento_pertenece=models.ForeignKey(Usuario, verbose_name='Pertenece a', on_delete=models.CASCADE)
+    tareaDocumento_pertenece=models.ForeignKey(Usuario, verbose_name='Pertenece a', on_delete=models.CASCADE) 
     tareaDocumento_Tarea=models.ForeignKey(Tarea, verbose_name='Tarea', on_delete=models.CASCADE)
     tareaDocumento_status=models.BooleanField('Status Tarea', default=False)
     tareaDocumento_calificacion=models.FloatField('Calificación', null=True, blank=True, validators=[MinValueValidator(1),MaxValueValidator(10)])
