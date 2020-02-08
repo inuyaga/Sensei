@@ -106,3 +106,4 @@ sensei_env/
 env_sensei/
 XDG_CACHE_HOME/
 media/
+0*.py
