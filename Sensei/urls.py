@@ -21,7 +21,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from aplicaciones.usuario.views import CreateUser, PerfilList, PerfilUpdate, ChaguePasswordUser
 from ajax_select import urls as ajax_select_urls
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+    path('adminsensei/', admin.site.urls),
     path('login/',LoginView.as_view(template_name='login_sensei.html'), name='login'),
     path('salir/', LogoutView.as_view(template_name='logout.html'), name="salir"),
     path('', include('aplicaciones.ctr_escolar.urls'), name='index_sensei'),
