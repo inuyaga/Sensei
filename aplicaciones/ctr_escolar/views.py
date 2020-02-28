@@ -5,8 +5,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from aplicaciones.ctr_escolar.models import Aula, Materia, Documento, Unidad, Tarea, Blog, \
 TareaDocumento, CalificacionUnidad, CalificacionMateria, ComentarioBlog
+
 from aplicaciones.ctr_escolar.forms import AulaForm, MateriaForm,MateriaFormEdit, DocumentoCreateForm, UnidadForm, \
-TareaForm, TareaFormEdit, BlogFrom, TareaDocumentoFrom, TareaEntregadaEdit, ComentarioBlogForm
+TareaForm, TareaFormEdit, BlogFrom, TareaDocumentoFrom, TareaEntregadaEdit, ComentarioBlogForm, LoginForm
+
 from aplicaciones.ctr_escolar.eliminaciones import get_deleted_objects
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
@@ -24,15 +26,19 @@ from django.core.serializers import serialize
 from openpyxl.styles import Font, Fill, Alignment
 from django.http import HttpResponse
 from openpyxl import Workbook
-"""
-CLASES ESCUSIVAMENTE PARA LOS USUARIOS CON PERMISOS DE MAESTRO
-DE AQUI EN ADELANTE
-#########################################################################################################
-#########################################################################################################
-#########################################################################################################
-"""
+# -------------------------------------------------------
+
 from django.http import JsonResponse
+from django.contrib.auth.views import LoginView
+
 # Create your views here.
+
+class IngrsarView(LoginView):
+    template_name = "login_sensei.html"
+    form_class = LoginForm
+
+
+
 class index(LoginRequiredMixin, TemplateView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'

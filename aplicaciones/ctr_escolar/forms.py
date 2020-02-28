@@ -3,6 +3,8 @@ from aplicaciones.ctr_escolar.models import Aula, Materia, Documento, Unidad, Ta
 TareaDocumento, ComentarioBlog
 from django.forms.widgets import CheckboxSelectMultiple
 from ajax_select.fields import AutoCompleteSelectMultipleField
+
+from django.contrib.auth.forms import AuthenticationForm
 class AulaForm(forms.ModelForm):
     class Meta:
         model = Aula
@@ -162,3 +164,11 @@ class ComentarioBlogForm(forms.ModelForm):
 
 
 
+# *****************************************************************************************
+
+class LoginForm(AuthenticationForm):
+
+    def __init__(self, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
