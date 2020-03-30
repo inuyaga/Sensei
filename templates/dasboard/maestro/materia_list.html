@@ -1,0 +1,103 @@
+{% extends 'dasboard/base.html' %}
+
+
+{% block titulo %}
+<title>Sensei | Materia</title>
+{% endblock titulo %}
+
+{% block navegacion_links %}
+
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb adminx-page-breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Materia</li>
+    </ol>
+</nav>
+<div class="pb-3">
+    <h1>Materia</h1>
+</div>
+{% endblock navegacion_links %}
+
+
+{% block contenido %}
+
+<div class="row">
+    <a class="btn btn-primary" href="{% url 'ctr:materia_create' %}" role="button">Añadir</a>
+</div>
+<br>
+
+
+<div class="row">
+    <div class="col">
+      <div class="card mb-grid">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <div class="card-header-title">Tabla</div>
+        </div>
+        <div class="table-responsive-md">
+          <table class="table table-actions table-striped table-hover mb-0">
+            <thead>
+              <tr>
+                <th scope="col">
+                  <label class="custom-control custom-checkbox m-0 p-0">
+                    <input type="checkbox" class="custom-control-input table-select-all">
+                    <span class="custom-control-indicator"></span>
+                  </label>
+                </th>
+                <th scope="col">Aula</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Alumnos</th>
+                <th scope="col">Creación</th>
+              </tr>
+            </thead>
+            <tbody>
+
+                
+                {% for item in object_list %}
+                    
+                <tr>
+                  <th scope="row">
+                    <label class="custom-control custom-checkbox m-0 p-0">
+                      <input type="checkbox" class="custom-control-input table-select-row">
+                      <span class="custom-control-indicator"></span>
+                    </label>
+                  </th>
+                  <td>{{item.materia_aula}}</td>
+                  <td>{{item.materia_nombre}}</td>
+                  <td>
+                      
+                      {% for al in item.materia_registro_alumnnos.all %}
+                      <span class="badge badge-pill badge-primary">{{al}}</span>
+                      {% endfor %}
+                          
+                    </td>
+                    <td>
+                <td>{{item.materia_creado}}</td>
+                    <a href="#" class="btn btn-sm btn-labeled btn-danger">
+                        <span class="btn-label">
+                          <span class="oi oi-trash" aria-hidden="true"></span>
+                        </span>
+                        <span class="btn-text">
+                          Delete
+                        </span>
+                      </a>
+                    <a href="#" class="btn btn-sm btn-labeled btn-primary">
+                        <span class="btn-label">
+                          <span class="oi oi-pencil" aria-hidden="true"></span>
+                        </span>
+                        <span class="btn-text">
+                          Delete
+                        </span>
+                      </a>
+                  </td>
+                </tr>
+                {% endfor %}
+                    
+              
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock contenido %}

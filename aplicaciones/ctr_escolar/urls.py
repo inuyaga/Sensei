@@ -1,9 +1,9 @@
 from django.contrib import admin 
 from django.urls import path
 from aplicaciones.ctr_escolar import views as view_ctr
-app_name='control_escolar'
+app_name='ctr'
 urlpatterns = [
-    path('',view_ctr.index.as_view(), name='index'),
+    path('dashboard1',view_ctr.index.as_view(), name='index'),
     path('maestro/crear_aula/', view_ctr.CreateAula.as_view(), name='maestro_create_aula'),
     path('maestro/actualizar_aula/<int:pk>', view_ctr.UpdateAula.as_view(), name='maestro_update_aula'),
     path('maestro/elimina_aula/<int:pk>', view_ctr.AulaDelete.as_view(), name='maestro_delete_aula'),
@@ -71,5 +71,18 @@ urlpatterns = [
 
     path('maestro/get/materias/', view_ctr.MateriaGet.as_view(), name='get_materias'), 
 
+
+
+
+
+    #Nuevas urls
+    path('dashboard', view_ctr.AdminIndex.as_view(), name='dasboard'),   
+    path('aula/list/', view_ctr.AulaList.as_view(), name='list_aula'),   
+    path('aula/create/', view_ctr.AulaCreateView.as_view(), name='aula_crear'),   
+    path('aula/update/<int:pk>/', view_ctr.AulaUpdateView.as_view(), name='aula_update'),   
+    path('aula/delete/<int:pk>/', view_ctr.AulaDeleteView.as_view(), name='aula_delete'),   
+
+    path('materia/list/', view_ctr.MateriaListView.as_view(), name='materia_list'),    
+    path('materia/create/', view_ctr.MateriaCreateView.as_view(), name='materia_create'),    
 
 ]

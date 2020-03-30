@@ -1749,3 +1749,79 @@ class ResponseMaestroAjax(TemplateView):
 #########################################################################################################
 #########################################################################################################
 """
+
+
+
+"""
+Nuevas vistas para la nueva version de sensei
+"""
+
+
+class AdminIndex(TemplateView):
+    template_name = "dasboard/base.html"
+
+
+class AulaList(ListView):
+    model = Aula
+    template_name = "dasboard/maestro/aula.html"
+
+class AulaCreateView(CreateView):
+    model = Aula
+    template_name = "dasboard/maestro/aula_crear.html"
+    form_class = AulaForm
+    success_url = reverse_lazy('ctr:list_aula')
+
+    def form_valid(self, form):
+        form.instance.aula_pertenece = self.request.user
+        return super(AulaCreate, self).form_valid(form)
+
+
+
+class AulaDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+
+    model = Aula
+    template_name = 'DeleteForm.html'
+    success_url = reverse_lazy('ctr:list_aula')
+
+    # def dispatch(self, *args, **kwargs):
+    #     if self.request.user.is_authenticated:
+    #         if self.request.user.is_alumno:
+    #             return redirect('/')
+    #     return super().dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+
+
+class AulaUpdateView(UpdateView):
+    model = Aula
+    template_name = "dasboard/maestro/aula_crear.html"
+    form_class = AulaForm
+    success_url = reverse_lazy('ctr:list_aula')
+
+
+
+
+class MateriaListView(ListView):
+    model = Materia
+    template_name = "dasboard/maestro/materia_list.html" 
+
+
+
+class MateriaCreateView(CreateView):
+    model = Materia
+    template_name = "FormCreate.html"
+    form_class = MateriaForm
+    success_url = reverse_lazy('ctr:materia_create')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user}) 
+        return kwargs
