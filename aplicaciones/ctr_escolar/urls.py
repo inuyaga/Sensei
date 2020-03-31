@@ -76,7 +76,7 @@ urlpatterns = [
 
 
     #Nuevas urls
-    path('dashboard', view_ctr.AdminIndex.as_view(), name='dasboard'),   
+    path('dashboard/', view_ctr.AdminIndex.as_view(), name='dasboard'),    
     path('aula/list/', view_ctr.AulaList.as_view(), name='list_aula'),   
     path('aula/create/', view_ctr.AulaCreateView.as_view(), name='aula_crear'),   
     path('aula/update/<int:pk>/', view_ctr.AulaUpdateView.as_view(), name='aula_update'),   
@@ -84,5 +84,27 @@ urlpatterns = [
 
     path('materia/list/', view_ctr.MateriaListView.as_view(), name='materia_list'),    
     path('materia/create/', view_ctr.MateriaCreateView.as_view(), name='materia_create'),    
+    path('materia/update/<int:pk>/', view_ctr.MateriaUpdateView.as_view(), name='materia_update'),    
+    path('materia/delete/<int:pk>/', view_ctr.MateriaDeleteView.as_view(), name='materia_delete'),    
+    path('materia/recurso/list/', view_ctr.RecursosMateriaView.as_view(), name='materia_recurso_new'),    
+    path('materia/recurso/crear/', view_ctr.DocumentoCreateView.as_view(), name='materia_recurso_create'),    
+    path('materia/recurso/delete/<int:pk>/', view_ctr.RecursoDelete.as_view(), name='materia_recurso_dell'),   
+
+
+    path('materia/unidades/list/<int:id_materia>/', view_ctr.UnidadesList.as_view(), name='materia_unidad'),    
+    path('materia/unidades/create/<int:id_materia>/', view_ctr.UnidadCreateView.as_view(), name='materia_unidad_create'),    
+    path('materia/unidades/update/<int:pk>/<int:id_materia>/', view_ctr.UnidadUpdateView.as_view(), name='materia_unidad_update'),    
+    path('materia/unidades/delete/<int:pk>/<int:id_materia>/', view_ctr.UnidadDeleteView.as_view(), name='materia_unidad_delete'),    
+
+    path('materia/unidades/tareas/list/<int:id_materia>/<int:id_unidad>/', view_ctr.TareaListView.as_view(), name='unidad_tareas'),    
+    path('materia/unidades/tareas/create/<int:id_materia>/<int:id_unidad>/', view_ctr.TareaCreateView.as_view(), name='tarea_crear'),    
+    path('materia/unidades/tareas/delete/<int:pk>/<int:id_materia>/<int:id_unidad>/', view_ctr.TareaDeleteView.as_view(), name='tarea_delete'),    
+    path('materia/unidades/tareas/update/<int:pk>/<int:id_materia>/<int:id_unidad>/', view_ctr.TareaUpdateView.as_view(), name='tarea_update'),    
+
+    path('Blog/List/', view_ctr.BlogListView.as_view(), name='blog_list'),    
+    path('Blog/crear/', view_ctr.BlogCreateView.as_view(), name='blog_crear'),    
+    path('Blog/leer/<int:pk>/', view_ctr.BlogLerrView.as_view(), name='blog_leer'),    
+    path('Blog/update/<int:pk>/', view_ctr.BlogEditarView.as_view(), name='blog_update'),    
+    path('Blog/delete/<int:pk>/', view_ctr.BlogDeleteView.as_view(), name='blog_delete'),     
 
 ]

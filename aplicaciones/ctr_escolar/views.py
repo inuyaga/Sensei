@@ -1761,11 +1761,20 @@ class AdminIndex(TemplateView):
     template_name = "dasboard/base.html"
 
 
-class AulaList(ListView):
+class AulaList(LoginRequiredMixin,ListView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
     model = Aula
     template_name = "dasboard/maestro/aula.html"
 
-class AulaCreateView(CreateView):
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(aula_pertenece=self.request.user)
+        return queryset
+
+class AulaCreateView(LoginRequiredMixin,CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
     model = Aula
     template_name = "dasboard/maestro/aula_crear.html"
     form_class = AulaForm
@@ -1773,14 +1782,13 @@ class AulaCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.aula_pertenece = self.request.user
-        return super(AulaCreate, self).form_valid(form)
+        return super(AulaCreateView, self).form_valid(form) 
 
 
 
 class AulaDeleteView(LoginRequiredMixin, DeleteView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
-
     model = Aula
     template_name = 'DeleteForm.html'
     success_url = reverse_lazy('ctr:list_aula')
@@ -1800,7 +1808,9 @@ class AulaDeleteView(LoginRequiredMixin, DeleteView):
         return context
 
 
-class AulaUpdateView(UpdateView):
+class AulaUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
     model = Aula
     template_name = "dasboard/maestro/aula_crear.html"
     form_class = AulaForm
@@ -1809,19 +1819,376 @@ class AulaUpdateView(UpdateView):
 
 
 
-class MateriaListView(ListView):
+class MateriaListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
     model = Materia
     template_name = "dasboard/maestro/materia_list.html" 
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(materia_aula__aula_pertenece=self.request.user)
+        return queryset
 
 
-class MateriaCreateView(CreateView):
+
+class MateriaCreateView(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
     model = Materia
     template_name = "FormCreate.html"
     form_class = MateriaForm
-    success_url = reverse_lazy('ctr:materia_create')
+    success_url = reverse_lazy('ctr:materia_list')
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({'user': self.request.user}) 
         return kwargs
+
+
+class MateriaDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+
+    model = Materia
+    template_name = 'DeleteForm.html'
+    success_url = reverse_lazy('ctr:materia_list')
+
+    # def dispatch(self, *args, **kwargs):
+    #     if self.request.user.is_authenticated:
+    #         if self.request.user.is_alumno:
+    #             return redirect('/')
+    #     return super().dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+
+class MateriaUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Materia
+    template_name = "FormCreate.html"
+    form_class = MateriaFormEdit
+    success_url = reverse_lazy('ctr:materia_list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user}) 
+        return kwargs
+
+
+class RecursosMateriaView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Documento
+    template_name = 'dasboard/maestro/recursos_materia.html'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(doc_pertenece=self.request.user)
+        return queryset
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+
+
+class DocumentoCreateView(LoginRequiredMixin, CreateView): 
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Documento
+    form_class = DocumentoCreateForm
+    template_name = "FormCreate.html"
+    success_url = reverse_lazy('ctr:materia_recurso_new')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+    
+    def form_valid(self, form):
+        form.instance.doc_pertenece = self.request.user
+        return super().form_valid(form)
+
+    
+
+class RecursoDelete(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+
+    model = Documento
+    template_name = 'DeleteForm.html'
+    success_url = reverse_lazy('ctr:materia_recurso_new')
+
+    # def dispatch(self, *args, **kwargs):
+    #     if self.request.user.is_authenticated:
+    #         if self.request.user.is_alumno:
+    #             return redirect('/')
+    #     return super().dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+
+
+class UnidadesList(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Unidad
+    template_name = "dasboard/maestro/unidades.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['materia']=Materia.objects.get(materia_id=self.kwargs.get('id_materia'))
+        return context
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(unidad_materia=self.kwargs.get('id_materia'))
+        return queryset
+
+
+
+
+class UnidadCreateView(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Unidad
+    template_name = "FormCreate.html"
+    form_class = UnidadForm
+
+    def get_success_url(self):
+        url = reverse_lazy('ctr:materia_unidad', kwargs={'id_materia':self.kwargs.get('id_materia')})
+        return str(url)
+    
+    def form_valid(self, form):
+        form.instance.unidad_materia_id = self.kwargs.get('id_materia')
+        return super().form_valid(form)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(unidad_materia__materia_id=self.kwargs.get('id_materia'))
+        return queryset
+
+
+class UnidadUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Unidad
+    template_name = "FormCreate.html"
+    form_class = UnidadForm
+
+    def get_success_url(self):
+        url = reverse_lazy('ctr:materia_unidad', kwargs={'id_materia':self.kwargs.get('id_materia')})
+        return str(url)
+
+
+
+class UnidadDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Unidad
+    template_name = 'DeleteForm.html'
+
+    def get_success_url(self):
+        url = reverse_lazy('ctr:materia_unidad', kwargs={'id_materia':self.kwargs.get('id_materia')})
+        return str(url)
+    # success_url = reverse_lazy('ctr:materia_recurso_new')
+
+    # def dispatch(self, *args, **kwargs):
+    #     if self.request.user.is_authenticated:
+    #         if self.request.user.is_alumno:
+    #             return redirect('/')
+    #     return super().dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+
+
+
+class TareaListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Tarea
+    template_name = "dasboard/maestro/tareas.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['materia']=Materia.objects.get(materia_id=self.kwargs.get('id_materia'))
+        context['unidad']=Unidad.objects.get(unidad_id=self.kwargs.get('id_unidad'))
+        return context
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(tarea_unidad__unidad_id=self.kwargs.get('id_unidad'))
+        return queryset
+
+class TareaCreateView(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Tarea
+    template_name = "FormCreate.html"
+    form_class = TareaForm
+
+    def get_success_url(self):
+        url = reverse_lazy('ctr:unidad_tareas', kwargs={
+            'id_materia':self.kwargs.get('id_materia'),
+            'id_unidad':self.kwargs.get('id_unidad'),
+            })
+        return str(url)
+    
+    def form_valid(self, form):
+        form.instance.tarea_unidad_id = self.kwargs.get('id_unidad')
+        return super().form_valid(form)
+
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     queryset = queryset.filter(tarea_unidad__unidad_id=self.kwargs.get('id_unidad'))
+    #     return queryset
+
+
+class TareaDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Tarea
+    template_name = 'DeleteForm.html'
+
+    def get_success_url(self):
+        url = reverse_lazy('ctr:unidad_tareas', kwargs={
+            'id_materia':self.kwargs.get('id_materia'),
+            'id_unidad':self.kwargs.get('id_unidad')
+            })
+        return str(url)
+    # success_url = reverse_lazy('ctr:materia_recurso_new')
+
+    # def dispatch(self, *args, **kwargs):
+    #     if self.request.user.is_authenticated:
+    #         if self.request.user.is_alumno:
+    #             return redirect('/')
+    #     return super().dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+
+
+
+class TareaUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Tarea
+    template_name = "FormCreate.html"
+    form_class = TareaFormEdit
+
+    def get_success_url(self):
+        url = reverse_lazy('ctr:unidad_tareas', kwargs={
+            'id_materia':self.kwargs.get('id_materia'),
+            'id_unidad':self.kwargs.get('id_unidad'),
+            })
+        return str(url)
+
+
+
+class BlogListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Blog
+    template_name = 'dasboard/maestro/blog_list.html'
+
+
+
+class BlogCreateView(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Blog
+    template_name = "FormBlog.html"
+    form_class = BlogFrom
+    success_url = reverse_lazy('ctr:blog_list')
+
+    def form_valid(self, form):
+        instancia = form.save(commit=False)
+        instancia.blog_pertenece = self.request.user
+        instancia.save()
+        return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+
+
+class BlogLerrView(LoginRequiredMixin, DetailView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Blog
+    template_name='dasboard/maestro/blog_leer.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['coments']=ComentarioBlog.objects.filter(comentario_blog=self.kwargs.get('pk'))
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = super(BlogLerrView, self).get_context_data(**kwargs)
+        context['coments']=ComentarioBlog.objects.filter(comentario_blog=self.kwargs.get('pk'))
+        coments_user = ComentarioBlog(
+            comentario_comentario=request.POST.get('coment_text'),
+            comentario_blog_id=kwargs.get('pk'),
+            comentario_comentado_by=request.user,
+        )
+        coments_user.save()
+        return self.render_to_response( context=context)
+    
+
+
+
+class BlogEditarView(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Blog
+    template_name = "FormBlog.html"
+    form_class = BlogFrom
+    success_url = reverse_lazy('ctr:blog_list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
+
+    
+
+
+class BlogDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Blog
+    template_name = 'DeleteForm.html'
+    success_url = reverse_lazy('ctr:blog_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context

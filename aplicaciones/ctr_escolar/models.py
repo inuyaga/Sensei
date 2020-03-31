@@ -11,13 +11,17 @@ class Aula(models.Model):
 
     def __str__(self):
         return self.aula_nombre 
-class Documento(models.Model): 
+class Documento(models.Model):  
     doc_id=models.AutoField(primary_key=True)
     doc_nombre = models.CharField('Nombre', max_length=100)
     doc_pertenece = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     doc_archivo=models.FileField('archivo', upload_to='documentos_meteria/')
     def __str__(self):
         return self.doc_nombre 
+    
+    class Meta:
+        verbose_name ='Recurso de materia'
+        verbose_name_plural = "Recursos de materia"
 
 class Materia(models.Model):
     materia_id = models.AutoField(primary_key=True)
@@ -29,6 +33,10 @@ class Materia(models.Model):
 
     def __str__(self):
         return self.materia_nombre
+    
+    class Meta:
+        verbose_name ='Materia'
+        verbose_name_plural = "Materias"
 
 
 
@@ -86,7 +94,7 @@ class Blog(models.Model):
     blog_id=models.AutoField(primary_key=True)
     blog_titulo =models.CharField('Titulo', max_length=250)
     blog_descripcion =models.CharField('Descripcion', max_length=500)
-    blog_contenido=models.TextField('Contenido', blank=True, null=True)
+    blog_contenido=models.TextField('Contenido', blank=False, null=True)
     blog_imagen = models.ImageField('Imagen Blog', upload_to='img_blogs/')
     blog_creado=models.DateTimeField('Creado en', auto_now_add=True)
     blog_ultima_actualizacion=models.DateTimeField('Ultima Actualizacion', auto_now=True)

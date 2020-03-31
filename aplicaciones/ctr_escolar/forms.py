@@ -63,7 +63,7 @@ class DocumentoCreateForm(forms.ModelForm):
 class UnidadForm(forms.ModelForm):
     class Meta:
         model = Unidad
-        fields = ('__all__')
+        fields = ('unidad_nombre',)
 
 
     def __init__(self, *args, **kwargs):
@@ -73,11 +73,12 @@ class UnidadForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
-        self.fields['unidad_materia'].widget.attrs.update({'class': 'invisible'})
+        # self.fields['unidad_materia'].widget.attrs.update({'class': 'invisible'})
 class TareaForm(forms.ModelForm):
     class Meta:
         model = Tarea
-        fields = ('__all__')
+        # fields = ('__all__')
+        exclude = ['tarea_unidad']
         widgets = {
         'tarea_fecha_inicio': forms.DateInput(attrs={'type': 'date'}),
         'tarea_fecha_termino' : forms.DateInput(attrs={'type': 'date'}),
@@ -85,15 +86,9 @@ class TareaForm(forms.ModelForm):
 
 
     def __init__(self, *args, **kwargs):
-        id_user = kwargs.pop('user')
         super(TareaForm, self).__init__(*args, **kwargs)
-        # self.fields['materia_aula'].queryset=Aula.objects.filter(aula_pertenece=id_user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
-
-        self.fields['tarea_unidad'].widget.attrs.update({'class': 'invisible'})
-        self.fields['tarea_unidad'].label = ''
-        self.fields['tarea_unidad'].queryset = Unidad.objects.filter(unidad_materia__materia_aula__aula_pertenece=id_user)
 class TareaFormEdit(forms.ModelForm):
     class Meta:
         model = Tarea
@@ -106,7 +101,13 @@ class TareaFormEdit(forms.ModelForm):
 class BlogFrom(forms.ModelForm):
     class Meta:
         model = Blog
-        exclude = ['blog_pertenece']
+        fields = (
+            'blog_titulo',
+            'blog_descripcion',
+            'blog_imagen',
+            'blog_materia',
+            'blog_contenido',
+            )
         widgets = {
         'blog_materia': forms.CheckboxSelectMultiple(attrs={'type': 'checkbox'}),
         }

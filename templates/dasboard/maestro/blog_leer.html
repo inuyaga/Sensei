@@ -1,0 +1,77 @@
+{% extends 'dasboard/base.html' %}
+{% block titulo %}
+<title>Sensei | Blogs</title>
+{% endblock titulo %}
+
+{% block navegacion_links %}
+
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb adminx-page-breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Blogs</li>
+    </ol>
+</nav>
+<div class="pb-3">
+    <h1>Blog</h1>
+</div>
+{% endblock navegacion_links %}
+
+
+{% block contenido %}
+
+<div class="container">
+    {{object.blog_contenido|safe}}
+</div>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    Comentario
+                </div>
+                <div class="card-body">
+                    <form action="" method="post">
+                        <div class="form-group">
+                            {% csrf_token %}
+                            <label for="coment_text">Compartenos tu idea</label>
+                            <textarea class="form-control" id="coment_text" name="coment_text" rows="3"
+                                required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    {% for item in coments %}
+    <div class="row">
+        <div class="card">
+            <div class="card-body">
+                <div class="media">
+                    <img style="width: 60px; height: 60px;" class="mr-3" class="rounded-circle" src="https://www.geecko.net/wp-content/uploads/2013/09/incognito-filter.png" alt="Generic placeholder image">
+                    <div class="media-body">
+                      <h5 class="mt-0"><strong>{{item.comentario_comentado_by}}</strong></h5>
+                      {{item.comentario_comentario}}
+                  
+                      <!-- <div class="media mt-3">
+                        <a class="pr-3" href="#">
+                          <img style="width: 60px; height: 60px;" class="rounded-circle" src="https://www.geecko.net/wp-content/uploads/2013/09/incognito-filter.png" alt="Generic placeholder image">
+                        </a>
+                        <div class="media-body">
+                          <h5 class="mt-0">Media heading</h5>
+                          Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                        </div>
+                      </div> -->
+                    </div>
+                  </div>
+            </div>
+          </div>
+        
+    </div>
+    <br>
+    {% endfor %}
+</div>
+{% endblock contenido %}
