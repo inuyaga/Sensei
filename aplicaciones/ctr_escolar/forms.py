@@ -110,9 +110,9 @@ class BlogFrom(forms.ModelForm):
             'blog_materia',
             'blog_contenido',
             )
-        widgets = {
-        'blog_materia': forms.CheckboxSelectMultiple(attrs={'type': 'checkbox'}),
-        }
+        # widgets = {
+        # 'blog_materia': forms.CheckboxSelectMultiple(attrs={'type': 'checkbox'}),
+        # }
 
     def __init__(self, *args, **kwargs):
         id_user = kwargs.pop('user')
@@ -120,7 +120,7 @@ class BlogFrom(forms.ModelForm):
         self.fields['blog_materia'].queryset=Materia.objects.filter(materia_aula__aula_pertenece=id_user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
-        self.fields['blog_materia'].widget.attrs.update({'class': 'form-check-input'})
+        # self.fields['blog_materia'].widget.attrs.update({'class': 'form-check-input'})
 
 class TareaDocumentoFrom(forms.ModelForm):
     class Meta:

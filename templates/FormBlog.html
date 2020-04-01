@@ -31,14 +31,14 @@
             {{input.label}}
             {{input.errors}}
             {{input}}
-            {{input.help_text}}
+            <small id="emailHelp" class="form-text text-muted">{{input.help_text}}</small>
         </div>
         {% else %}
         <div class="col-md-3">
             {{input.label}}
             {{input.errors}}
             {{input}}
-            {{input.help_text}}
+            <small id="emailHelp" class="form-text text-muted">{{input.help_text}}</small>
         </div>
         {% endif %}
 
@@ -59,6 +59,7 @@
 
 <script>
     tinymce.init({
+        language: 'es',
         selector: '#id_blog_contenido',
         plugins: 'print preview paste importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap quickbars emoticons',
         imagetools_cors_hosts: ['picsum.photos'],
