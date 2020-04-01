@@ -1,38 +1,32 @@
+{% extends 'inicio/base_inicio.html' %}
 {% load static %}
-<!doctype html>
-<html lang="en" class="fullscreen-bg">
 
-<head>
-    <title>Lockscreen | Klorofil - Free Bootstrap Dashboard Template</title>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <!-- VENDOR CSS -->
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-        crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'assets/vendor/font-awesome/css/font-awesome.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/vendor/linearicons/style.css' %}">
-    <!-- MAIN CSS -->
-    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
-    <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
-    <link rel="stylesheet" href="{% static 'assets/css/demo.css' %}">
-    <!-- GOOGLE FONTS -->
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
-    <!-- ICONS -->
-    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'assets/img/apple-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'assets/img/favicon.png' %}">
-</head>
+{% block contenido %}
+    
 <style>
-    ul.errorlist{
-        color:red;
-    }
-    ul{
-        text-align: left;
+    .errorlist{
+        color: red;
+        font-size: 20px;
     }
 </style>
-<body>
+
+    
+    <!-- <section class="home-slider ftco-degree-bg">
+        <div class="slider-item">
+          <div class="overlay"></div>
+          <div class="container">
+            <div class="row slider-text align-items-center justify-content-center">
+             
+            </div>
+          </div>
+        </div>
+      </section> -->
     <!-- WRAPPER -->
+    <br>
+    <br>
+    <br>
+    <br>
     <div id="wrapper">
         <div class="container">
             <div class="row">
@@ -45,40 +39,40 @@
                         <div class="row">
                             <div class="col-sm-6">
                                     <strong>{{ form.first_name.label }}</strong>
-                                    <p class="text-danger">{{ form.first_name.errors }}</p>
+                                    <p class="text-danger active">{{ form.first_name.errors }}</p>
                                     {{ form.first_name }}
                             </div>
                             <div class="col-sm-6">
                                     <strong>{{ form.last_name.label }}</strong>
-                                    <p class="text-danger">{{ form.last_name.errors }}</p>
+                                    <p class="text-danger active">{{ form.last_name.errors }}</p>
                                     {{ form.last_name }}
                             </div>
                             <div class="col-sm-12">
                                     <strong>{{ form.email.label }}</strong>
-                                    <p class="text-danger">{{ form.email.errors }}</p>
+                                    <p class="text-danger active">{{ form.email.errors }}</p>
                                     {{ form.email }}
                             </div>
                             <div class="col-sm-12">
                                 <strong>{{ form.username.label }}</strong>
-                                <p class="text-danger">{{ form.username.errors }}</p>
+                                <p style="color: red;">{{ form.username.errors }}</p>
                                 {{ form.username }}
                                 {{ form.username.help_text }}
                             </div>
                             <div class="col-sm-12">
                                     <strong>{{ form.password1.label }}</strong>
-                                    <p class="text-danger">{{ form.password1.errors }}</p>
+                                    <p class="text-danger active">{{ form.password1.errors }}</p>
                                     {{ form.password1 }}
                                     {{ form.password1.help_text }}
                             </div>
                             <div class="col-sm-12">
                                     <strong>{{ form.password2.label }}</strong>
-                                    <p class="text-danger">{{ form.password2.errors }}</p>
+                                    <p class="text-danger active">{{ form.password2.errors }}</p>
                                     {{ form.password2 }}
                                     {{ form.password2.help_text }}
                             </div>
                             <div class="col-sm-12">
                                     <strong>{{ form.tipo_de_usuario.label }}</strong>
-                                    <p class="text-danger">{{ form.tipo_de_usuario.errors }}</p>
+                                    <p class="text-danger active">{{ form.tipo_de_usuario.errors }}</p>
                                     {{ form.tipo_de_usuario }}
                                     {{ form.tipo_de_usuario.help_text }}
                             </div>
@@ -93,7 +87,4 @@
             </div>
         </div>
     </div>
-    <!-- END WRAPPER -->
-</body>
-
-</html>
+    {% endblock contenido %}

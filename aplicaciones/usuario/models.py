@@ -7,6 +7,8 @@ class User(AbstractUser):
     fecha_nacimiento=models.DateField('Fecha de nacimiento',null=True, blank=True)
     telefono=models.BigIntegerField('Telefono', null=True, blank=True)
     acerca_de_mi=models.CharField('Acerca de mi', max_length=1000, default='.....')
+    # def __str__(self):
+    #     return self.get_full_name()
     class Meta:
         db_table = 'auth_user' 
 # Create your models here.

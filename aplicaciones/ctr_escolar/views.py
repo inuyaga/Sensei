@@ -1757,7 +1757,9 @@ Nuevas vistas para la nueva version de sensei
 """
 
 
-class AdminIndex(TemplateView):
+class AdminIndex(LoginRequiredMixin, TemplateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
     template_name = "dasboard/base.html"
 
 

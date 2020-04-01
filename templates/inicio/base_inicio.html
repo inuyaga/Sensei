@@ -22,7 +22,8 @@
   </head>
   <body>
     
-    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    {% block navegacion %}
+    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light awake" id="ftco-navbar">
       <div class="container">
         <a class="navbar-brand" href="index.html">Sensei</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,11 +32,11 @@
 
         <div class="collapse navbar-collapse" id="ftco-nav">
           <ul class="navbar-nav ml-auto">
-            <li class="nav-item active"><a href="#" class="nav-link">Inicio</a></li>
+            <li class="nav-item active"><a href="{% url 'web:index' %}" class="nav-link">Inicio</a></li>
             <li class="nav-item"><a href="#" class="nav-link">Acerca de</a></li>
             <li class="nav-item"><a href="#" class="nav-link">Documentación</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">Registro</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">Login</a></li>
+            <li class="nav-item"><a href="{% url 'web:registro' %}" class="nav-link">Registro</a></li>
+            <li class="nav-item"><a href="{% url 'web:login' %}" class="nav-link">Login</a></li>
             <li class="nav-item"><a href="{% url 'ctr:dasboard' %}" class="nav-link">Dasboard</a></li>
             <!-- <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="room.html" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Portfolio</a>
@@ -49,6 +50,14 @@
       </div>
     </nav>
     <!-- END nav -->
+    {% endblock navegacion %}
+
+
+    
+    {% block contenido %}
+      
+    
+      
     
     <section class="home-slider ftco-degree-bg">
       <div class="slider-item">
@@ -374,6 +383,8 @@
         </div>
       </div>
     </section>
+
+    {% endblock contenido %}
 
     <footer class="ftco-footer ftco-bg-dark ftco-section">
       <div class="container">

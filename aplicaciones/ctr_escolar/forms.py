@@ -15,11 +15,12 @@ class AulaForm(forms.ModelForm):
 class MateriaForm(forms.ModelForm):
     class Meta:
         model = Materia
-        exclude = ['materia_registro_alumnnos']
+        fields = '__all__'
         widgets = {
         'materia_archivos': forms.CheckboxSelectMultiple(attrs={'type': 'checkbox'}),
         }
     materia_archivos = AutoCompleteSelectMultipleField('documentos_tags',required=False, help_text='Escriba el nombre del documento a agregar, y seleccione.')
+    materia_registro_alumnnos = AutoCompleteSelectMultipleField('user_register_materia',label='Alumnos registrados', required=False, help_text='Escriba el nombre de usuario del alumno.')
     
     def __init__(self, *args, **kwargs):
         id_user = kwargs.pop('user')
@@ -33,11 +34,12 @@ class MateriaForm(forms.ModelForm):
 class MateriaFormEdit(forms.ModelForm):
     class Meta:
         model = Materia
-        exclude = ['materia_registro_alumnnos']
+        fields = '__all__'
         widgets = {
         'materia_archivos': forms.CheckboxSelectMultiple(attrs={'type': 'checkbox'}),
         }
     materia_archivos = AutoCompleteSelectMultipleField('documentos_tags',required=False, help_text='Escriba el nombre del documento a agregar, y seleccione.')
+    materia_registro_alumnnos = AutoCompleteSelectMultipleField('user_register_materia',label='Alumnos registrados',required=False, help_text='Escriba el nombre de usuario del alumno.')
 
     def __init__(self, *args, **kwargs):
         id_user = kwargs.pop('user')

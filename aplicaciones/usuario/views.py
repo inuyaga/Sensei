@@ -16,11 +16,9 @@ class CreateUser(CreateView):
     model = UserAdmin
     form_class = UserForm
     template_name = 'registrar.html'
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('web:login')
     def form_valid(self, form):
         instancia = form.save(commit=False)
-        print(form.data['tipo_de_usuario'])
-        # print(instancia.is_alumnow)
         if form.data['tipo_de_usuario'] == '1':
             instancia.is_maestro=True
             instancia.is_staff=True
