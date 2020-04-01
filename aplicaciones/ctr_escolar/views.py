@@ -3,10 +3,8 @@ from django.views.generic import TemplateView, CreateView, UpdateView, DeleteVie
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from aplicaciones.ctr_escolar.models import Aula, Materia, Documento, Unidad, Tarea, Blog, \
-TareaDocumento, CalificacionUnidad, CalificacionMateria, ComentarioBlog
-from aplicaciones.ctr_escolar.forms import AulaForm, MateriaForm,MateriaFormEdit, DocumentoCreateForm, UnidadForm, \
-TareaForm, TareaFormEdit, BlogFrom, TareaDocumentoFrom, TareaEntregadaEdit, ComentarioBlogForm
+from aplicaciones.ctr_escolar.models import *
+from aplicaciones.ctr_escolar.forms import *
 from aplicaciones.ctr_escolar.eliminaciones import get_deleted_objects
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
@@ -2194,3 +2192,35 @@ class BlogDeleteView(LoginRequiredMixin, DeleteView):
         context['model_count']=dict(model_count).items()
         context['protected']=protected
         return context
+
+
+
+class ExamenListView(ListView):
+    model = Examen
+    template_name = "dasboard/maestro/ExamenList.html"
+    
+class ExamenCreateView(CreateView):
+    model = Examen
+    template_name = "FormCreate.html"
+    form_class = ExamenForm
+    success_url = reverse_lazy('ctr:examen_listar')
+
+class ExamenUpdateView(UpdateView):
+    model = Examen
+    template_name = "FormCreate.html"
+    form_class = ExamenForm
+    success_url = reverse_lazy('ctr:examen_listar')
+
+class ExamenDeleteView(DeleteView):
+    model = Examen
+    template_name = 'DeleteForm.html'
+    success_url = reverse_lazy('ctr:examen_listar')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+    

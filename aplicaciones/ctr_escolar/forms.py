@@ -1,6 +1,6 @@
 from django import forms
 from aplicaciones.ctr_escolar.models import Aula, Materia, Documento, Unidad, Tarea, Blog, \
-TareaDocumento, ComentarioBlog
+TareaDocumento, ComentarioBlog, Examen
 from django.forms.widgets import CheckboxSelectMultiple
 from ajax_select.fields import AutoCompleteSelectMultipleField
 class AulaForm(forms.ModelForm):
@@ -159,6 +159,24 @@ class ComentarioBlogForm(forms.ModelForm):
         exclude = ['comentario_blog','comentario_comentado_by']
     def __init__(self, *args, **kwargs):
         super(ComentarioBlogForm, self).__init__(*args, **kwargs)
+        # self.fields['materia_aula'].queryset=Aula.objects.filter(aula_pertenece=id_user)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+
+class ExamenForm(forms.ModelForm):
+    # ex_hora_init = forms.TimeField(label="Hora inicial", help_text="Formato de 24hrs H:M:S.")
+    # ex_hora_end = forms.TimeField(label="Hora Final", help_text="Formato de 24hrs H:M:S.")
+    class Meta:
+        model = Examen
+        fields = ('__all__')
+        widgets = {
+        'ex_hora_init': forms.TimeInput(attrs={'type': 'time', 'step':'1'}),
+        'ex_hora_end' : forms.TimeInput(attrs={'type': 'time', 'step':'1'}),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super(ExamenForm, self).__init__(*args, **kwargs)
         # self.fields['materia_aula'].queryset=Aula.objects.filter(aula_pertenece=id_user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})

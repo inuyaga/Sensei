@@ -135,6 +135,17 @@ class CalificacionMateria(models.Model):
 
 
 
+class Examen(models.Model):
+    ex_nombre = models.CharField('Nombre', max_length=150)
+    ex_creado = models.DateTimeField(auto_now_add=True)
+    ex_hora_init = models.TimeField("Hora de inicio")
+    ex_hora_end = models.TimeField("Hora de finalización")
+    ex_status = models.BooleanField('Status', help_text='Activar o desactivar, para poder aplicar examen debe activar.')
+
+    def __str__(self):
+        return self.ex_nombre
+
+
 """
 MODELOS PARA LAS VISTAS DE ALUMNOS
 ############################################################################################################

@@ -105,6 +105,11 @@ urlpatterns = [
     path('Blog/crear/', view_ctr.BlogCreateView.as_view(), name='blog_crear'),    
     path('Blog/leer/<int:pk>/', view_ctr.BlogLerrView.as_view(), name='blog_leer'),    
     path('Blog/update/<int:pk>/', view_ctr.BlogEditarView.as_view(), name='blog_update'),    
-    path('Blog/delete/<int:pk>/', view_ctr.BlogDeleteView.as_view(), name='blog_delete'),     
+    path('Blog/delete/<int:pk>/', view_ctr.BlogDeleteView.as_view(), name='blog_delete'),    
+
+    path('Examen/list/', view_ctr.ExamenListView.as_view(), name='examen_listar'),     
+    path('Examen/crear/', view_ctr.ExamenCreateView.as_view(), name='examen_crear'),     
+    path('Examen/update/<int:pk>/', view_ctr.ExamenUpdateView.as_view(), name='examen_update'),     
+    path('Examen/delete/<int:pk>/', view_ctr.ExamenDeleteView.as_view(), name='examen_delete'),     
 
 ]

@@ -224,6 +224,35 @@
         </li>
 
 
+        <li class="sidebar-nav-item">
+          <a class="sidebar-nav-link collapsed" data-toggle="collapse" href="#examen" aria-expanded="false"
+            aria-controls="examen">
+            <span class="sidebar-nav-icon">
+              <span class="oi oi-bookmark"></span>
+            </span>
+            <span class="sidebar-nav-name">
+              Examen
+            </span>
+            <span class="sidebar-nav-end">
+              <i data-feather="chevron-right" class="nav-collapse-icon"></i>
+            </span>
+          </a>
+
+          <ul class="sidebar-sub-nav collapse" id="examen">
+            <li class="sidebar-nav-item">
+              <a href="{% url 'ctr:examen_listar' %}" class="sidebar-nav-link">
+                <span class="sidebar-nav-abbr">
+                  List
+                </span>
+                <span class="sidebar-nav-name">
+                  Ver
+                </span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+
 
       </ul>
     </div><!-- Sidebar End -->

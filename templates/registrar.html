@@ -2,13 +2,25 @@
 {% load static %}
 
 
+{% block style %}
+    <style>
+        .ftco-navbar-light{
+        background-color: #343A40 !important;
+    }
+    </style>
+{% endblock style %}
+    
+
+
 {% block contenido %}
     
 <style>
+    
     .errorlist{
         color: red;
         font-size: 20px;
     }
+    .mce-notification-inner {display: none! Important;}
 </style>
 
     
@@ -27,6 +39,9 @@
     <br>
     <br>
     <br>
+    <br>
+    <br>
+    <input type="checkbox" name="" id="">
     <div id="wrapper">
         <div class="container">
             <div class="row">
@@ -78,7 +93,7 @@
                             </div>
                         </div>
 
-
+<br>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </form>
 
@@ -87,4 +102,9 @@
             </div>
         </div>
     </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
     {% endblock contenido %}
