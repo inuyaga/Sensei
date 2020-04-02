@@ -1,0 +1,153 @@
+{% extends 'dasboard/base.html' %}
+{% block titulo %}
+<title>Sensei | Examenes</title>
+{% endblock titulo %}
+
+{% block navegacion_links %}
+
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb adminx-page-breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="">Materia</a></li>
+        <li class="breadcrumb-item"><a href="">Unidad</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Examen</li>
+        <li class="breadcrumb-item active" aria-current="page">Reactivos</li>
+    </ol>
+</nav>
+<div class="pb-3">
+    <h1>Examenes</h1>
+</div>
+{% endblock navegacion_links %}
+
+
+{% block contenido %}
+
+<div id="app">
+
+
+    <div class="d-flex flex-row-reverse bd-highlight">
+        <div class="btn-group pb-2" role="group" aria-label="Basic example">
+            <a class="btn btn-primary" href="{% url 'ctr:reactivo_create' view.kwargs.id_examen %}"
+                role="button">Añadir</a>
+        </div>
+    </div>
+    <br>
+
+
+
+
+    <div class="row">
+        <div class="col-sm-6">
+            {{form.rec_nombre.label}}
+            {{form.rec_nombre}}
+        </div>
+        <div class="col-sm-6">
+            {{form.rec_tipo.label}}
+            {{form.rec_tipo}}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-7">
+            <h2>[[titulo]]</h2>
+        </div>
+        <div class="col-sm-7">
+            <div v-html="tipo_widget"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card mb-grid">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-header-title">Contenido [[message]]</div>
+                </div>
+                <div class="table-responsive-md">
+                    <table class="table table-actions table-striped table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    <label class="custom-control custom-checkbox m-0 p-0">
+                                        <input type="checkbox" class="custom-control-input table-select-all">
+                                        <span class="custom-control-indicator"></span>
+                                    </label>
+                                </th>
+                                <th scope="col">Pregunta</th>
+                                <th scope="col">Tipo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in object_list %}
+                            <tr>
+                                <th scope="row">
+                                    <label class="custom-control custom-checkbox m-0 p-0">
+                                        <input type="checkbox" class="custom-control-input table-select-row">
+                                        <span class="custom-control-indicator"></span>
+                                    </label>
+                                </th>
+                                <td>{{item.rec_nombre}}</td>
+                                <td>{{item.rec_tipo|safe}}</td>
+
+
+                                <td>
+                                    <a href="" class="btn btn-sm btn-labeled btn-info">
+                                        <span class="btn-label">
+                                            <span class="oi oi-menu" aria-hidden="true"></span>
+                                        </span>
+                                        <span class="btn-text">
+                                            Reactivos
+                                        </span>
+                                    </a>
+
+                                    <a href="" class="btn btn-sm btn-labeled btn-primary">
+                                        <span class="btn-label">
+                                            <span class="oi oi-pencil" aria-hidden="true"></span>
+                                        </span>
+                                        <span class="btn-text">
+                                            Editar
+                                        </span>
+                                    </a>
+
+                                    <a href="" class="btn btn-sm btn-labeled btn-danger">
+                                        <span class="btn-label">
+                                            <span class="oi oi-trash" aria-hidden="true"></span>
+                                        </span>
+                                        <span class="btn-text">
+                                            Eliminar
+                                        </span>
+                                    </a>
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock contenido %}
+
+{% block script %}
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!',
+            titulo: "",
+            tipo_widget: "",
+            prueba: "Edtor de texto",
+            items: [
+                { mensaje: 'Seleccion uno' },
+                { mensaje: 'Seleccion dos' }
+            ]
+        },
+        delimiters: ["[[", "]]"]
+    })
+</script>
+{% endblock script %}

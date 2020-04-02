@@ -8,14 +8,14 @@
 {% block navegacion_links %}
 
 <nav aria-label="breadcrumb" role="navigation">
-    <ol class="breadcrumb adminx-page-breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'ctr:materia_list' %}">Materias</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Unidades</li>
-    </ol>
+  <ol class="breadcrumb adminx-page-breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'ctr:materia_list' %}">Materias</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Unidades</li>
+  </ol>
 </nav>
 <div class="pb-3">
-    <h1>{{materia.materia_nombre}} Unidades</h1>
+  <h1>{{materia.materia_nombre}} Unidades</h1>
 </div>
 {% endblock navegacion_links %}
 
@@ -23,80 +23,95 @@
 {% block contenido %}
 
 <div class="d-flex flex-row-reverse bd-highlight">
-    <div class="btn-group pb-2" role="group" aria-label="Basic example">
-      <a class="btn btn-primary" href="{% url 'ctr:materia_unidad_create' view.kwargs.id_materia %}" role="button">Añadir</a>
-    </div>
+  <div class="btn-group pb-2" role="group" aria-label="Basic example">
+    <a class="btn btn-primary" href="{% url 'ctr:materia_unidad_create' view.kwargs.id_materia %}"
+      role="button">Añadir</a>
+  </div>
 </div>
 <br>
 
 
 <div class="row">
-    <div class="col">
-      <div class="card mb-grid">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <div class="card-header-title">Contenido</div>
-        </div>
-        <div class="table-responsive-md">
-          <table class="table table-actions table-striped table-hover mb-0">
-            <thead>
-              <tr>
-                <th scope="col">
-                  <label class="custom-control custom-checkbox m-0 p-0">
-                    <input type="checkbox" class="custom-control-input table-select-all">
-                    <span class="custom-control-indicator"></span>
-                  </label>
-                </th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
+  <div class="col">
+    <div class="card mb-grid">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="card-header-title">Contenido</div>
+      </div>
+      <div class="table-responsive-md">
+        <table class="table table-actions table-striped table-hover mb-0">
+          <thead>
+            <tr>
+              <th scope="col">
+                <label class="custom-control custom-checkbox m-0 p-0">
+                  <input type="checkbox" class="custom-control-input table-select-all">
+                  <span class="custom-control-indicator"></span>
+                </label>
+              </th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
 
-                
-                {% for item in object_list %}
-                    
-                <tr>
-                  <th scope="row">
-                    <label class="custom-control custom-checkbox m-0 p-0">
-                      <input type="checkbox" class="custom-control-input table-select-row">
-                      <span class="custom-control-indicator"></span>
-                    </label>
-                  </th>
-                  <td>{{item.unidad_nombre}}</td>                  
-                  <td>
-                    <a href="{% url 'ctr:materia_unidad_delete' item.unidad_id view.kwargs.id_materia %}" class="btn btn-sm btn-labeled btn-danger">
-                        <span class="btn-label">
-                          <span class="oi oi-trash" aria-hidden="true"></span>
-                        </span>
-                        <span class="btn-text">
-                          Eliminar
-                        </span>
-                      </a>
-                    <a href="{% url 'ctr:materia_unidad_update' item.unidad_id view.kwargs.id_materia %}" class="btn btn-sm btn-labeled btn-primary">
-                        <span class="btn-label">
-                          <span class="oi oi-pencil" aria-hidden="true"></span>
-                        </span>
-                        <span class="btn-text">
-                          Editar
-                        </span>
-                      </a>
-                    <a href="{% url 'ctr:unidad_tareas' view.kwargs.id_materia item.unidad_id %}" class="btn btn-sm btn-labeled btn-success">
-                        <span class="btn-label">
-                          <span class="oi oi-book" aria-hidden="true"></span>
-                        </span>
-                        <span class="btn-text">
-                          Tareas
-                        </span>
-                      </a>
-                  </td>
-                </tr>
-                {% endfor %}
-                    
-              
-            </tbody>
-          </table>
-        </div>
+
+            {% for item in object_list %}
+
+            <tr>
+              <th scope="row">
+                <label class="custom-control custom-checkbox m-0 p-0">
+                  <input type="checkbox" class="custom-control-input table-select-row">
+                  <span class="custom-control-indicator"></span>
+                </label>
+              </th>
+              <td>{{item.unidad_nombre}}</td>
+              <td>
+                <a href="{% url 'ctr:unidad_tareas' view.kwargs.id_materia item.unidad_id %}"
+                  class="btn btn-sm btn-labeled btn-success">
+                  <span class="btn-label">
+                    <span class="oi oi-book" aria-hidden="true"></span>
+                  </span>
+                  <span class="btn-text">
+                    Tareas
+                  </span>
+                </a>
+
+                <a href="{% url 'ctr:examen_listar' item.unidad_id %}" class="btn btn-sm btn-labeled btn-info">
+                  <span class="btn-label">
+                    <span class="oi oi-trash" aria-hidden="true"></span>
+                  </span>
+                  <span class="btn-text">
+                    Examen
+                  </span>
+                </a>
+
+                <a href="{% url 'ctr:materia_unidad_update' item.unidad_id view.kwargs.id_materia %}"
+                  class="btn btn-sm btn-labeled btn-secondary">
+                  <span class="btn-label">
+                    <span class="oi oi-pencil" aria-hidden="true"></span>
+                  </span>
+                  <span class="btn-text">
+                    Editar
+                  </span>
+                </a>
+                <a href="{% url 'ctr:materia_unidad_delete' item.unidad_id view.kwargs.id_materia %}"
+                  class="btn btn-sm btn-labeled btn-danger">
+                  <span class="btn-label">
+                    <span class="oi oi-trash" aria-hidden="true"></span>
+                  </span>
+                  <span class="btn-text">
+                    Eliminar
+                  </span>
+                </a>
+
+              </td>
+            </tr>
+            {% endfor %}
+
+
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
+</div>
 {% endblock contenido %}

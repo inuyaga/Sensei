@@ -1,6 +1,5 @@
 from django import forms
-from aplicaciones.ctr_escolar.models import Aula, Materia, Documento, Unidad, Tarea, Blog, \
-TareaDocumento, ComentarioBlog, Examen
+from aplicaciones.ctr_escolar.models import *
 from django.forms.widgets import CheckboxSelectMultiple
 from ajax_select.fields import AutoCompleteSelectMultipleField
 class AulaForm(forms.ModelForm):
@@ -180,6 +179,20 @@ class ExamenForm(forms.ModelForm):
         # self.fields['materia_aula'].queryset=Aula.objects.filter(aula_pertenece=id_user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+
+class ReactivoForm(forms.ModelForm):
+    class Meta:
+        model = Reactivo
+        fields = ('__all__')
+    
+    def __init__(self, *args, **kwargs):
+        super(ReactivoForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+        
+        self.fields['rec_nombre'].widget.attrs.update({'v-model': 'titulo'})
+        self.fields['rec_tipo'].widget.attrs.update({'v-model': 'tipo_widget'})
 
 
 

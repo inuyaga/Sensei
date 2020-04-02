@@ -2198,6 +2198,13 @@ class BlogDeleteView(LoginRequiredMixin, DeleteView):
 class ExamenListView(ListView):
     model = Examen
     template_name = "dasboard/maestro/ExamenList.html"
+
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['unidad'] = Unidad.objects.get(unidad_id=self.kwargs.get('id_unidad'))
+        return context
+    
     
 class ExamenCreateView(CreateView):
     model = Examen
@@ -2205,16 +2212,34 @@ class ExamenCreateView(CreateView):
     form_class = ExamenForm
     success_url = reverse_lazy('ctr:examen_listar')
 
+    def get_success_url(self):
+        url = reverse_lazy('ctr:examen_listar', kwargs={
+            'id_unidad':self.kwargs.get('id_unidad'),
+            })
+        return str(url)
+
 class ExamenUpdateView(UpdateView):
     model = Examen
     template_name = "FormCreate.html"
     form_class = ExamenForm
     success_url = reverse_lazy('ctr:examen_listar')
 
+    def get_success_url(self):
+        url = reverse_lazy('ctr:examen_listar', kwargs={
+            'id_unidad':self.kwargs.get('id_unidad'),
+            })
+        return str(url)
+
 class ExamenDeleteView(DeleteView):
     model = Examen
     template_name = 'DeleteForm.html'
     success_url = reverse_lazy('ctr:examen_listar')
+
+    def get_success_url(self):
+        url = reverse_lazy('ctr:examen_listar', kwargs={
+            'id_unidad':self.kwargs.get('id_unidad'),
+            })
+        return str(url)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -2223,4 +2248,26 @@ class ExamenDeleteView(DeleteView):
         context['model_count']=dict(model_count).items()
         context['protected']=protected
         return context
+
+
+class ReactivoListView(ListView):
+    model = Reactivo
+    template_name = 'dasboard/maestro/reactivo_list.html'
+
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form']=ReactivoForm()
+        return context
+    
+
+class ReactivoCreatetView(CreateView):
+    model = Reactivo
+    template_name = "dasboard/maestro/create_reactivo.html"
+    form_class = ReactivoForm
+    success_url = reverse_lazy('ctr:reactivo_list')
+
+    def get_success_url(self):
+        url = reverse_lazy('ctr:reactivo_list', kwargs={
+            'id_examen':self.kwargs.get('id_examen'),})
+        return str(url)

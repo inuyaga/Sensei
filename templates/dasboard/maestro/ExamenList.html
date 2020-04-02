@@ -8,6 +8,8 @@
 <nav aria-label="breadcrumb" role="navigation">
     <ol class="breadcrumb adminx-page-breadcrumb">
         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'ctr:materia_list' %}">Materia</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'ctr:materia_unidad' unidad.unidad_materia.materia_id %}">Unidad</a></li>
         <li class="breadcrumb-item active" aria-current="page">Examen</li>
     </ol>
 </nav>
@@ -20,7 +22,7 @@
 {% block contenido %} 
 <div class="d-flex flex-row-reverse bd-highlight">
     <div class="btn-group pb-2" role="group" aria-label="Basic example">
-      <a class="btn btn-primary" href="{% url 'ctr:examen_crear' %}" role="button">Añadir</a>
+      <a class="btn btn-primary" href="{% url 'ctr:examen_crear' unidad.unidad_id %}" role="button">Añadir</a>
     </div>
 </div>
 <br>
@@ -72,15 +74,16 @@
                       {% endif %}
                   </td>
                   <td>
-                    <a href="{% url 'ctr:examen_delete' item.id %}" class="btn btn-sm btn-labeled btn-danger">
-                        <span class="btn-label">
-                          <span class="oi oi-trash" aria-hidden="true"></span>
-                        </span>
-                        <span class="btn-text">
-                          Eliminar
-                        </span>
-                      </a>
-                    <a href="{% url 'ctr:examen_update' item.id %}" class="btn btn-sm btn-labeled btn-primary">
+                    <a href="{% url 'ctr:reactivo_list' item.id %}" class="btn btn-sm btn-labeled btn-info">
+                      <span class="btn-label">
+                        <span class="oi oi-menu" aria-hidden="true"></span>
+                      </span>
+                      <span class="btn-text">
+                        Reactivos
+                      </span>
+                    </a>
+                    
+                    <a href="{% url 'ctr:examen_update' item.id view.kwargs.id_unidad %}" class="btn btn-sm btn-labeled btn-primary">
                         <span class="btn-label">
                           <span class="oi oi-pencil" aria-hidden="true"></span>
                         </span>
@@ -88,14 +91,16 @@
                           Editar
                         </span>
                       </a>
-                    <a href="" class="btn btn-sm btn-labeled btn-info">
+
+                      <a href="{% url 'ctr:examen_delete' item.id view.kwargs.id_unidad %}" class="btn btn-sm btn-labeled btn-danger">
                         <span class="btn-label">
-                          <span class="oi oi-menu" aria-hidden="true"></span>
+                          <span class="oi oi-trash" aria-hidden="true"></span>
                         </span>
                         <span class="btn-text">
-                          Unidades
+                          Eliminar
                         </span>
                       </a>
+                    
                   </td>
                 </tr>
                 {% endfor %}

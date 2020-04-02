@@ -27,7 +27,7 @@ class Materia(models.Model):
     materia_id = models.AutoField(primary_key=True)
     materia_aula=models.ForeignKey(Aula, verbose_name='Aula', on_delete=models.CASCADE)
     materia_nombre = models.CharField('Nombre', max_length=150)
-    materia_archivos=models.ManyToManyField(Documento, verbose_name="Archivos", null=True, blank=True )
+    materia_archivos=models.ManyToManyField(Documento, verbose_name="Archivos")
     materia_registro_alumnnos=models.ManyToManyField(Usuario, verbose_name="Registro_materia")
     materia_creado = models.DateTimeField(auto_now_add=True)
 
@@ -141,10 +141,23 @@ class Examen(models.Model):
     ex_hora_init = models.TimeField("Hora de inicio")
     ex_hora_end = models.TimeField("Hora de finalización")
     ex_status = models.BooleanField('Status', help_text='Activar o desactivar, para poder aplicar examen debe activar.')
-
+    ex_porcentaje = models.IntegerField("Valor de examen", help_text="Numero entero sin el signo %")
+    ex_unidad=models.ForeignKey(Unidad, verbose_name='Unidad correspondiente', on_delete=models.CASCADE)
     def __str__(self):
         return self.ex_nombre
 
+
+TIPO_REACTIVO = (
+    ('<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Respuesta">', 'Respuesta corta' ),
+    ('<textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>', 'Parrafo' ),
+    ('<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1">', 'Varias opciones' ),
+    ('<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">', 'Casillas' ),
+    ("""<select class="form-control form-control-sm"><option>[[prueba]]</option></select>""", 'Desplegables' ),
+)
+class Reactivo(models.Model):
+    rec_nombre = models.CharField("Redacte su pregunta",max_length=200)
+    rec_examen = models.ForeignKey(Examen, verbose_name ="Examen", on_delete=models.CASCADE)
+    rec_tipo = models.TextField('Tipo de reactivo', choices=TIPO_REACTIVO)
 
 """
 MODELOS PARA LAS VISTAS DE ALUMNOS
