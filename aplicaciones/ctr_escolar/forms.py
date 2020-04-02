@@ -192,7 +192,7 @@ class ReactivoForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({'class': 'form-control'})
         
         self.fields['rec_nombre'].widget.attrs.update({'v-model': 'titulo'})
-        self.fields['rec_tipo'].widget.attrs.update({'v-model': 'tipo_widget'})
+        self.fields['rec_tipo'].widget.attrs.update({'@change': 'onChange($event)'})
 
 
 

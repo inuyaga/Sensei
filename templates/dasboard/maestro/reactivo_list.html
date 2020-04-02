@@ -38,22 +38,47 @@
 
 
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-3">
             {{form.rec_nombre.label}}
             {{form.rec_nombre}}
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-3">
             {{form.rec_tipo.label}}
             {{form.rec_tipo}}
         </div>
+        <div class="col-sm-3" v-if="visivilidad">
+            <label for="exampleInputEmail1">Especifique su opción</label>
+            <div class="input-group mb-3 input-group-sm">
+                <input type="text" class="form-control" placeholder="Opcion" aria-label="Recipient's username"
+                    aria-describedby="basic-addon2" v-model="v_opcion">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" v-on:click="add_items_data">Agregar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <br>
+            <button type="button" class="btn btn-success">Terminar</button>
+        </div>
     </div>
 
+
+
+
     <div class="row">
-        <div class="col-sm-7">
-            <h2>[[titulo]]</h2>
-        </div>
-        <div class="col-sm-7">
-            <div v-html="tipo_widget"></div>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="exampleFormControlInput1">
+                            <h3>[[titulo]]</h3>
+                        </label>
+                        <div v-html="tipo_widget"></div>
+                        <wigget_form :data_item="items"></wigget_form>
+                        <wigget_select :data_item="items"></wigget_select>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -61,7 +86,7 @@
         <div class="col">
             <div class="card mb-grid">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <div class="card-header-title">Contenido [[message]]</div>
+                    <div class="card-header-title">Contenido</div>
                 </div>
                 <div class="table-responsive-md">
                     <table class="table table-actions table-striped table-hover mb-0">
@@ -131,23 +156,114 @@
     </div>
 
 </div>
+
+
+
 {% endblock contenido %}
 
 {% block script %}
 <script>
+
+    Vue.component('wigget_form', {
+        data: function () {
+
+            return {
+                raiio_data: []
+            }
+        },
+        delimiters: ["[[", "]]"],
+        props: ['data_item'],
+        template: `
+        <ul>
+            <li v-for="item in data_item">
+                <div class="form-check" >
+                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" :value="item.valor">
+                    <label class="form-check-label" for="gridRadios2">[[item.text]]</label>
+                </div>
+            </li>
+        </ul>`,
+
+    })
+    Vue.component('wigget_select', {
+        data: function () {
+
+            return {
+                raiio_data: []
+            }
+        },
+        delimiters: ["[[", "]]"],
+        props: ['data_item'],
+        template: `
+                <div class="form-group">
+                    <label for="exampleFormControlSelect1">Selecciones</label>
+                    <select class="form-control" id="exampleFormControlSelect1">
+                    <option  v-for="item in data_item">[[item.text]]</option>
+                    </select>
+                </div>`,
+
+    })
+
+
     var app = new Vue({
         el: '#app',
         data: {
-            message: 'Hello Vue!',
+            visivilidad: false,
+            v_opcion: '',
             titulo: "",
             tipo_widget: "",
-            prueba: "Edtor de texto",
             items: [
-                { mensaje: 'Seleccion uno' },
-                { mensaje: 'Seleccion dos' }
             ]
+        },
+        methods: {
+            onChange(event) {
+                console.log(event.target.value)
+
+                switch (event.target.value) {
+                    case 'text':
+                        this.tipo_widget = '<input class="form-control form-control-lg" type="text" placeholder="">'
+                        this.visivilidad = false
+                        break;
+                    case 'textarea':
+                        this.tipo_widget = '<textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>'
+                        this.visivilidad = false
+                        break;
+                    case 'radio':
+                        this.tipo_widget = ''
+                        this.visivilidad = true
+                        break;
+                    case 'checkbox':
+                        this.tipo_widget = ''
+                        this.visivilidad = true
+                        break;
+                    case 'option':
+                        this.tipo_widget = ''
+                        this.visivilidad = true
+                        break;
+                    default:
+                        this.tipo_widget = ''
+                        this.visivilidad = false
+                        break;
+
+                }
+
+
+
+            },
+
+            add_items_data: function (event) {
+                if (this.v_opcion != '') {
+                    this.items.push({ valor: '', text: this.v_opcion });
+                    this.v_opcion = ''
+                }
+            }
         },
         delimiters: ["[[", "]]"]
     })
+
+
+
+
+
+
 </script>
 {% endblock script %}

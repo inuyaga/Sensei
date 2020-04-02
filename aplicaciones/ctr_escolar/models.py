@@ -148,11 +148,11 @@ class Examen(models.Model):
 
 
 TIPO_REACTIVO = (
-    ('<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Respuesta">', 'Respuesta corta' ),
-    ('<textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>', 'Parrafo' ),
-    ('<input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1">', 'Varias opciones' ),
-    ('<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">', 'Casillas' ),
-    ("""<select class="form-control form-control-sm"><option>[[prueba]]</option></select>""", 'Desplegables' ),
+    ('text', 'Respuesta corta' ),
+    ('textarea', 'Parrafo' ),
+    ('radio', 'Varias opciones' ),
+    ('checkbox', 'Casillas' ),
+    ('option', 'Desplegables' ),
 )
 class Reactivo(models.Model):
     rec_nombre = models.CharField("Redacte su pregunta",max_length=200)
