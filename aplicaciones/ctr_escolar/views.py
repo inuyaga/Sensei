@@ -30,6 +30,9 @@ DE AQUI EN ADELANTE
 #########################################################################################################
 """
 from django.http import JsonResponse
+
+from django.core import serializers
+import json
 # Create your views here.
 class index(LoginRequiredMixin, TemplateView):
     login_url = '/login/'
@@ -2259,6 +2262,30 @@ class ReactivoListView(ListView):
         context = super().get_context_data(**kwargs)
         context['form']=ReactivoForm()
         return context
+    def post(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body_data = json.loads(body_unicode)
+        status_code = 201
+        datos={}
+        
+        try:
+            reactivo = Reactivo(
+            rec_nombre=body_data['question_text'],
+            rec_examen_id=kwargs.get('id_examen'),
+            rec_tipo=body_data['tipo_iput'],
+            )
+            reactivo.save()
+            status_code = 201
+            datos['preguntas'] = list(Reactivo.objects.values('rec_nombre','rec_examen','rec_tipo',))
+            datos['TIPO_REACTIVO'] = json.dumps(dict(TIPO_REACTIVO))
+        except IntegrityError as error:
+            status_code = 400
+            datos['IntegrityError'] = 'Debe completar el fomulario'
+
+
+        
+
+        return JsonResponse(status=status_code, data=datos)
     
 
 class ReactivoCreatetView(CreateView):

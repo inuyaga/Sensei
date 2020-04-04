@@ -10,14 +10,14 @@ Vue.component('wigget_form', {
     correcto: '',
     template: `
     <ul>
-        <li v-for="(item, index) in data_item">
+        <div v-for="(item, index) in data_item">
             <div class="form-check" >
-                <input class="form-check-input" v-model="index" type="radio" name="gridRadios" :id="index" :value="index">
-                <label class="form-check-label" :for="index">[[item.text]]</label>
-                <button type="button" class="btn btn-link btn-sm" v-on:click="delete_item(index)"><span class="oi oi-trash"></span></button>
+                <input style="display: inline-block;" class="form-check-input" v-model="index" type="radio" name="gridRadios" :id="index" :value="index">
+                <label style="display: inline-block;" class="form-check-label" :for="index">[[item.text]]</label>
+                <button style="display: inline-block;" type="button" class="btn btn-link btn-sm" v-on:click="delete_item(index)"><span class="oi oi-trash"></span></button>
                 
             </div>
-        </li>
+        </div>
     </ul>`,
     methods:{
         delete_item:function (index) {
@@ -68,17 +68,20 @@ var app = new Vue({
     data: {
         visivilidad: false,
         v_opcion: '',
-        titulo: "",
-        tipo_widget: "",
+        question_text: null,
+        tipo_widget: null,
+        tipo_iput: null,
         visible_radio: false,
         visible_select: false,
         visible_check: false,
+        preguntas:[],
+        tipo_reactivo:[],
         items: [
         ]
     },
     methods: {
         onChange(event) {
-            console.log(event.target.value)
+            this.tipo_iput = event.target.value
 
             switch (event.target.value) {
                 case 'text':
@@ -128,8 +131,26 @@ var app = new Vue({
         add_items_data: function (event) {
             if (this.v_opcion != '') {
                 this.items.push({ text: this.v_opcion });
-                this.v_opcion = ''
+                this.v_opcion = null
             }
+        },
+
+        post_item:function (){
+            axios.defaults.xsrfCookieName = 'csrftoken'
+            axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+            axios.post('', {
+                tipo_iput: this.tipo_iput,
+                items: this.items,
+                question_text: this.question_text,
+              })
+              .then(function (response) {
+                app.preguntas=response.data.preguntas
+              })
+              .catch(function (error) {
+                // preg = error.response.data.preguntas
+                // this.preguntas.push(preg);
+                // swal("Mal!", error.response.data.IntegrityError, "success");
+              });
         }
     },
     delimiters: ["[[", "]]"]

@@ -59,7 +59,7 @@
         </div>
         <div class="col-sm-3">
             <br>
-            <button type="button" class="btn btn-success">Terminar</button>
+            <button type="button" class="btn btn-success" v-on:click="post_item()">Terminar</button>
         </div>
     </div>
 
@@ -72,7 +72,7 @@
                 <div class="card-body">
                     <div class="form-group">
                         <label for="exampleFormControlInput1">
-                            <h3>[[titulo]]</h3>
+                            <h3>[[question_text]]</h3>
                         </label>
                         <div v-html="tipo_widget"></div>
                         <wigget_form :data_item="items" v-if="visible_radio"></wigget_form>
@@ -84,6 +84,9 @@
         </div>
     </div>
 
+    <ul>
+        <li v-for="value in preguntas">[[value]]</li>
+    </ul>
     <div class="row">
         <div class="col">
             <div class="card mb-grid">
@@ -102,9 +105,21 @@
                                 </th>
                                 <th scope="col">Pregunta</th>
                                 <th scope="col">Tipo</th>
+                                <th scope="col">Accion</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <tr v-for="value in preguntas">
+                                <th scope="row">
+                                    <label class="custom-control custom-checkbox m-0 p-0">
+                                        <input type="checkbox" class="custom-control-input table-select-row">
+                                        <span class="custom-control-indicator"></span>
+                                    </label>
+                                </th>
+                                <td>[[value.rec_nombre]]</td>
+                                <td>[[value.rec_tipo]]</td>
+                                <td>[[value.rec_tipo]]</td>
+                            </tr>
                             {% for item in object_list %}
                             <tr>
                                 <th scope="row">
@@ -159,10 +174,10 @@
 
 </div>
 
-
-
 {% endblock contenido %}
 
 {% block script %}
-<script src="{% static 'vue/reactivo_vue.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+<script src="{% static 'vue/reactivo_vue.js' %}"></script> 
 {% endblock script %}
