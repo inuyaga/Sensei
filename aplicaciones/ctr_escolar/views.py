@@ -2271,3 +2271,24 @@ class ReactivoCreatetView(CreateView):
         url = reverse_lazy('ctr:reactivo_list', kwargs={
             'id_examen':self.kwargs.get('id_examen'),})
         return str(url)
+
+
+
+class ReactivoDeleteView(DeleteView):
+    model = Reactivo
+    template_name = 'DeleteForm.html'
+    success_url = reverse_lazy('ctr:reactivo_list')
+
+    def get_success_url(self):
+        url = reverse_lazy('ctr:reactivo_list', kwargs={
+            'id_examen':self.kwargs.get('id_examen'),
+            })
+        return str(url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context

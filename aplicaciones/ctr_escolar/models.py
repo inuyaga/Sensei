@@ -159,12 +159,17 @@ class Reactivo(models.Model):
     rec_examen = models.ForeignKey(Examen, verbose_name ="Examen", on_delete=models.CASCADE)
     rec_tipo = models.TextField('Tipo de reactivo', choices=TIPO_REACTIVO)
 
-"""
-MODELOS PARA LAS VISTAS DE ALUMNOS
-############################################################################################################
-############################################################################################################
-############################################################################################################
-"""
+    def __str__(self):
+        return self.rec_nombre
+
+
+class EleccionReactivo(models.Model):
+    el_value = models.TextField(verbose_name="Valor eleccion")
+    el_reactivo = models.ForeignKey(Reactivo, verbose_name='Reactivo', on_delete=models.CASCADE)
+    el_verdadero = models.BooleanField(verbose_name="respuesta correcta")
+    
+
+
 
 
 

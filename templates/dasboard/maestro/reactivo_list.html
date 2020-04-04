@@ -118,25 +118,25 @@
 
 
                                 <td>
-                                    <a href="" class="btn btn-sm btn-labeled btn-info">
+                                    <!-- <a href="" class="btn btn-sm btn-labeled btn-info">
                                         <span class="btn-label">
                                             <span class="oi oi-menu" aria-hidden="true"></span>
                                         </span>
                                         <span class="btn-text">
                                             Reactivos
                                         </span>
-                                    </a>
+                                    </a> -->
 
-                                    <a href="" class="btn btn-sm btn-labeled btn-primary">
+                                    <!-- <a href="" class="btn btn-sm btn-labeled btn-primary">
                                         <span class="btn-label">
                                             <span class="oi oi-pencil" aria-hidden="true"></span>
                                         </span>
                                         <span class="btn-text">
                                             Editar
                                         </span>
-                                    </a>
+                                    </a> -->
 
-                                    <a href="" class="btn btn-sm btn-labeled btn-danger">
+                                    <a href="{% url 'ctr:reactivo_delete' item.id view.kwargs.id_examen %}" class="btn btn-sm btn-labeled btn-danger">
                                         <span class="btn-label">
                                             <span class="oi oi-trash" aria-hidden="true"></span>
                                         </span>
