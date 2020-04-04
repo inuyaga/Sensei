@@ -1,6 +1,8 @@
 {% extends 'admin/base_sensei.html'%}
 {% block contenido %}
 
+
+
 <div class="row">
     <div class="col-md-3">
         <label for="materia">Materia</label>
@@ -42,18 +44,25 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Tarea</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
+
             </div>
             <div class="modal-body">
                 <form action="" method="post" enctype="multipart/form-data" id="forms_tarea">
                     {% csrf_token %}
                     {{ form.as_p }}
             </div>
+            <div class="progress">
+                <div id="progress_relative" class="progress-bar bg-success" role="progressbar" style="width: 0%"
+                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
             <div class="modal-footer">
-                <button type="button" id="btn_modal_close" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+
+                <button type="button" id="btn_modal_close" class="btn btn-secondary"
+                    data-dismiss="modal">Cerrar</button>
                 <button type="submit" id="btn_form" class="btn btn-primary">Guardar</button>
                 </form>
             </div>
@@ -92,7 +101,7 @@
             error: function (data) {
                 console.log('An error occurred.');
 
-                console.log(data); 
+                console.log(data);
             },
         });
     });
@@ -124,7 +133,7 @@
 
     frm.submit(function (e) {
 
-        // $("#btn_form").attr("disabled", true);
+        $("#btn_form").attr("disabled", true);
         e.preventDefault();
         var formData = new FormData(this);
 
@@ -135,10 +144,44 @@
             cache: false,
             contentType: false,
             processData: false,
+            xhr: function () {
+                var jqXHR = null;
+                if (window.ActiveXObject) {
+                    jqXHR = new window.ActiveXObject("Microsoft.XMLHTTP");
+                }
+                else {
+                    jqXHR = new window.XMLHttpRequest();
+                }
+                //Upload progress
+                jqXHR.upload.addEventListener("progress", function (evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = Math.round((evt.loaded * 100) / evt.total);
+                        //Do something with upload progress
+                        console.log('Uploaded percent', percentComplete);
+                        $("#progress_relative").attr("style","width: "+percentComplete+"%");
+                        $("#progress_relative").attr("aria-valuenow",percentComplete);
+                        $("#progress_relative").html(percentComplete+"%");
+                    }
+                }, false);
+                //Download progress
+                jqXHR.addEventListener("progress", function (evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = Math.round((evt.loaded * 100) / evt.total);
+                        //Do something with download progress
+                        console.log('Downloaded percent', percentComplete);
+                        $("#progress_relative").attr("style","width: "+percentComplete+"%");
+                        $("#progress_relative").attr("aria-valuenow",percentComplete);
+                        $("#progress_relative").html(percentComplete+"%");
+                    }
+                }, false);
+
+                return jqXHR;
+            },
             success: function (data) {
-                var message = data.content.cont 
+                var message = data.content.cont
                 var tipo = data.content.tipo
                 if (tipo) {
+                    $("#btn_form").attr("disabled", false);
                     alertify.success(message);
                     $.post("{% url 'control_escolar:alumno_tarea_scrip' %}", {
                         csrfmiddlewaretoken: '{{ csrf_token }}',
@@ -151,6 +194,7 @@
                             $('#btn_modal_close').click();
                         });
                 } else {
+                    $("#btn_form").attr("disabled", false);
                     alertify.error(message);
                 }
 
@@ -160,6 +204,7 @@
                 console.log('An error occurred.');
                 console.log(data);
                 alertify.error(data.responseText);
+                $("#btn_form").attr("disabled", false);
             },
         });
     });

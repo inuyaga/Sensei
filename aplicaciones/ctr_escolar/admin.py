@@ -18,12 +18,31 @@ class BlogConfig(admin.ModelAdmin):
         'blog_titulo',
         'blog_descripcion',
         'blog_pertenece',
-        'blog_materia',
     )
     raw_id_fields = ['blog_pertenece', 'blog_materia']
     search_fields = (
-        'blog_pertenece',
+        'blog_pertenece', 
         'blog_materia',
+        )
+class TareaConfig(admin.ModelAdmin):
+    list_display = (
+        'tarea_nombre',
+        'tarea_descripcion',
+        'tarea_fecha_inicio',
+        'tarea_fecha_termino',
+        'tarea_tipo',
+        'tarea_porcentaje',
+        'tarea_unidad',
+    )
+    list_filter = (
+        'tarea_fecha_inicio',
+        'tarea_fecha_termino',
+        'tarea_tipo',
+        'tarea_unidad',
+    )
+    search_fields = (
+        'tarea_nombre', 
+        'tarea_unidad',
         )
 
 class TareaDocumentoConfig(admin.ModelAdmin):
@@ -49,5 +68,5 @@ admin.site.register(CalificacionUnidad)
 admin.site.register(ComentarioBlog)
 admin.site.register(Documento)
 admin.site.register(Materia)
-admin.site.register(Tarea) 
+admin.site.register(Tarea, TareaConfig) 
 admin.site.register(TareaDocumento, TareaDocumentoConfig) 
