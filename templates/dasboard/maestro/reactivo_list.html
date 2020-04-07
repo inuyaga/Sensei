@@ -9,15 +9,15 @@
 <nav aria-label="breadcrumb" role="navigation">
     <ol class="breadcrumb adminx-page-breadcrumb">
         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="">Materia</a></li>
-        <li class="breadcrumb-item"><a href="">Unidad</a>
+        <li class="breadcrumb-item"><a href="{% url 'ctr:materia_list' %}">Materia</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'ctr:materia_unidad' obj_examen.ex_unidad.unidad_materia.materia_id  %}">Unidad</a>
+        <li class="breadcrumb-item"><a href="{% url 'ctr:examen_listar' obj_examen.ex_unidad.unidad_id %}">Examen</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page">Examen</li>
         <li class="breadcrumb-item active" aria-current="page">Reactivos</li>
     </ol>
 </nav>
 <div class="pb-3">
-    <h1>Examenes</h1>
+    <h1>Reactivos</h1>
 </div>
 {% endblock navegacion_links %}
 
@@ -74,19 +74,16 @@
                         <label for="exampleFormControlInput1">
                             <h3>[[question_text]]</h3>
                         </label>
-                        <div v-html="tipo_widget"></div>
                         <wigget_form :data_item="items" v-if="visible_radio"></wigget_form>
-                        <wigget_select :data_item="items" v-if="visible_select"></wigget_select>
-                        <wigget_check :data_item="items" v-if="visible_check"></wigget_check>
+                        <input_text_widget  @return_text_valor="value_text_verdadero = $event" v-if="visible_text"></input_text_widget>
+                        <input_textarea_widget @return_text_valor="value_textarea_verdadero = $event" v-if="visible_textarea"></input_textarea_widget>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <ul>
-        <li v-for="value in preguntas">[[value]]</li>
-    </ul>
+    
     <div class="row">
         <div class="col">
             <div class="card mb-grid">
@@ -109,17 +106,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="value in preguntas">
-                                <th scope="row">
-                                    <label class="custom-control custom-checkbox m-0 p-0">
-                                        <input type="checkbox" class="custom-control-input table-select-row">
-                                        <span class="custom-control-indicator"></span>
-                                    </label>
-                                </th>
-                                <td>[[value.rec_nombre]]</td>
-                                <td>[[value.rec_tipo]]</td>
-                                <td>[[value.rec_tipo]]</td>
-                            </tr>
                             {% for item in object_list %}
                             <tr>
                                 <th scope="row">
@@ -129,7 +115,7 @@
                                     </label>
                                 </th>
                                 <td>{{item.rec_nombre}}</td>
-                                <td>{{item.rec_tipo|safe}}</td>
+                                <td>{{item.get_rec_tipo_display}}</td>
 
 
                                 <td>
@@ -142,14 +128,14 @@
                                         </span>
                                     </a> -->
 
-                                    <!-- <a href="" class="btn btn-sm btn-labeled btn-primary">
+                                    <a href="{% url 'ctr:eleccion_list' item.id %}" class="btn btn-sm btn-labeled btn-primary">
                                         <span class="btn-label">
                                             <span class="oi oi-pencil" aria-hidden="true"></span>
                                         </span>
                                         <span class="btn-text">
-                                            Editar
+                                            Marcar Respuesta
                                         </span>
-                                    </a> -->
+                                    </a>
 
                                     <a href="{% url 'ctr:reactivo_delete' item.id view.kwargs.id_examen %}" class="btn btn-sm btn-labeled btn-danger">
                                         <span class="btn-label">
@@ -174,10 +160,17 @@
 
 </div>
 
+
+    
+
+    
+
+
 {% endblock contenido %}
 
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+<script src="{% static 'vue/componentes.js' %}"></script> 
 <script src="{% static 'vue/reactivo_vue.js' %}"></script> 
 {% endblock script %}

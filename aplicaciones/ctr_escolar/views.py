@@ -2261,6 +2261,7 @@ class ReactivoListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form']=ReactivoForm()
+        context['obj_examen']=Examen.objects.get(id=self.kwargs.get('id_examen'))
         return context
     def post(self, request, *args, **kwargs):
         body_unicode = request.body.decode('utf-8')
@@ -2275,17 +2276,40 @@ class ReactivoListView(ListView):
             rec_tipo=body_data['tipo_iput'],
             )
             reactivo.save()
+            if body_data['tipo_iput'] == 'radio':
+                for item in body_data['items']:
+                    EleccionReactivo(el_value=item['text'], el_reactivo=reactivo, el_verdadero=False).save()
+            else:
+                EleccionReactivo(el_value=body_data['el_value'], el_reactivo=reactivo, el_verdadero=True).save()
+            
+            
             status_code = 201
             datos['preguntas'] = list(Reactivo.objects.values('rec_nombre','rec_examen','rec_tipo',))
-            datos['TIPO_REACTIVO'] = json.dumps(dict(TIPO_REACTIVO))
         except IntegrityError as error:
             status_code = 400
             datos['IntegrityError'] = 'Debe completar el fomulario'
-
-
-        
-
         return JsonResponse(status=status_code, data=datos)
+
+
+
+class ItemReactivoListView(ListView):
+    model=EleccionReactivo
+    template_name = "dasboard/maestro/respuestaitem.html"
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(el_reactivo = self.kwargs.get('id_reactivo'))
+        return queryset
+    
+    def post(self, request, *args, **kwargs):
+        print(request.POST.get('res_correcta'))
+        ide = EleccionReactivo.objects.get(id=request.POST.get('res_correcta'))
+        EleccionReactivo.objects.filter(el_reactivo=ide.el_reactivo).update(el_verdadero=False)
+        EleccionReactivo.objects.filter(id=request.POST.get('res_correcta')).update(el_verdadero=True)
+
+        reacti = Reactivo.objects.get(id=self.kwargs.get('id_reactivo'))
+        id_examen = reacti.rec_examen.id
+        url = reverse_lazy('ctr:reactivo_list', kwargs={'id_examen':id_examen})
+        return redirect(url)
     
 
 class ReactivoCreatetView(CreateView):

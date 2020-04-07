@@ -151,8 +151,6 @@ TIPO_REACTIVO = (
     ('text', 'Respuesta corta' ),
     ('textarea', 'Parrafo' ),
     ('radio', 'Varias opciones' ),
-    ('checkbox', 'Casillas' ),
-    ('option', 'Desplegables' ),
 )
 class Reactivo(models.Model):
     rec_nombre = models.CharField("Redacte su pregunta",max_length=200)
