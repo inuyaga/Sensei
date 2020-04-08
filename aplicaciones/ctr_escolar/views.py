@@ -2055,6 +2055,22 @@ class TareaCreateView(LoginRequiredMixin, CreateView):
     
     def form_valid(self, form):
         form.instance.tarea_unidad_id = self.kwargs.get('id_unidad')
+
+        get_sum_porcentaje_tarea=Tarea.objects.filter(tarea_unidad=form.instance.tarea_unidad.unidad_id).aggregate(total_porcentaje=Sum('tarea_porcentaje'))
+        get_sum_porcentaje_tarea=0 if get_sum_porcentaje_tarea['total_porcentaje'] == None else get_sum_porcentaje_tarea['total_porcentaje']
+        porcentaje_input_form=form.instance.tarea_porcentaje
+        total = get_sum_porcentaje_tarea + porcentaje_input_form
+        if total <= 100:            
+            tipo_set=form.instance.tarea_tipo
+            if tipo_set == 'PARA CALIFICAR':
+                unida=Unidad.objects.get(unidad_id=form.instance.tarea_unidad.unidad_id)
+                idmateria=unida.unidad_materia.materia_id
+                materia=Materia.objects.get(materia_id=idmateria)
+                tarea = form.save(commit=False)
+                tarea.save()
+                for id_user in materia.materia_registro_alumnnos.all():
+                    doc=TareaDocumento(tareaDocumento_archivo='s/n',tareaDocumento_comentario_alumno='s/n' ,tareaDocumento_pertenece=id_user ,tareaDocumento_Tarea=tarea)
+                    doc.save()
         return super().form_valid(form)
 
     # def get_queryset(self):
@@ -2106,6 +2122,30 @@ class TareaUpdateView(LoginRequiredMixin, UpdateView):
             'id_unidad':self.kwargs.get('id_unidad'),
             })
         return str(url)
+    def form_valid(self, form):
+        # instancia = form.save(commit=False)
+        # instancia.blog_pertenece = self.request.user
+        # instancia.save()
+        get_tarea_id=Tarea.objects.get(tarea_id=self.kwargs.get('pk'))
+        get_sum_porcentaje_tarea=Tarea.objects.filter(tarea_unidad=form.instance.tarea_unidad.unidad_id).aggregate(total_porcentaje=Sum('tarea_porcentaje'))
+        get_sum_porcentaje_tarea=0 if get_sum_porcentaje_tarea['total_porcentaje'] == None else get_sum_porcentaje_tarea['total_porcentaje']
+        porcentaje_input_form=form.instance.tarea_porcentaje
+        total = (get_sum_porcentaje_tarea - get_tarea_id.tarea_porcentaje) + porcentaje_input_form
+        if total <= 100:
+            tipo_set=form.instance.tarea_tipo
+            if tipo_set=='PARA CALIFICAR' and get_tarea_id.tarea_tipo == 'ENTREGA':
+                unida=Unidad.objects.get(unidad_id=form.instance.tarea_unidad.unidad_id)
+                idmateria=unida.unidad_materia.materia_id
+                materia=Materia.objects.get(materia_id=idmateria)
+                tarea = form.save(commit=False)
+                tarea.save()
+                for id_user in materia.materia_registro_alumnnos.all():
+                    doc=TareaDocumento(tareaDocumento_archivo='s/n',tareaDocumento_comentario_alumno='s/n' ,tareaDocumento_pertenece=id_user ,tareaDocumento_Tarea=tarea)
+                    doc.save()
+
+
+        return super().form_valid(form)
+    
 
 
 
@@ -2198,81 +2238,88 @@ class BlogDeleteView(LoginRequiredMixin, DeleteView):
 
 
 
-class ExamenListView(ListView):
-    model = Examen
-    template_name = "dasboard/maestro/ExamenList.html"
+# class ExamenListView(ListView):
+#     model = Examen
+#     template_name = "dasboard/maestro/ExamenList.html"
 
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['unidad'] = Unidad.objects.get(unidad_id=self.kwargs.get('id_unidad'))
-        return context
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['unidad'] = Unidad.objects.get(unidad_id=self.kwargs.get('id_unidad'))
+#         return context
     
     
-class ExamenCreateView(CreateView):
-    model = Examen
-    template_name = "FormCreate.html"
-    form_class = ExamenForm
-    success_url = reverse_lazy('ctr:examen_listar')
+# class ExamenCreateView(CreateView):
+#     model = Examen
+#     template_name = "FormCreate.html"
+#     form_class = ExamenForm
+#     success_url = reverse_lazy('ctr:examen_listar')
 
-    def get_success_url(self):
-        url = reverse_lazy('ctr:examen_listar', kwargs={
-            'id_unidad':self.kwargs.get('id_unidad'),
-            })
-        return str(url)
+#     def get_success_url(self):
+#         url = reverse_lazy('ctr:examen_listar', kwargs={
+#             'id_unidad':self.kwargs.get('id_unidad'),
+#             })
+#         return str(url)
 
-class ExamenUpdateView(UpdateView):
-    model = Examen
-    template_name = "FormCreate.html"
-    form_class = ExamenForm
-    success_url = reverse_lazy('ctr:examen_listar')
+# class ExamenUpdateView(UpdateView):
+#     model = Examen
+#     template_name = "FormCreate.html"
+#     form_class = ExamenForm
+#     success_url = reverse_lazy('ctr:examen_listar')
 
-    def get_success_url(self):
-        url = reverse_lazy('ctr:examen_listar', kwargs={
-            'id_unidad':self.kwargs.get('id_unidad'),
-            })
-        return str(url)
+#     def get_success_url(self):
+#         url = reverse_lazy('ctr:examen_listar', kwargs={
+#             'id_unidad':self.kwargs.get('id_unidad'),
+#             })
+#         return str(url)
 
-class ExamenDeleteView(DeleteView):
-    model = Examen
-    template_name = 'DeleteForm.html'
-    success_url = reverse_lazy('ctr:examen_listar')
+# class ExamenDeleteView(DeleteView):
+#     model = Examen
+#     template_name = 'DeleteForm.html'
+#     success_url = reverse_lazy('ctr:examen_listar')
 
-    def get_success_url(self):
-        url = reverse_lazy('ctr:examen_listar', kwargs={
-            'id_unidad':self.kwargs.get('id_unidad'),
-            })
-        return str(url)
+#     def get_success_url(self):
+#         url = reverse_lazy('ctr:examen_listar', kwargs={
+#             'id_unidad':self.kwargs.get('id_unidad'),
+#             })
+#         return str(url)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        deletable_objects, model_count, protected = get_deleted_objects([self.object])
-        context['deletable_objects']=deletable_objects
-        context['model_count']=dict(model_count).items()
-        context['protected']=protected
-        return context
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         deletable_objects, model_count, protected = get_deleted_objects([self.object])
+#         context['deletable_objects']=deletable_objects
+#         context['model_count']=dict(model_count).items()
+#         context['protected']=protected
+#         return context
 
 
-class ReactivoListView(ListView):
+class ReactivoListView(ListView): 
     model = Reactivo
     template_name = 'dasboard/maestro/reactivo_list.html'
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(rec_examen=self.kwargs.get('id_tarea'))
+        return queryset
+
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form']=ReactivoForm()
-        context['obj_examen']=Examen.objects.get(id=self.kwargs.get('id_examen'))
+        context['form']=ReactivoForm() 
+        # context['obj_examen']=Unidad.objects.get(unidad_id=self.kwargs.get('id_unidad'))
         return context
     def post(self, request, *args, **kwargs):
         body_unicode = request.body.decode('utf-8')
         body_data = json.loads(body_unicode)
         status_code = 201
         datos={}
+
+        # print(body_data)
         
         try:
             reactivo = Reactivo(
             rec_nombre=body_data['question_text'],
-            rec_examen_id=kwargs.get('id_examen'),
+            rec_examen_id=kwargs.get('id_tarea'),
             rec_tipo=body_data['tipo_iput'],
             )
             reactivo.save()
@@ -2286,6 +2333,7 @@ class ReactivoListView(ListView):
             status_code = 201
             datos['preguntas'] = list(Reactivo.objects.values('rec_nombre','rec_examen','rec_tipo',))
         except IntegrityError as error:
+            print(error)
             status_code = 400
             datos['IntegrityError'] = 'Debe completar el fomulario'
         return JsonResponse(status=status_code, data=datos)
@@ -2307,8 +2355,8 @@ class ItemReactivoListView(ListView):
         EleccionReactivo.objects.filter(id=request.POST.get('res_correcta')).update(el_verdadero=True)
 
         reacti = Reactivo.objects.get(id=self.kwargs.get('id_reactivo'))
-        id_examen = reacti.rec_examen.id
-        url = reverse_lazy('ctr:reactivo_list', kwargs={'id_examen':id_examen})
+        id_tarea = reacti.rec_examen.tarea_id
+        url = reverse_lazy('ctr:reactivo_list', kwargs={'id_tarea':id_tarea})
         return redirect(url)
     
 
@@ -2320,7 +2368,7 @@ class ReactivoCreatetView(CreateView):
 
     def get_success_url(self):
         url = reverse_lazy('ctr:reactivo_list', kwargs={
-            'id_examen':self.kwargs.get('id_examen'),})
+            'id_unidad':self.kwargs.get('id_unidad'),})
         return str(url)
 
 
@@ -2332,7 +2380,7 @@ class ReactivoDeleteView(DeleteView):
 
     def get_success_url(self):
         url = reverse_lazy('ctr:reactivo_list', kwargs={
-            'id_examen':self.kwargs.get('id_examen'),
+            'id_unidad':self.kwargs.get('id_unidad'),
             })
         return str(url)
 

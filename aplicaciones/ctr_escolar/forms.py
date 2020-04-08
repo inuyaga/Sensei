@@ -83,6 +83,8 @@ class TareaForm(forms.ModelForm):
         widgets = {
         'tarea_fecha_inicio': forms.DateInput(attrs={'type': 'date'}),
         'tarea_fecha_termino' : forms.DateInput(attrs={'type': 'date'}),
+        'tarea_hora_init': forms.TimeInput(attrs={'type': 'time', 'step':'1'}),
+        'tarea_hora_end' : forms.TimeInput(attrs={'type': 'time', 'step':'1'}),
         }
 
 
@@ -94,6 +96,12 @@ class TareaFormEdit(forms.ModelForm):
     class Meta:
         model = Tarea
         exclude = ['tarea_unidad']
+        widgets = {
+        # 'tarea_fecha_inicio': forms.DateInput(attrs={'type': 'date'}),
+        # 'tarea_fecha_termino' : forms.DateInput(attrs={'type': 'date'}),
+        'tarea_hora_init': forms.TimeInput(attrs={'type': 'time', 'step':'1'}),
+        'tarea_hora_end' : forms.TimeInput(attrs={'type': 'time', 'step':'1'}),
+        }
     def __init__(self, *args, **kwargs):
         super(TareaFormEdit, self).__init__(*args, **kwargs)
         # self.fields['materia_aula'].queryset=Aula.objects.filter(aula_pertenece=id_user)
@@ -163,22 +171,22 @@ class ComentarioBlogForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
 
-class ExamenForm(forms.ModelForm):
-    # ex_hora_init = forms.TimeField(label="Hora inicial", help_text="Formato de 24hrs H:M:S.")
-    # ex_hora_end = forms.TimeField(label="Hora Final", help_text="Formato de 24hrs H:M:S.")
-    class Meta:
-        model = Examen
-        fields = ('__all__')
-        widgets = {
-        'ex_hora_init': forms.TimeInput(attrs={'type': 'time', 'step':'1'}),
-        'ex_hora_end' : forms.TimeInput(attrs={'type': 'time', 'step':'1'}),
-        }
+# class ExamenForm(forms.ModelForm):
+#     # ex_hora_init = forms.TimeField(label="Hora inicial", help_text="Formato de 24hrs H:M:S.")
+#     # ex_hora_end = forms.TimeField(label="Hora Final", help_text="Formato de 24hrs H:M:S.")
+#     class Meta:
+#         model = Examen
+#         fields = ('__all__')
+#         widgets = {
+#         'ex_hora_init': forms.TimeInput(attrs={'type': 'time', 'step':'1'}),
+#         'ex_hora_end' : forms.TimeInput(attrs={'type': 'time', 'step':'1'}),
+#         }
     
-    def __init__(self, *args, **kwargs):
-        super(ExamenForm, self).__init__(*args, **kwargs)
-        # self.fields['materia_aula'].queryset=Aula.objects.filter(aula_pertenece=id_user)
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({'class': 'form-control'})
+#     def __init__(self, *args, **kwargs):
+#         super(ExamenForm, self).__init__(*args, **kwargs)
+#         # self.fields['materia_aula'].queryset=Aula.objects.filter(aula_pertenece=id_user)
+#         for field in self.fields:
+#             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
 
 class ReactivoForm(forms.ModelForm):

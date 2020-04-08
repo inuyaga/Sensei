@@ -70,8 +70,10 @@ var app = new Vue({
             var valor_post=""
             if (this.tipo_iput == "text") {
                 valor_post = this.value_text_verdadero
-            }if (this.tipo_iput == "textarea") {
+                console.log(valor_post)
+            }else if (this.tipo_iput == "textarea") {
                 valor_post = this.value_textarea_verdadero
+                
             } else {
                 valor_post = ""
             }

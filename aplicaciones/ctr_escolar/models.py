@@ -1,8 +1,13 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils.safestring import mark_safe
 Usuario = get_user_model()
-
+TIPO_REACTIVO = (
+    ('text', 'Respuesta corta' ),
+    ('textarea', 'Parrafo' ),
+    ('radio', 'Varias opciones' ),
+)
 # Create your models here.
 class Aula(models.Model):
     aula_nombre = models.CharField('Nombre', max_length=50)
@@ -53,12 +58,32 @@ class Tarea(models.Model):
     tarea_descripcion = models.CharField('Descripcion', max_length=800)
     tarea_fecha_inicio = models.DateField('Fecha de inicio')
     tarea_fecha_termino = models.DateField('Fecha de Final')
-    TIPO_TAREA=(('ENTREGA', 'ENTREGA'), ('PARA CALIFICAR','PARA CALIFICAR'))
+    TIPO_TAREA=(('ENTREGA', 'ENTREGA'), ('PARA CALIFICAR','PARA CALIFICAR'), ('EXAMEN', 'EXAMEN'))
     tarea_tipo=models.CharField('Tipo de tarea', max_length=20, choices=TIPO_TAREA)
     tarea_porcentaje=models.IntegerField('Valor en %', validators=[MinValueValidator(1),MaxValueValidator(100)], default=1)
     tarea_unidad=models.ForeignKey(Unidad, verbose_name='Unidad', on_delete=models.CASCADE)
+    tarea_hora_init = models.TimeField("Hora de inicio", help_text=mark_safe('<small class="form-text text-muted">Aplica si es examen</small>'),null=True, blank=True)
+    tarea_hora_end = models.TimeField("Hora de finalización", help_text=mark_safe('<small class="form-text text-muted">Aplica si es examen</small>'),null=True, blank=True)
     def __str__(self):
         return self.tarea_nombre
+
+
+class Reactivo(models.Model):
+    rec_nombre = models.CharField("Redacte su pregunta",max_length=200)
+    rec_examen = models.ForeignKey(Tarea, verbose_name ="Tarea", on_delete=models.CASCADE)
+    rec_tipo = models.TextField('Tipo de reactivo', choices=TIPO_REACTIVO)
+
+    def __str__(self):
+        return self.rec_nombre
+
+
+class EleccionReactivo(models.Model):
+    el_value = models.TextField(verbose_name="Valor eleccion")
+    el_reactivo = models.ForeignKey(Reactivo, verbose_name='Reactivo', on_delete=models.CASCADE)
+    el_verdadero = models.BooleanField(verbose_name="respuesta correcta")
+
+    def __str__(self):
+        return self.el_value
 
 
 class TareaDocumento(models.Model):
@@ -135,36 +160,10 @@ class CalificacionMateria(models.Model):
 
 
 
-class Examen(models.Model):
-    ex_nombre = models.CharField('Nombre', max_length=150)
-    ex_creado = models.DateTimeField(auto_now_add=True)
-    ex_hora_init = models.TimeField("Hora de inicio")
-    ex_hora_end = models.TimeField("Hora de finalización")
-    ex_status = models.BooleanField('Status', help_text='Activar o desactivar, para poder aplicar examen debe activar.')
-    ex_porcentaje = models.IntegerField("Valor de examen", help_text="Numero entero sin el signo %")
-    ex_unidad=models.ForeignKey(Unidad, verbose_name='Unidad correspondiente', on_delete=models.CASCADE)
-    def __str__(self):
-        return self.ex_nombre
 
 
-TIPO_REACTIVO = (
-    ('text', 'Respuesta corta' ),
-    ('textarea', 'Parrafo' ),
-    ('radio', 'Varias opciones' ),
-)
-class Reactivo(models.Model):
-    rec_nombre = models.CharField("Redacte su pregunta",max_length=200)
-    rec_examen = models.ForeignKey(Examen, verbose_name ="Examen", on_delete=models.CASCADE)
-    rec_tipo = models.TextField('Tipo de reactivo', choices=TIPO_REACTIVO)
-
-    def __str__(self):
-        return self.rec_nombre
 
 
-class EleccionReactivo(models.Model):
-    el_value = models.TextField(verbose_name="Valor eleccion")
-    el_reactivo = models.ForeignKey(Reactivo, verbose_name='Reactivo', on_delete=models.CASCADE)
-    el_verdadero = models.BooleanField(verbose_name="respuesta correcta")
     
 
 

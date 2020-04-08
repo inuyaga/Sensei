@@ -10,8 +10,8 @@
     <ol class="breadcrumb adminx-page-breadcrumb">
         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
         <li class="breadcrumb-item"><a href="{% url 'ctr:materia_list' %}">Materia</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'ctr:materia_unidad' obj_examen.ex_unidad.unidad_materia.materia_id  %}">Unidad</a>
-        <li class="breadcrumb-item"><a href="{% url 'ctr:examen_listar' obj_examen.ex_unidad.unidad_id %}">Examen</a>
+        <li class="breadcrumb-item"><a href="">Unidad</a>
+        <li class="breadcrumb-item"><a href="">Tareas</a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">Reactivos</li>
     </ol>
@@ -29,7 +29,7 @@
 
     <div class="d-flex flex-row-reverse bd-highlight">
         <div class="btn-group pb-2" role="group" aria-label="Basic example">
-            <a class="btn btn-primary" href="{% url 'ctr:reactivo_create' view.kwargs.id_examen %}"
+            <a class="btn btn-primary" href="{% url 'ctr:reactivo_create' view.kwargs.id_tarea %}"
                 role="button">Añadir</a>
         </div>
     </div>
@@ -137,7 +137,7 @@
                                         </span>
                                     </a>
 
-                                    <a href="{% url 'ctr:reactivo_delete' item.id view.kwargs.id_examen %}" class="btn btn-sm btn-labeled btn-danger">
+                                    <a href="{% url 'ctr:reactivo_delete' item.id view.kwargs.id_tarea %}" class="btn btn-sm btn-labeled btn-danger">
                                         <span class="btn-label">
                                             <span class="oi oi-trash" aria-hidden="true"></span>
                                         </span>

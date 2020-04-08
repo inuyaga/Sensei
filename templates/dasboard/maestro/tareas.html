@@ -75,14 +75,18 @@
                   <td>{{item.get_tarea_tipo_display}}</td>                  
                   <td>{{item.tarea_porcentaje}}%</td>                  
                   <td>
-                    <a href="{% url 'ctr:tarea_delete' item.tarea_id materia.materia_id unidad.unidad_id %}" class="btn btn-sm btn-labeled btn-danger">
+
+                    {% if item.tarea_tipo == 'EXAMEN' %}
+                        <a href="{% url 'ctr:reactivo_list' item.tarea_id %}" class="btn btn-sm btn-labeled btn-success">
                         <span class="btn-label">
-                          <span class="oi oi-trash" aria-hidden="true"></span>
+                          <span class="oi oi-book" aria-hidden="true"></span>
                         </span>
                         <span class="btn-text">
-                          Eliminar
+                          Reactivos
                         </span>
                       </a>
+                      {% endif %}
+                    
                     <a href="{% url 'ctr:tarea_update' item.tarea_id materia.materia_id unidad.unidad_id %}" class="btn btn-sm btn-labeled btn-primary">
                         <span class="btn-label">
                           <span class="oi oi-pencil" aria-hidden="true"></span>
@@ -91,14 +95,16 @@
                           Editar
                         </span>
                       </a>
-                    <!-- <a href="" class="btn btn-sm btn-labeled btn-success">
+
+                      <a href="{% url 'ctr:tarea_delete' item.tarea_id materia.materia_id unidad.unidad_id %}" class="btn btn-sm btn-labeled btn-danger">
                         <span class="btn-label">
-                          <span class="oi oi-book" aria-hidden="true"></span>
+                          <span class="oi oi-trash" aria-hidden="true"></span>
                         </span>
                         <span class="btn-text">
-                          Tareas
+                          Eliminar
                         </span>
-                      </a> -->
+                      </a>                    
+                      
                   </td>
                 </tr>
                 {% endfor %}

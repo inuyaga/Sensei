@@ -107,14 +107,14 @@ urlpatterns = [
     path('Blog/update/<int:pk>/', view_ctr.BlogEditarView.as_view(), name='blog_update'),    
     path('Blog/delete/<int:pk>/', view_ctr.BlogDeleteView.as_view(), name='blog_delete'),    
 
-    path('Examen/list/<int:id_unidad>/', view_ctr.ExamenListView.as_view(), name='examen_listar'),     
-    path('Examen/crear/<int:id_unidad>/', view_ctr.ExamenCreateView.as_view(), name='examen_crear'),     
-    path('Examen/update/<int:pk>/<int:id_unidad>/', view_ctr.ExamenUpdateView.as_view(), name='examen_update'),     
-    path('Examen/delete/<int:pk>/<int:id_unidad>/', view_ctr.ExamenDeleteView.as_view(), name='examen_delete'),   
+    # path('Examen/list/<int:id_unidad>/', view_ctr.ExamenListView.as_view(), name='examen_listar'),     
+    # path('Examen/crear/<int:id_unidad>/', view_ctr.ExamenCreateView.as_view(), name='examen_crear'),     
+    # path('Examen/update/<int:pk>/<int:id_unidad>/', view_ctr.ExamenUpdateView.as_view(), name='examen_update'),     
+    # path('Examen/delete/<int:pk>/<int:id_unidad>/', view_ctr.ExamenDeleteView.as_view(), name='examen_delete'),   
 
-    path('rectivo/listar/<int:id_examen>/', view_ctr.ReactivoListView.as_view(), name='reactivo_list'),     
-    path('rectivo/create/<int:id_examen>/', view_ctr.ReactivoCreatetView.as_view(), name='reactivo_create'),     
-    path('rectivo/delete/<int:pk>/<int:id_examen>/', view_ctr.ReactivoDeleteView.as_view(), name='reactivo_delete'),     
+    path('rectivo/listar/<int:id_tarea>/', view_ctr.ReactivoListView.as_view(), name='reactivo_list'),     
+    path('rectivo/create/<int:id_unidad>/', view_ctr.ReactivoCreatetView.as_view(), name='reactivo_create'),     
+    path('rectivo/delete/<int:pk>/<int:id_unidad>/', view_ctr.ReactivoDeleteView.as_view(), name='reactivo_delete'),     
     path('rectivo/eleccion/list/<int:id_reactivo>/', view_ctr.ItemReactivoListView.as_view(), name='eleccion_list'),     
 
 ]
