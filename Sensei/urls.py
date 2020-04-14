@@ -23,7 +23,7 @@ from ajax_select import urls as ajax_select_urls
 urlpatterns = [
     path('', include('aplicaciones.web.urls'), name='web'),
     path('ctr/', include('aplicaciones.ctr_escolar.urls'), name='index_sensei'),
-    path('adminsensei/', admin.site.urls),
+    path('adminsensei/', admin.site.urls, name='sensei'),
     path('perfil-usuario/', PerfilList.as_view(),name='perfil_user'),
     path('perfil-usuario/edit/<int:pk>/', PerfilUpdate.as_view(),name='perfil_user_update'),
     path('cambiar_pasworduser/', ChaguePasswordUser.as_view(),name='cambiar_password'),

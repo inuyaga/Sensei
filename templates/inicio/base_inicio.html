@@ -30,7 +30,7 @@
     {% block navegacion %}
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light awake" id="ftco-navbar">
       <div class="container">
-        <a class="navbar-brand" href="index.html">Sensei</a>
+        <a class="navbar-brand" href="{% url 'web:index' %}">Sensei</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="oi oi-menu"></span> Menu
         </button>
@@ -40,9 +40,14 @@
             <li class="nav-item active"><a href="{% url 'web:index' %}" class="nav-link">Inicio</a></li>
             <li class="nav-item"><a href="#" class="nav-link">Acerca de</a></li>
             <li class="nav-item"><a href="#" class="nav-link">Documentación</a></li>
-            <li class="nav-item"><a href="{% url 'web:registro' %}" class="nav-link">Registro</a></li>
-            <li class="nav-item"><a href="{% url 'web:login' %}" class="nav-link">Login</a></li>
+            
+            {% if user.is_authenticated %}
             <li class="nav-item"><a href="{% url 'ctr:dasboard' %}" class="nav-link">Dasboard</a></li>
+              {% else %}
+              <li class="nav-item"><a href="{% url 'web:registro' %}" class="nav-link">Registro</a></li>
+              <li class="nav-item"><a href="{% url 'web:login' %}" class="nav-link">Login</a></li>
+            {% endif %}
+              
             <!-- <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="room.html" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Portfolio</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown04">
