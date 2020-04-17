@@ -1,4 +1,5 @@
 {% extends 'dasboard/base.html' %}
+{% load get_model_object %}
 {% block titulo %}
 <title>Sensei | Materia</title>
 {% endblock titulo %}
@@ -20,23 +21,26 @@
 {% block contenido %}
 
 <div class="row">
+{% for item in object_list %}
+<div class="col-sm-4">
+<div class="card">
+  <!-- <img src="..." class="card-img-top" alt="..."> -->
+  <div class="card-body">
+    <h5 class="card-title">{{item}}</h5>
+    <h6 class="card-subtitle mb-2 text-muted">{{item.materia_aula}}</h6>
+    <h6 class="card-subtitle mb-2 text-muted">{{item.materia_creado}}</h6>
+  </div>
 
-    <div class="card" style="width: 18rem;">
-        <img src="..." class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        </div>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">Cras justo odio</li>
-          <li class="list-group-item">Dapibus ac facilisis in</li>
-          <li class="list-group-item">Vestibulum at eros</li>
-        </ul>
-        <div class="card-body">
-          <a href="#" class="card-link">Card link</a>
-          <a href="#" class="card-link">Another link</a>
-        </div>
-      </div>
-    
+  <div class="list-group">
+    {% for unidad in item.materia_id|unidades_materia %}
+    <a href="{% url 'ctr:al_tareas' unidad.unidad_id %}" class="list-group-item list-group-item-action">{{unidad}}</a>
+    {% endfor %}
+  </div>
+  <div class="card-body">
+    <a href="{% url 'ctr:al_recurso' item.materia_id %}" class="btn btn-link">Recursos</a>
+  </div>
+</div>
+</div>
+{% endfor %}    
 </div>
 {% endblock contenido %}

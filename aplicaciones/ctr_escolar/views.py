@@ -35,6 +35,12 @@ from django.http import JsonResponse
 
 from django.core import serializers
 import json
+
+
+from django.utils.formats import localize
+from datetime import datetime
+# EXCEPCIONES
+from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
 class index(LoginRequiredMixin, TemplateView):
     login_url = '/login/'
@@ -1634,9 +1640,7 @@ class ListTareaAlumno(LoginRequiredMixin, View):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     def post(self, request, *args, **kwargs):
-        from django.utils.formats import localize
-        from datetime import datetime
-        from django.core.exceptions import ObjectDoesNotExist
+        
         tipo_post = request.POST.get('tipo_post')
         contenido='';
         coment='';
@@ -2454,12 +2458,45 @@ class InscripcionAlumnoCreateView(LoginRequiredMixin, TemplateView):
             for tarea in tareas:
                 doc=TareaDocumento(tareaDocumento_archivo='s/n',tareaDocumento_comentario_alumno='s/n' ,tareaDocumento_pertenece=self.request.user ,tareaDocumento_Tarea=tarea)
                 doc.save()
-            link_materia=reverse_lazy('cre:al_materia')
+            link_materia=reverse_lazy('ctr:al_materia')
             return redirect(link_materia)
             
         except IntegrityError as err:
             messages.info(self.request, 'Usted ya se encuentra registrado actualmente en la materia.')
-            link_materia=reverse_lazy('cre:al_inscribir')
+            link_materia=reverse_lazy('ctr:al_inscribir')
+            return redirect(link_materia)
+        except ObjectDoesNotExist as err:
+            messages.info(self.request, 'Codigo de materia no existe.')
+            link_materia=reverse_lazy('ctr:al_inscribir')
             return redirect(link_materia)
 
+
+
+
+class RecursosMateriaListAlumno(LoginRequiredMixin, DetailView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Materia
+    template_name = 'dasboard/alumno/recurso_list.html'
+
+
+
+class TareasListViewAlumno(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Tarea
+    template_name = 'dasboard/alumno/tareas_alunos.html'
+    # paginate_by = 10
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset()
         
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        context['unidad'] = Unidad.objects.get(unidad_id=self.kwargs.get('id_unidad'))
+        context['entregas'] = TareaDocumento.objects.filter(tareaDocumento_pertenece=self.request.user)
+
+        return context

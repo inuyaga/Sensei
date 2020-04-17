@@ -1,0 +1,115 @@
+{% extends 'dasboard/base.html' %}
+{% load get_model_object %}
+{% block titulo %}
+<title>Sensei | Tareas</title>
+{% endblock titulo %}
+
+{% block navegacion_links %}
+
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb adminx-page-breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Tareas</li>
+    </ol>
+</nav>
+<div class="pb-3">
+    <h2>{{unidad.unidad_materia}}</h2>
+    <h3>{{unidad}}</h3>
+</div>
+{% endblock navegacion_links %}
+
+
+{% block contenido %}
+
+<div class="row">
+  
+
+  <div class="col-md-6">  
+    <div class="card mb-grid">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="card-header-title">Tareas</div>
+      </div>
+      <table class="table table-sm mb-0">
+        <thead>
+          <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Descripcion</th>
+            <th scope="col">Inicio</th>
+            <th scope="col">Termino</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">%</th>
+            <th scope="col">Accion</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in object_list %}
+          <tr>
+            <td>{{item.tarea_nombre}}</td>
+            <td>{{item.tarea_descripcion}}</td>
+            <td>{{item.tarea_fecha_inicio}}</td>
+            <td>{{item.tarea_fecha_termino}}</td>
+            <td>{{item.tarea_tipo}}</td>
+            <td>{{item.tarea_porcentaje}}%</td>
+            <td>
+              <a href="" class="btn btn-sm btn-labeled btn-success">
+                <span class="btn-label">
+                  <span class="oi oi-book" aria-hidden="true"></span>
+                </span>
+                <span class="btn-text">
+                  Entregar
+                </span>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <div class="col-md-6">  
+    <div class="card mb-grid">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="card-header-title">Entregados</div>
+      </div>
+      <table class="table table-sm mb-0">
+        <thead>
+          <tr>
+            <th scope="col">Tarea</th>
+            <th scope="col">Comentario</th>
+            <th scope="col">Respuesta</th>
+            <th scope="col">Entregado</th>
+            <th scope="col">Status</th>
+            <th scope="col">Calificacion</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          {% for item in entregas %}
+          <tr>
+            <td>{{item.tareaDocumento_Tarea}}</td>
+            <td>{{item.tareaDocumento_comentario_alumno}}</td>
+            <td>{{item.tareaDocumento_comentario_maestro}}</td>
+            <td>{{item.tareaDocumento_creado}}</td>
+            <td>
+
+              
+              
+              {% if item.tareaDocumento_status %}
+              <span class="badge badge-success">Calificado</span>
+              {% else %}
+              <span class="badge badge-info">Entregado</span>
+              {% endif %}
+                
+            </td>
+          </tr>
+          {% endfor %}
+            
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock contenido %}

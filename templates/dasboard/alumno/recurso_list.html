@@ -1,0 +1,45 @@
+{% extends 'dasboard/base.html' %}
+{% load get_model_object %}
+{% block titulo %}
+<title>Sensei | Recursos</title>
+{% endblock titulo %}
+
+{% block navegacion_links %}
+
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb adminx-page-breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Recursos</li>
+    </ol>
+</nav>
+<div class="pb-3">
+    <h1>Recursos</h1>
+</div>
+{% endblock navegacion_links %}
+
+
+{% block contenido %}
+<h1>{{object}}</h1>
+
+<div class="row">
+    {% for item in object.materia_archivos.all %}
+    <div class="col-sm-3">
+        <div class="card bg-light mb-3">
+            <div class="card-header text-center">{{item}}</div>
+            <div class="card-body text-white text-center">
+                <a href="{{item.doc_archivo.url}}" class="btn btn-light">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="250" height="250" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-download-cloud">
+                        <polyline points="8 17 12 21 16 17"></polyline>
+                        <line x1="12" y1="12" x2="12" y2="21"></line>
+                        <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
+                    </svg>
+                </a>
+            </div>
+          </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock contenido %}
