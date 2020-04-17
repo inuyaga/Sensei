@@ -113,8 +113,12 @@ urlpatterns = [
     # path('Examen/delete/<int:pk>/<int:id_unidad>/', view_ctr.ExamenDeleteView.as_view(), name='examen_delete'),   
 
     path('rectivo/listar/<int:id_tarea>/', view_ctr.ReactivoListView.as_view(), name='reactivo_list'),     
-    path('rectivo/create/<int:id_unidad>/', view_ctr.ReactivoCreatetView.as_view(), name='reactivo_create'),     
     path('rectivo/delete/<int:pk>/<int:id_unidad>/', view_ctr.ReactivoDeleteView.as_view(), name='reactivo_delete'),     
-    path('rectivo/eleccion/list/<int:id_reactivo>/', view_ctr.ItemReactivoListView.as_view(), name='eleccion_list'),     
+    path('rectivo/eleccion/list/<int:id_reactivo>/', view_ctr.ItemReactivoListView.as_view(), name='eleccion_list'),   
+
+
+    path('alumno/blogs/list/', view_ctr.BoligAlumnoListView.as_view(), name='al_blog'),     
+    path('alumno/materia/list/', view_ctr.MateriaAlumnoListView.as_view(), name='al_materia'),     
+    path('alumno/materia/inscribir/', view_ctr.InscripcionAlumnoCreateView.as_view(), name='al_inscribir'),     
 
 ]

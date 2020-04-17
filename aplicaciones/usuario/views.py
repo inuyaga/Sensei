@@ -21,10 +21,10 @@ class CreateUser(CreateView):
         instancia = form.save(commit=False)
         if form.data['tipo_de_usuario'] == '1':
             instancia.is_maestro=True
-            instancia.is_staff=True
+            
         elif form.data['tipo_de_usuario'] == '2':
             instancia.is_alumno=True
-            instancia.is_staff=True
+            
         instancia.save()
         return super(CreateUser, self).form_valid(form)
 

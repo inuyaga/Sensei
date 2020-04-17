@@ -1,0 +1,33 @@
+{% extends 'dasboard/base.html' %}
+{% block titulo %}
+<title>Sensei | Inscripción</title>
+{% endblock titulo %}
+
+{% block navegacion_links %}
+
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb adminx-page-breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Inscripción</li>
+    </ol>
+</nav>
+<div class="pb-3">
+    <h1>Inscripción</h1>
+</div>
+{% endblock navegacion_links %}
+
+
+{% block contenido %}
+
+<div class="row">
+<form action="" method="post">
+    {% csrf_token %}
+    <label for="inscrip">Inscripción</label>
+    <input type="number" id="inscrip" class="form-control" aria-describedby="help" name="regis_materia">
+    <small id="help" class="form-text text-muted">
+      Ingrese el codigo de materia especificado por su instructor o maestro.
+    </small>
+    <input class="btn btn-outline-success" type="submit" value="Agregar">
+</form>
+</div>
+{% endblock contenido %}

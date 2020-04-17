@@ -22,6 +22,8 @@ from django.core.serializers import serialize
 from openpyxl.styles import Font, Fill, Alignment
 from django.http import HttpResponse
 from openpyxl import Workbook
+
+from django.contrib import messages
 """
 CLASES ESCUSIVAMENTE PARA LOS USUARIOS CON PERMISOS DE MAESTRO
 DE AQUI EN ADELANTE
@@ -2071,7 +2073,11 @@ class TareaCreateView(LoginRequiredMixin, CreateView):
                 for id_user in materia.materia_registro_alumnnos.all():
                     doc=TareaDocumento(tareaDocumento_archivo='s/n',tareaDocumento_comentario_alumno='s/n' ,tareaDocumento_pertenece=id_user ,tareaDocumento_Tarea=tarea)
                     doc.save()
-        return super().form_valid(form)
+            return super().form_valid(form) 
+        else:
+            messages.info(self.request, 'Sobrepasa el limite de % debe ser menor o igual a 100%.')
+            url = reverse_lazy('ctr:unidad_tareas', kwargs={'id_materia':self.kwargs.get('id_materia'),'id_unidad':self.kwargs.get('id_unidad')})
+            return redirect(url)
 
     # def get_queryset(self):
     #     queryset = super().get_queryset()
@@ -2142,9 +2148,11 @@ class TareaUpdateView(LoginRequiredMixin, UpdateView):
                 for id_user in materia.materia_registro_alumnnos.all():
                     doc=TareaDocumento(tareaDocumento_archivo='s/n',tareaDocumento_comentario_alumno='s/n' ,tareaDocumento_pertenece=id_user ,tareaDocumento_Tarea=tarea)
                     doc.save()
-
-
-        return super().form_valid(form)
+            return super().form_valid(form)
+        else:
+            messages.info(self.request, 'Sobrepasa el limite de % debe ser menor o igual a 100%.')
+            url = reverse_lazy('ctr:unidad_tareas', kwargs={'id_materia':self.kwargs.get('id_materia'),'id_unidad':self.kwargs.get('id_unidad')})
+            return redirect(url)
     
 
 
@@ -2306,6 +2314,7 @@ class ReactivoListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form']=ReactivoForm() 
+        context['tarea_obj']=Tarea.objects.get(tarea_id=self.kwargs.get('id_tarea')) 
         # context['obj_examen']=Unidad.objects.get(unidad_id=self.kwargs.get('id_unidad'))
         return context
     def post(self, request, *args, **kwargs):
@@ -2360,16 +2369,6 @@ class ItemReactivoListView(ListView):
         return redirect(url)
     
 
-class ReactivoCreatetView(CreateView):
-    model = Reactivo
-    template_name = "dasboard/maestro/create_reactivo.html"
-    form_class = ReactivoForm
-    success_url = reverse_lazy('ctr:reactivo_list')
-
-    def get_success_url(self):
-        url = reverse_lazy('ctr:reactivo_list', kwargs={
-            'id_unidad':self.kwargs.get('id_unidad'),})
-        return str(url)
 
 
 
@@ -2391,3 +2390,76 @@ class ReactivoDeleteView(DeleteView):
         context['model_count']=dict(model_count).items()
         context['protected']=protected
         return context
+
+
+
+
+"""CLASES PARA ALUMNO"""
+
+class BoligAlumnoListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Blog
+    template_name = 'dasboard/alumno/blog_al_list.html'
+    paginate_by = 10
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(blog_materia__materia_registro_alumnnos=self.request.user)
+        # queryset = queryset.filter()
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+
+        return context
+
+
+class MateriaAlumnoListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Materia
+    template_name = 'dasboard/alumno/materias.html'
+    # paginate_by = 10
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(materia_registro_alumnnos=self.request.user)
+        # queryset = queryset.filter()
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+
+        return context
+
+
+
+
+
+class InscripcionAlumnoCreateView(LoginRequiredMixin, TemplateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    template_name = "dasboard/alumno/inscripcion.html"
+
+    def post(self, request, *args, **kwargs):
+        regis_materia = request.POST.get('regis_materia')
+        try:
+            materia=Materia.objects.get(materia_id=regis_materia)
+            materia.materia_registro_alumnnos.add(self.request.user)
+            tareas=Tarea.objects.filter(tarea_unidad__unidad_materia=regis_materia,tarea_tipo='PARA CALIFICAR')
+
+            for tarea in tareas:
+                doc=TareaDocumento(tareaDocumento_archivo='s/n',tareaDocumento_comentario_alumno='s/n' ,tareaDocumento_pertenece=self.request.user ,tareaDocumento_Tarea=tarea)
+                doc.save()
+            link_materia=reverse_lazy('cre:al_materia')
+            return redirect(link_materia)
+            
+        except IntegrityError as err:
+            messages.info(self.request, 'Usted ya se encuentra registrado actualmente en la materia.')
+            link_materia=reverse_lazy('cre:al_inscribir')
+            return redirect(link_materia)
+
+        

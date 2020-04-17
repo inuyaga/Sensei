@@ -10,8 +10,8 @@
     <ol class="breadcrumb adminx-page-breadcrumb">
         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
         <li class="breadcrumb-item"><a href="{% url 'ctr:materia_list' %}">Materia</a></li>
-        <li class="breadcrumb-item"><a href="">Unidad</a>
-        <li class="breadcrumb-item"><a href="">Tareas</a>
+        <li class="breadcrumb-item"><a href="{% url 'ctr:materia_unidad' tarea_obj.tarea_unidad.unidad_materia.materia_id %}">Unidad</a>
+        <li class="breadcrumb-item"><a href="{% url 'ctr:unidad_tareas' tarea_obj.tarea_unidad.unidad_materia.materia_id tarea_obj.tarea_unidad.unidad_id %}">Tareas</a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">Reactivos</li>
     </ol>
@@ -25,18 +25,6 @@
 {% block contenido %}
 
 <div id="app">
-
-
-    <div class="d-flex flex-row-reverse bd-highlight">
-        <div class="btn-group pb-2" role="group" aria-label="Basic example">
-            <a class="btn btn-primary" href="{% url 'ctr:reactivo_create' view.kwargs.id_tarea %}"
-                role="button">Añadir</a>
-        </div>
-    </div>
-    <br>
-
-
-
 
     <div class="row">
         <div class="col-sm-3">
