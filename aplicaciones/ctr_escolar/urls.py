@@ -121,6 +121,9 @@ urlpatterns = [
     path('alumno/materia/list/', view_ctr.MateriaAlumnoListView.as_view(), name='al_materia'),     
     path('alumno/materia/inscribir/', view_ctr.InscripcionAlumnoCreateView.as_view(), name='al_inscribir'),     
     path('alumno/materia/recursos/<int:pk>/', view_ctr.RecursosMateriaListAlumno.as_view(), name='al_recurso'),     
-    path('alumno/materia/unidad/tareas/<int:id_unidad>', view_ctr.TareasListViewAlumno.as_view(), name='al_tareas'),     
+    path('alumno/materia/unidad/tareas/<int:id_unidad>', view_ctr.TareasListViewAlumno.as_view(), name='al_tareas'),   
+
+    path('alumno/materia/unidad/tareas/entrega/<int:id_unidad>/<int:id_tarea>/', view_ctr.EntrgaTareaAlumnoView.as_view(), name='al_tareas_create'),      
+    path('alumno/materia/unidad/tareas/delete/<int:pk>/<int:id_unidad>/', view_ctr.EntrgaTareaAlumnoViewDelete.as_view(), name='al_tareas_delete'),      
 
 ]

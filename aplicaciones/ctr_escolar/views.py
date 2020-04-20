@@ -24,6 +24,7 @@ from django.http import HttpResponse
 from openpyxl import Workbook
 
 from django.contrib import messages
+from django.db import IntegrityError
 """
 CLASES ESCUSIVAMENTE PARA LOS USUARIOS CON PERMISOS DE MAESTRO
 DE AQUI EN ADELANTE
@@ -2490,13 +2491,62 @@ class TareasListViewAlumno(LoginRequiredMixin, ListView):
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset()
-        
+        queryset = queryset.filter(tarea_unidad=self.kwargs.get('id_unidad'))        
         return queryset
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         context['unidad'] = Unidad.objects.get(unidad_id=self.kwargs.get('id_unidad'))
-        context['entregas'] = TareaDocumento.objects.filter(tareaDocumento_pertenece=self.request.user)
+        context['entregas'] = TareaDocumento.objects.filter(tareaDocumento_pertenece=self.request.user, tareaDocumento_Tarea__tarea_unidad=self.kwargs.get('id_unidad'))
 
+        return context
+
+
+class EntrgaTareaAlumnoView(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = TareaDocumento
+    template_name = "dasboard/alumno/FormCreate.html"
+    form_class = TareaDocumentoFrom
+    success_url = reverse_lazy('ctr:al_tareas')
+
+    def get_success_url(self):
+        url = reverse_lazy('ctr:al_tareas', kwargs={
+            'id_unidad':self.kwargs.get('id_unidad'),
+            })
+        return str(url)
+
+    
+
+    def form_valid(self, form):
+        instancia = form.save(commit=False)
+        instancia.tareaDocumento_pertenece = self.request.user
+        instancia.tareaDocumento_Tarea_id = self.kwargs.get('id_tarea')
+        try:
+            instancia.save()
+            return super().form_valid(form)
+        except IntegrityError as error:
+            url = reverse_lazy('ctr:al_tareas', kwargs={'id_unidad':self.kwargs.get('id_unidad'),})
+            messages.warning(self.request, 'Esta tarea ya se encuentra entregada.')
+            return redirect(url)
+        
+
+class EntrgaTareaAlumnoViewDelete(DeleteView):
+    model = TareaDocumento
+    template_name = 'DeleteForm.html'
+    success_url = reverse_lazy('ctr:al_tareas')
+
+    def get_success_url(self):
+        url = reverse_lazy('ctr:al_tareas', kwargs={
+            'id_unidad':self.kwargs.get('id_unidad'),
+            })
+        return str(url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
         return context

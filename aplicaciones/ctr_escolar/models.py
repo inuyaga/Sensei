@@ -85,6 +85,14 @@ class EleccionReactivo(models.Model):
     def __str__(self):
         return self.el_value
 
+class RespuestaExamen(models.Model):
+    re_respuesta_alumno = models.TextField(verbose_name="Respuesta de alumno")
+    re_reactivo = models.ForeignKey(Reactivo, verbose_name ="Pregunta", on_delete=models.CASCADE)
+    re_alumno = models.ForeignKey(Usuario, on_delete=models.CASCADE, verbose_name="Alumno")
+    def __str__(self):
+        return self.re_respuesta_alumno
+
+
 
 class TareaDocumento(models.Model):
     tareaDocumento_id=models.AutoField(primary_key=True)

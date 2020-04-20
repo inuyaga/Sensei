@@ -132,24 +132,17 @@ class BlogFrom(forms.ModelForm):
 class TareaDocumentoFrom(forms.ModelForm):
     class Meta:
         model = TareaDocumento
-        exclude = ['blog_pertenece',
-        'tareaDocumento_comentario_maestro',
-        'tareaDocumento_pertenece',
-        'tareaDocumento_calificacion',
-        'tareaDocumento_status',
-        'tareaDocumento_tipo',
-        ]
+        fields = (
+            'tareaDocumento_archivo',
+            'tareaDocumento_comentario_alumno',
+            )
         widgets = {
         'tareaDocumento_comentario_alumno': forms.Textarea(),
         }
     def __init__(self, *args, **kwargs):
-        id_user = kwargs.pop('user')
         super(TareaDocumentoFrom, self).__init__(*args, **kwargs)
-        self.fields['tareaDocumento_Tarea'].queryset=Tarea.objects.filter(tarea_unidad__unidad_materia__materia_registro_alumnnos=id_user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
-        self.fields['tareaDocumento_Tarea'].widget.attrs.update({'class': 'invisible'})
-        self.fields['tareaDocumento_Tarea'].label = ''
 
 class TareaEntregadaEdit(forms.ModelForm):
     class Meta:
