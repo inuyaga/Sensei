@@ -75,6 +75,9 @@ class Reactivo(models.Model):
 
     def __str__(self):
         return self.rec_nombre
+    def get_eleccion_ok(self):
+        id_rlrccion_reactivo = EleccionReactivo.objects.get(el_reactivo=self.id, el_verdadero=True)
+        return id_rlrccion_reactivo
 
 
 class EleccionReactivo(models.Model):
@@ -87,12 +90,14 @@ class EleccionReactivo(models.Model):
 
 class RespuestaExamen(models.Model): 
     re_reactivo = models.ForeignKey(Reactivo, verbose_name ="Pregunta", on_delete=models.CASCADE)
-    re_resp = models.ForeignKey(EleccionReactivo, verbose_name ="Respuesta", on_delete=models.CASCADE)
     re_alumno = models.ForeignKey(Usuario, on_delete=models.CASCADE, verbose_name="Alumno")
     re_ok = models.BooleanField(verbose_name="¿Correcto?")
     re_text = models.TextField(verbose_name="Respondió")
     def __str__(self):
         return str(self.re_reactivo)
+    class Meta:
+        unique_together = (("re_reactivo", "re_alumno"),)
+        # ordering = ['-tareaDocumento_actualizado']
 
 
 

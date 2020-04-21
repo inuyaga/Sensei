@@ -2563,17 +2563,80 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
     form_class = RespuestaExamenForm
     success_url = reverse_lazy('ctr:al_tareas')
 
+    def dispatch(self, *args, **kwargs):
+        respuestas_examen_count=RespuestaExamen.objects.filter(re_alumno=self.request.user, re_reactivo__rec_examen=self.kwargs.get('id_examen')).count()
+        
+        tarea_examen = Tarea.objects.get(tarea_id=self.kwargs.get('id_examen'))
+        url = reverse_lazy('ctr:al_tareas', kwargs={'id_unidad':tarea_examen.tarea_unidad.unidad_id})
+
+        ahora = datetime.now().time()
+        hora_inicial = tarea_examen.tarea_hora_init
+        hora_final = tarea_examen.tarea_hora_end
+        
+        if respuestas_examen_count > 0:
+            messages.warning(self.request, 'Examen ha sido contestado, no es posible responder nuevamente.')
+            return redirect(url)
+
+        if hora_inicial <= ahora <= hora_final:
+            pass
+        else:
+            messages.warning(self.request, 'Supero el limite para responder entre:{} hasta:{} hora actual:{}'.format(hora_inicial, hora_final, ahora))
+            return redirect(url)
+        return super().dispatch(*args, **kwargs)
+
     def post(self, request, *args, **kwargs):
+        from difflib import SequenceMatcher as SM
         reactivos = Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen'))
+        tarea_examen = Tarea.objects.get(tarea_id=self.kwargs.get('id_examen'))
+        corecto=False
         for item in reactivos:
-            print(request.POST.get(str(item.id)))
-            rep=RespuestaExamen(re_reactivo_id=item.id, re_resp_id=request.POST.get(str(item.id)), re_alumno=request.user, re_ok=True, re_text=request.POST.get(str(item.id)))
-            rep.save()
-        return super().post(request, *args, **kwargs)
+            id_corecto=item.get_eleccion_ok()
+            if item.rec_tipo == 'radio':
+                respuesta_alumno=request.POST.get(str(item.id))
+                r_corecto = id_corecto.id
+                # print('Alumno R:{} Corecto:{}'.format(respuesta_alumno, r_corecto))
+                if respuesta_alumno == str(r_corecto):
+                    corecto = True
+                else:
+                    corecto =False
+            else:
+                respuesta_alumno=request.POST.get(str(item.id))
+                respuesta_correcta=id_corecto.el_value
+                similitud = SM(None, respuesta_correcta, respuesta_alumno).ratio()
+                if similitud >= 0.4:
+                    corecto=True
+                else:
+                    corecto = False
+            try:
+                rep=RespuestaExamen(re_reactivo_id=item.id, re_alumno=request.user, re_ok=corecto, re_text=request.POST.get(str(item.id)))
+                rep.save()
+            except IntegrityError as error:
+                messages.warning(request, 'Examen ha sido contestado, no es posible responder nuevamente.')
+                url = reverse_lazy('ctr:al_tareas', kwargs={'id_unidad':tarea_examen.tarea_unidad.unidad_id})
+                return redirect(url)
+            
+        
+        total_preguntas = Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen')).count()
+        respondidas_correctamente = RespuestaExamen.objects.filter(re_reactivo__rec_examen__tarea_id=self.kwargs.get('id_examen'), re_ok=True).count()
+        resultado = (respondidas_correctamente / total_preguntas) * 100
+        tarea_docu=TareaDocumento(
+            tareaDocumento_archivo='n/a',
+            tareaDocumento_comentario_alumno='S/C',
+            tareaDocumento_comentario_maestro='S/C',
+            tareaDocumento_pertenece=request.user,
+            tareaDocumento_Tarea_id=self.kwargs.get('id_examen'),
+            tareaDocumento_status=True,
+            tareaDocumento_calificacion=round(resultado, 2),
+        )
+        tarea_docu.save()
+        messages.success(request, 'Examen completado su resultados total de preguntas:{} contestado correctamente:{} resultado={}%.'.format(total_preguntas, respondidas_correctamente, resultado))
+        url = reverse_lazy('ctr:al_tareas', kwargs={'id_unidad':tarea_examen.tarea_unidad.unidad_id})
+        return redirect(url)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['preguntas']=Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen'))
+        context['tarea']=Tarea.objects.get(tarea_id=self.kwargs.get('id_examen'))
         return context
 
   

@@ -21,6 +21,7 @@
 {% block contenido %}
 
 <div class="container">
+  <h3 id="countdown" class="text-center"></h3>
 <div class="row">
 <form action="" method="post">
     {% csrf_token %}
@@ -38,7 +39,7 @@
             <textarea class="form-control" id="area_pregunta"  name="{{item.id}}" rows="3" required></textarea>
           </div>
           {% elif item.rec_tipo == 'radio' %}
-          <li><h5 style="font-weight: bold;">{{item}}</h5></li>
+          <h5 style="font-weight: bold;">{{item}}</h5>
           {% for radio in item.id|elecciones_reactivo %}
           <div class="form-check">
             <input class="form-check-input" type="radio" name="{{radio.el_reactivo.id}}" id="{{radio.id}}" value="{{radio.id}}" required>
@@ -57,4 +58,44 @@
 </form>
 </div>
 </div>
+
+
+
 {% endblock contenido %}
+
+
+{% block script %}
+<script>
+  var end = new Date('{{tarea.tarea_fecha_termino|date:"m/d/Y"}} {{tarea.tarea_hora_end}}');
+  
+      var _second = 1000;
+      var _minute = _second * 60;
+      var _hour = _minute * 60;
+      var _day = _hour * 24;
+      var timer;
+  
+      function showRemaining() {
+          var now = new Date();
+          var distance = end - now;
+          if (distance < 0) {
+  
+              clearInterval(timer);
+              document.getElementById('countdown').innerHTML = 'EXPIRED!';
+  
+              return;
+          }
+          var days = Math.floor(distance / _day);
+          var hours = Math.floor((distance % _day) / _hour);
+          var minutes = Math.floor((distance % _hour) / _minute);
+          var seconds = Math.floor((distance % _minute) / _second);
+  
+          document.getElementById('countdown').innerHTML = days + ' dias, ';
+          document.getElementById('countdown').innerHTML += hours + ' horas, ';
+          document.getElementById('countdown').innerHTML += minutes + ' minutos y ';
+          document.getElementById('countdown').innerHTML += seconds + ' segundos';
+      }
+  
+      timer = setInterval(showRemaining, 1000);
+  </script>
+{% endblock script %}
+  
