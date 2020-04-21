@@ -1,0 +1,60 @@
+{% extends 'dasboard/base.html' %} 
+{% load get_model_object %}
+{% block titulo %}
+<title>Sensei | Responder</title>
+{% endblock titulo %}
+
+{% block navegacion_links %}
+
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb adminx-page-breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Examen</li>
+    </ol>
+</nav>
+<div class="pb-3"> 
+    <h1>Examen</h1>
+</div>
+{% endblock navegacion_links %}
+
+
+{% block contenido %}
+
+<div class="container">
+<div class="row">
+<form action="" method="post">
+    {% csrf_token %}
+    
+    {% for item in preguntas %}
+        
+        {% if item.rec_tipo == 'text' %}
+        <div class="form-group">
+            <label for="rep_txt" style="font-weight: bold;"><h5  style="font-weight: bold;">{{item}}</h5></label>
+            <input type="text" class="form-control" id="rep_txt" name="{{item.id}}" placeholder="Especifique su respuesta" required>
+          </div>
+          {% elif item.rec_tipo == 'textarea' %}
+          <div class="form-group">
+            <label for="area_pregunta"><h5  style="font-weight: bold;">{{item}}</h5></label>
+            <textarea class="form-control" id="area_pregunta"  name="{{item.id}}" rows="3" required></textarea>
+          </div>
+          {% elif item.rec_tipo == 'radio' %}
+          <li><h5 style="font-weight: bold;">{{item}}</h5></li>
+          {% for radio in item.id|elecciones_reactivo %}
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="{{radio.el_reactivo.id}}" id="{{radio.id}}" value="{{radio.id}}" required>
+            <label class="form-check-label" for="{{radio.id}}">
+              {{radio.el_value}}
+            </label>
+          </div>
+          {% endfor %}
+              
+          
+        {% endif %}
+            
+    {% endfor %}
+        
+    <input class="btn btn-outline-success" type="submit" value="Finalizar">
+</form>
+</div>
+</div>
+{% endblock contenido %}

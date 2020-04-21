@@ -2550,3 +2550,30 @@ class EntrgaTareaAlumnoViewDelete(DeleteView):
         context['model_count']=dict(model_count).items()
         context['protected']=protected
         return context
+
+
+
+
+
+class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = RespuestaExamen
+    template_name = "dasboard/alumno/resolucion_examen.html"
+    form_class = RespuestaExamenForm
+    success_url = reverse_lazy('ctr:al_tareas')
+
+    def post(self, request, *args, **kwargs):
+        reactivos = Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen'))
+        for item in reactivos:
+            print(request.POST.get(str(item.id)))
+            rep=RespuestaExamen(re_reactivo_id=item.id, re_resp_id=request.POST.get(str(item.id)), re_alumno=request.user, re_ok=True, re_text=request.POST.get(str(item.id)))
+            rep.save()
+        return super().post(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['preguntas']=Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen'))
+        return context
+
+  

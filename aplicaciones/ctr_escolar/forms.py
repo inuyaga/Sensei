@@ -196,4 +196,15 @@ class ReactivoForm(forms.ModelForm):
         self.fields['rec_tipo'].widget.attrs.update({'@change': 'onChange($event)'})
 
 
+class RespuestaExamenForm(forms.ModelForm):
+    class Meta:
+        model = RespuestaExamen
+        fields = ('__all__')
+    
+    def __init__(self, *args, **kwargs):
+        super(RespuestaExamenForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+
 

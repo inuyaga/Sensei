@@ -125,5 +125,6 @@ urlpatterns = [
 
     path('alumno/materia/unidad/tareas/entrega/<int:id_unidad>/<int:id_tarea>/', view_ctr.EntrgaTareaAlumnoView.as_view(), name='al_tareas_create'),      
     path('alumno/materia/unidad/tareas/delete/<int:pk>/<int:id_unidad>/', view_ctr.EntrgaTareaAlumnoViewDelete.as_view(), name='al_tareas_delete'),      
+    path('alumno/materia/unidad/tareas/examen/respuesta/<int:id_examen>/', view_ctr.RespuestaExamenAlumnoView.as_view(), name='al_examen'),      
 
 ]

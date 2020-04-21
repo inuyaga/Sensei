@@ -46,7 +46,7 @@ def return_button_tarea(id_tarea):
         ahora_final = obj_tarea.tarea_hora_end
         if ahora_inicial <= ahora <= ahora_final:
             html =""" 
-                <a href="" class="btn btn-sm btn-labeled btn-success">
+                <a href="{}" class="btn btn-sm btn-labeled btn-success">
                     <span class="btn-label">
                         <span class="oi oi-book" aria-hidden="true"></span>
                     </span>
@@ -54,7 +54,7 @@ def return_button_tarea(id_tarea):
                         Responder
                     </span>
                 </a>
-                """
+                """.format(reverse_lazy('ctr:al_examen', kwargs={'id_examen':id_tarea}))
             return html
         else:
             return """<span class="badge badge-info">inicia:{} - termina:{}</span>""".format(ahora_inicial, ahora_final)

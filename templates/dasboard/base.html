@@ -145,12 +145,11 @@
 
         
         {% if user.is_maestro %}
-          
-        
-          
+
+
+
         <li class="sidebar-nav-item">
-          <a class="sidebar-nav-link collapsed" data-toggle="collapse" href="#aula" aria-expanded="false"
-            aria-controls="aula">
+          <a href="{% url 'ctr:list_aula' %}" class="sidebar-nav-link">
             <span class="sidebar-nav-icon">
               <span class="oi oi-basket"></span>
             </span>
@@ -158,29 +157,13 @@
               Aula
             </span>
             <span class="sidebar-nav-end">
-              <i data-feather="chevron-right" class="nav-collapse-icon"></i>
             </span>
           </a>
-
-          <ul class="sidebar-sub-nav collapse" id="aula">
-            <li class="sidebar-nav-item">
-              <a href="{% url 'ctr:list_aula' %}" class="sidebar-nav-link">
-                <span class="sidebar-nav-abbr">
-                  List
-                </span>
-                <span class="sidebar-nav-name">
-                  Listar
-                </span>
-              </a>
-            </li>
-          </ul>
         </li>
 
 
-
         <li class="sidebar-nav-item">
-          <a class="sidebar-nav-link collapsed" data-toggle="collapse" href="#materia" aria-expanded="false"
-            aria-controls="materia">
+          <a href="{% url 'ctr:materia_list' %}" class="sidebar-nav-link">
             <span class="sidebar-nav-icon">
               <span class="oi oi-book"></span>
             </span>
@@ -188,30 +171,13 @@
               Materia
             </span>
             <span class="sidebar-nav-end">
-              <i data-feather="chevron-right" class="nav-collapse-icon"></i>
             </span>
           </a>
-
-          <ul class="sidebar-sub-nav collapse" id="materia">
-            <li class="sidebar-nav-item">
-              <a href="{% url 'ctr:materia_list' %}" class="sidebar-nav-link">
-                <span class="sidebar-nav-abbr">
-                  List
-                </span>
-                <span class="sidebar-nav-name">
-                  Listar
-                </span>
-              </a>
-            </li>
-          </ul>
         </li>
 
 
-
-
         <li class="sidebar-nav-item">
-          <a class="sidebar-nav-link collapsed" data-toggle="collapse" href="#blog" aria-expanded="false"
-            aria-controls="blog">
+          <a href="{% url 'ctr:blog_list' %}" class="sidebar-nav-link">
             <span class="sidebar-nav-icon">
               <span class="oi oi-bookmark"></span>
             </span>
@@ -219,23 +185,12 @@
               Blogs
             </span>
             <span class="sidebar-nav-end">
-              <i data-feather="chevron-right" class="nav-collapse-icon"></i>
             </span>
           </a>
-
-          <ul class="sidebar-sub-nav collapse" id="blog">
-            <li class="sidebar-nav-item">
-              <a href="{% url 'ctr:blog_list' %}" class="sidebar-nav-link">
-                <span class="sidebar-nav-abbr">
-                  List
-                </span>
-                <span class="sidebar-nav-name">
-                  Ver
-                </span>
-              </a>
-            </li>
-          </ul>
         </li>
+
+
+        
 
         {% endif %}
 

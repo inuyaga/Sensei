@@ -46,8 +46,9 @@
                     <span class="custom-control-indicator"></span>
                   </label>
                 </th>
-                <th scope="col">Aula</th>
+                <th scope="col">###</th>
                 <th scope="col">Nombre</th>
+                <th scope="col">Aula</th>
                 <th scope="col">Usuarios</th>
                 <th scope="col">Creado</th>
                 <th scope="col">Acciones</th>
@@ -65,8 +66,9 @@
                       <span class="custom-control-indicator"></span>
                     </label>
                   </th>
-                  <td>{{item.materia_aula}}</td>
+                  <td>{{item.materia_id}}</td>
                   <td>{{item}}</td>
+                  <td>{{item.materia_aula}}</td>
                   <td>
                     {% for al in item.materia_registro_alumnnos.all %}
                     <span class="badge badge-pill badge-primary">{{al}}</span>
