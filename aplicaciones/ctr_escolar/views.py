@@ -42,6 +42,7 @@ from django.utils.formats import localize
 from datetime import datetime
 # EXCEPCIONES
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Count
 # Create your views here.
 class index(LoginRequiredMixin, TemplateView):
     login_url = '/login/'
@@ -2169,7 +2170,7 @@ class CalificarTareaListView(LoginRequiredMixin, ListView):
     model = TareaDocumento
     template_name = 'dasboard/maestro/calificar_tarea.html'
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs): 
         context = super().get_context_data(**kwargs)
         context['tarea']=Tarea.objects.get(tarea_id=self.kwargs.get('id_tarea'))
         return context
@@ -2177,7 +2178,51 @@ class CalificarTareaListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.filter(tareaDocumento_Tarea__tarea_id=self.kwargs.get('id_tarea'))
+        status=self.request.GET.get('status')
+        if status != None:
+            queryset = queryset.filter(tareaDocumento_status=status)
         return queryset
+
+
+class TareaDocumentoUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = TareaDocumento
+    template_name = "FormBlog.html"
+    form_class = TareaDocumentoEditMaestroFrom
+    success_url = reverse_lazy('ctr:calificar_tarea')
+
+    def get_success_url(self):
+        ob_tarea_doc = TareaDocumento.objects.get(tareaDocumento_id=self.kwargs.get('pk'))
+        url = reverse_lazy('ctr:calificar_tarea', kwargs={
+            'id_tarea':ob_tarea_doc.tareaDocumento_Tarea.tarea_id,
+            })
+        url += '?'+self.request.GET.urlencode()
+        return str(url)
+    def form_valid(self, form):
+        form.instance.tareaDocumento_status = True
+        return super().form_valid(form)
+    
+    
+class TareaDocumentoDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = TareaDocumento
+    template_name = 'DeleteForm.html'
+
+    def get_success_url(self):
+        ob_tarea_doc = TareaDocumento.objects.get(tareaDocumento_id=self.kwargs.get('pk'))
+        url = reverse_lazy('ctr:calificar_tarea', kwargs={'id_tarea':ob_tarea_doc.tareaDocumento_Tarea.tarea_id})
+        return str(url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        deletable_objects, model_count, protected = get_deleted_objects([self.object])
+        context['deletable_objects']=deletable_objects
+        context['model_count']=dict(model_count).items()
+        context['protected']=protected
+        return context
+    
 
 
 class BlogListView(LoginRequiredMixin, ListView):
@@ -2269,59 +2314,7 @@ class BlogDeleteView(LoginRequiredMixin, DeleteView):
 
 
 
-# class ExamenListView(ListView):
-#     model = Examen
-#     template_name = "dasboard/maestro/ExamenList.html"
 
-    
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['unidad'] = Unidad.objects.get(unidad_id=self.kwargs.get('id_unidad'))
-#         return context
-    
-    
-# class ExamenCreateView(CreateView):
-#     model = Examen
-#     template_name = "FormCreate.html"
-#     form_class = ExamenForm
-#     success_url = reverse_lazy('ctr:examen_listar')
-
-#     def get_success_url(self):
-#         url = reverse_lazy('ctr:examen_listar', kwargs={
-#             'id_unidad':self.kwargs.get('id_unidad'),
-#             })
-#         return str(url)
-
-# class ExamenUpdateView(UpdateView):
-#     model = Examen
-#     template_name = "FormCreate.html"
-#     form_class = ExamenForm
-#     success_url = reverse_lazy('ctr:examen_listar')
-
-#     def get_success_url(self):
-#         url = reverse_lazy('ctr:examen_listar', kwargs={
-#             'id_unidad':self.kwargs.get('id_unidad'),
-#             })
-#         return str(url)
-
-# class ExamenDeleteView(DeleteView):
-#     model = Examen
-#     template_name = 'DeleteForm.html'
-#     success_url = reverse_lazy('ctr:examen_listar')
-
-#     def get_success_url(self):
-#         url = reverse_lazy('ctr:examen_listar', kwargs={
-#             'id_unidad':self.kwargs.get('id_unidad'),
-#             })
-#         return str(url)
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         deletable_objects, model_count, protected = get_deleted_objects([self.object])
-#         context['deletable_objects']=deletable_objects
-#         context['model_count']=dict(model_count).items()
-#         context['protected']=protected
-#         return context
 
 
 class ReactivoListView(ListView): 
@@ -2412,12 +2405,39 @@ class ReactivoDeleteView(DeleteView):
         context['deletable_objects']=deletable_objects
         context['model_count']=dict(model_count).items()
         context['protected']=protected
-        return context
+        return context 
 
 
 
 
-"""CLASES PARA ALUMNO"""
+class PromediarUnidadAlumnosView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = TareaDocumento
+    template_name = "dasboard/maestro/promediar_unidad.html"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.values(
+        'tareaDocumento_Tarea__tarea_unidad__unidad_id', 
+        'tareaDocumento_Tarea__tarea_unidad__unidad_nombre', 
+        'tareaDocumento_pertenece__first_name',
+        'tareaDocumento_pertenece__last_name',
+        ).filter(tareaDocumento_Tarea__tarea_unidad=self.kwargs.get('id_unidad')).annotate(
+            total_tareas=Count('tareaDocumento_id'),
+            total_suma=Sum('tareaDocumento_calificacion')
+            ).order_by('tareaDocumento_pertenece')
+        print(queryset)
+        return queryset
+
+
+
+
+"""
+###################################################################################################################
+                                                CLASES PARA ALUMNO
+###################################################################################################################
+"""
 
 class BoligAlumnoListView(LoginRequiredMixin, ListView):
     login_url = '/login/'
@@ -2636,7 +2656,7 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
         
         total_preguntas = Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen')).count()
         respondidas_correctamente = RespuestaExamen.objects.filter(re_reactivo__rec_examen__tarea_id=self.kwargs.get('id_examen'), re_ok=True).count()
-        resultado = (respondidas_correctamente / total_preguntas) * 100
+        resultado = (respondidas_correctamente / total_preguntas) * 10
         tarea_docu=TareaDocumento(
             tareaDocumento_archivo='n/a',
             tareaDocumento_comentario_alumno='S/C',
@@ -2647,7 +2667,7 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
             tareaDocumento_calificacion=round(resultado, 2),
         )
         tarea_docu.save()
-        messages.success(request, 'Examen completado su resultados total de preguntas:{} contestado correctamente:{} resultado={}%.'.format(total_preguntas, respondidas_correctamente, resultado))
+        messages.success(request, 'Examen completado su resultados total de preguntas:{} contestado correctamente:{} resultado={}.'.format(total_preguntas, respondidas_correctamente, resultado))
         url = reverse_lazy('ctr:al_tareas', kwargs={'id_unidad':tarea_examen.tarea_unidad.unidad_id})
         return redirect(url)
 

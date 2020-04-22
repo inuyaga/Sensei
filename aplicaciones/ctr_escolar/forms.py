@@ -144,6 +144,22 @@ class TareaDocumentoFrom(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
+class TareaDocumentoEditMaestroFrom(forms.ModelForm):
+    class Meta:
+        model = TareaDocumento
+        fields = (
+            'tareaDocumento_archivo',
+            'tareaDocumento_comentario_maestro',
+            'tareaDocumento_calificacion',
+            )
+        widgets = {
+        'tareaDocumento_comentario_maestro': forms.Textarea(),
+        }
+    def __init__(self, *args, **kwargs):
+        super(TareaDocumentoEditMaestroFrom, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
 class TareaEntregadaEdit(forms.ModelForm):
     class Meta:
         model = TareaDocumento
@@ -153,6 +169,7 @@ class TareaEntregadaEdit(forms.ModelForm):
         # self.fields['materia_aula'].queryset=Aula.objects.filter(aula_pertenece=id_user)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+
 class ComentarioBlogForm(forms.ModelForm):
     class Meta:
         model = ComentarioBlog

@@ -111,7 +111,7 @@ class TareaDocumento(models.Model):
     tareaDocumento_Tarea=models.ForeignKey(Tarea, verbose_name='Tarea', on_delete=models.CASCADE)
     tareaDocumento_status=models.BooleanField('Status Tarea', default=False)
     tareaDocumento_calificacion=models.FloatField('Calificación', null=True, blank=True, validators=[MinValueValidator(1),MaxValueValidator(10)])
-    tareaDocumento_actualizado=models.DateTimeField(auto_now=True)
+    tareaDocumento_actualizado=models.DateTimeField(auto_now=True) 
 
     def porcentaje_tarea(self):
         porcentaje_tarea=self.tareaDocumento_Tarea.tarea_porcentaje

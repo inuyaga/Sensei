@@ -17,6 +17,12 @@ def is_aviable_tarea(id_tarea):
         return False
 
 @register.filter
+def get_promedio(id_unidad, suma):
+    tareas_count = Tarea.objects.filter(tarea_unidad=id_unidad).count()
+    promedio = suma/tareas_count
+    return round(promedio, 2)
+
+@register.filter
 def is_mark_reactivo_true(id_reactivo):
     reactivo = EleccionReactivo.objects.filter(el_reactivo=id_reactivo, el_verdadero=True).count()
     print(reactivo)

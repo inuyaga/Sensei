@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from aplicaciones.usuario.models import User
-
+from django.contrib.auth.views import PasswordChangeView, PasswordChangeForm
 TIPO_USER = (
     (1, 'Maestro'),
     (2, 'Alumno'),
@@ -26,6 +26,14 @@ class UserFormEdit(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UserFormEdit, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class UserFormUpdatePassForm(PasswordChangeForm):
+    class Meta:
+        model = User
+    def __init__(self, *args, **kwargs):
+        super(UserFormUpdatePassForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 

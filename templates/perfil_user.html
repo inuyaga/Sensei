@@ -1,6 +1,6 @@
 {% extends 'dasboard/base.html' %}
 {% block titulo %}
-<title>Sensei | Aula</title>
+<title>Sensei | Perfil</title>
 {% endblock titulo %}
 
 {% block navegacion_links %}
@@ -8,191 +8,33 @@
 <nav aria-label="breadcrumb" role="navigation">
     <ol class="breadcrumb adminx-page-breadcrumb">
         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Aula</li>
+        <li class="breadcrumb-item active" aria-current="page">Perfil</li>
     </ol>
 </nav>
 <div class="pb-3">
-    <h1>Aula</h1>
+    <h1>Perfil</h1>
 </div>
-{% endblock navegacion_links %}
+{% endblock navegacion_links %} 
 
 {% block contenido %}
-{% comment %} <!-- LEFT COLUMN -->
-<div class="profile-left">
-    <!-- PROFILE HEADER -->
-    <div class="profile-header">
-        <div class="overlay"></div>
-        <div class="profile-main">
-            <img src="{% if foto_perfil != '' %} {{foto_perfil.url}} {% endif %}" width="90" height="90"
-                class="img-circle" alt="Avatar">
-            <h3 class="name">{{nombre}}</h3>
-            <span class="online-status status-available">Disponible</span>
-        </div>
-        <div class="profile-stat">
-            <div class="row">
-                <div class="col-md-4 stat-item">
-                    {{total_tareas_por_hacer}} <span>Tareas</span>
-                </div>
-                <div class="col-md-4 stat-item">
-                    {{total_tareas}} <span>Entregadas</span>
-                </div>
-                <div class="col-md-4 stat-item">
-                    ok <span>Puntos</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- END PROFILE HEADER -->
-    <!-- PROFILE DETAIL -->
-    <div class="profile-detail">
-        <div class="profile-info">
-            <h4 class="heading">Información Basica</h4>
-            <ul class="list-unstyled list-justify">
-                <li>Nacimiento <span>{{Usuario.fecha_nacimiento}}</span></li>
-                <li>Telefono <span>{{Usuario.telefono}}</span></li>
-                <li>Email <span>{{email}}</span></li>
-            </ul>
-        </div>
-        <div class="profile-info">
-            <h4 class="heading">Acerca de mi</h4>
-            <p>{{Usuario.acerca_de_mi}}</p>
-        </div>
-        <div class="text-center"><a href="{% url 'perfil_user_update' id %}" class="btn btn-primary">Editar Perfil</a>
-        </div>
-    </div>
-    <!-- END PROFILE DETAIL -->
-</div>
-<!-- END LEFT COLUMN -->
-<!-- RIGHT COLUMN -->
-<div class="profile-right">
-    <h4 class="heading">{{nombre}} Recompensas</h4>
-    <!-- AWARDS -->
-    <div class="awards">
-        <div class="row">
-            <div class="col-md-3 col-sm-6">
-                <div class="award-item">
-                    <div class="hexagon">
-                        <span class="lnr lnr-sun award-icon"></span>
-                    </div>
-                    <span>Idea más brillante</span>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="award-item">
-                    <div class="hexagon">
-                        <span class="lnr lnr-clock award-icon"></span>
-                    </div>
-                    <span>Más a tiempo</span>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="award-item">
-                    <div class="hexagon">
-                        <span class="lnr lnr-magic-wand award-icon"></span>
-                    </div>
-                    <span>Solucionador de problemas</span>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="award-item">
-                    <div class="hexagon">
-                        <span class="lnr lnr-heart award-icon"></span>
-                    </div>
-                    <span>Más amado</span>
-                </div>
-            </div>
-        </div>
-        <div class="text-center"><a href="#" class="btn btn-default">Mas</a></div>
-    </div>
-    <!-- END AWARDS -->
-    <!-- TABBED CONTENT -->
-    <div class="custom-tabs-line tabs-line-bottom left-aligned">
-        <ul class="nav" role="tablist">
-            <li class="active"><a href="#tab-bottom-left1" role="tab" data-toggle="tab">Actividad Reciente</a></li>
-        </ul>
-    </div>
-    <div class="tab-content">
-        <div class="tab-pane fade in active" id="tab-bottom-left1">
-            <ul class="list-unstyled activity-timeline">
-                <li>
-                    <i class="fa fa-comment activity-icon"></i>
-                    <p>Commented on post <a href="#">Prototyping</a> <span class="timestamp">2 minutes ago</span></p>
-                </li>
-                <li>
-                    <i class="fa fa-cloud-upload activity-icon"></i>
-                    <p>Uploaded new file <a href="#">Proposal.docx</a> to project <a href="#">New Year Campaign</a>
-                        <span class="timestamp">7 hours ago</span></p>
-                </li>
-                <li>
-                    <i class="fa fa-plus activity-icon"></i>
-                    <p>Added <a href="#">Martin</a> and <a href="#">3 others colleagues</a> to project repository <span
-                            class="timestamp">Yesterday</span></p>
-                </li>
-                <li>
-                    <i class="fa fa-check activity-icon"></i>
-                    <p>Finished 80% of all <a href="#">assigned tasks</a> <span class="timestamp">1 day ago</span></p>
-                </li>
-            </ul>
-            <div class="margin-top-30 text-center"><a href="#" class="btn btn-default">Mas</a></div>
-        </div>
+<div class="row justify-content-center">
+<div class="card text-center">
 
+    
+    <div class="card-header">
+        {{user.get_full_name}}
     </div>
-    <!-- END TABBED CONTENT -->
-</div> {% endcomment %}
-
-
-{% load static %}
-
-
-<div class="col-md-12">
-    <div class="card card-profile">
-        <div class="card-header" style="background-image: url('{% static 'overlay-admin/assets/img/blogpost.jpg' %}')">
-            <div class="profile-picture">
-                <div class="avatar avatar-xl">
-                    <img src="{% if foto_perfil != '' %} {{foto_perfil.url}} {% endif %}" alt="..."
-                        class="avatar-img rounded-circle">
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="user-profile text-center">
-                <div class="name">{{Usuario.get_full_name}}</div>
-                <div class="job">{% if Usuario.is_maestro %}<span class="user-level">Maestro</span>{% else %}<span
-                        class="user-level">Alumno</span>{% endif %}</div>
-                <div class="desc">{{Usuario.acerca_de_mi}}</div>
-                <div class="social-media">
-                    <a class="btn btn-info btn-twitter btn-sm btn-link" href="#">
-                        <span class="btn-label just-icon"><i class="flaticon-twitter"></i> </span>
-                    </a>
-                    <a class="btn btn-danger btn-sm btn-link" rel="publisher" href="#">
-                        <span class="btn-label just-icon"><i class="flaticon-google-plus"></i> </span>
-                    </a>
-                    <a class="btn btn-primary btn-sm btn-link" rel="publisher" href="#">
-                        <span class="btn-label just-icon"><i class="flaticon-facebook"></i> </span>
-                    </a>
-
-                </div>
-                <div class="view-profile">
-                    <a href="{% url 'perfil_user_update' id %}" class="btn btn-secondary btn-block">Editar perfil</a>
-                </div>
-            </div>
-        </div>
-        <div class="card-footer">
-            <div class="row user-stats text-center">
-                <div class="col">
-                    <div class="number">{{email}}</div>
-                    <div class="title">Correo</div>
-                </div>
-                <div class="col">
-                    <div class="number">{{Usuario.fecha_nacimiento}}</div>
-                    <div class="title">Fecha nacimiento</div>
-                </div>
-                <div class="col">
-                    <div class="number">{{Usuario.telefono}}</div>
-                    <div class="title">Telefono</div>
-                </div>
-            </div>
-        </div>
+    <div class="card-body">
+        <img src="{% if user.foto_perfil != '' %}{{user.foto_perfil.url}}{% endif %}" class="rounded-circle" style="width: 150px;" alt="{{user.get_full_name}}">
+      <h5 class="card-title">{{user.username}}</h5>
+      <p class="card-text">{{user.acerca_de_mi}}</p>
+      <p class="card-text">{{user.telefono}}</p>
+      <p class="card-text">{{user.fecha_nacimiento}}</p>
+      <a href="{% url 'perfil_user_update' user.id %}" class="btn btn-primary">Actualizar</a>
     </div>
+    <div class="card-footer text-muted">
+      Ultimo acceso: {{user.last_login}}
+    </div>
+  </div>
 </div>
 {% endblock contenido %}

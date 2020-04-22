@@ -1,8 +1,38 @@
-{% extends 'admin/base_sensei.html'%}
+{% extends 'dasboard/base.html' %}
+{% load get_model_object %}
+{% load condicionales %}
+{% block titulo %}
+<title>Sensei | Tareas</title>
+{% endblock titulo %}
+
+{% block navegacion_links %}
+
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb adminx-page-breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'ctr:dasboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Perfil</li>
+    </ol>
+</nav>
+<div class="pb-3">
+    <h2>Perifl de usurario</h2>
+</div>
+{% endblock navegacion_links %}
+
+
 {% block contenido %}
-<form action="" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{form.as_p}}
-        <button type="submit" class="btn btn-success">Guardar</button>
-</form>
+
+<h3>{{tarea.tarea_unidad.unidad_materia}}</h3>
+<h4>{{tarea.tarea_unidad}}</h4>
+<h5>{{tarea}}</h5>
+
+<div class="row">
+ 
+  <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+        <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form.as_p}}
+                <button type="submit" class="btn btn-success">Guardar</button>
+        </form>
+  </div>
+</div>
 {% endblock contenido %}

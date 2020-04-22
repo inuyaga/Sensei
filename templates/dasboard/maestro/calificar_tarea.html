@@ -29,6 +29,13 @@
 <h4>{{tarea.tarea_unidad}}</h4>
 <h5>{{tarea}}</h5>
 
+<div class="row justify-content-center">
+  <div class="btn-group" role="group" aria-label="Basic example">
+    <a class="btn btn-outline-primary btn-sm" href="?" role="button">Todo</a>
+    <a class="btn btn-outline-success btn-sm" href="?status=True" role="button">Calificado</a>
+    <a class="btn btn-outline-info btn-sm" href="?status=False" role="button">Entregados</a>
+  </div>
+</div>
 <div class="row">
  
   <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
@@ -79,7 +86,7 @@
               <td>
                 {% if item.tareaDocumento_Tarea.tarea_tipo != 'EXAMEN' %}
                 <div class="btn-group" role="group" aria-label="Basic example">
-                    <a href="" class="btn btn-sm btn-labeled btn-success">
+                    <a href="{% url 'ctr:tarea_update' item.tareaDocumento_id %}?{{view.request.GET.urlencode}}" class="btn btn-sm btn-labeled btn-success">
                         <span class="btn-label">
                           <span class="oi oi-pencil"></span>
                         </span>
@@ -87,7 +94,7 @@
                           Calificar
                         </span>
                       </a>
-                      <a href="{% url 'ctr:al_tareas_delete' item.tareaDocumento_id item.tareaDocumento_Tarea.tarea_unidad.unidad_id %}" class="btn btn-sm btn-labeled btn-danger">
+                      <a href="{% url 'ctr:docu_delete' item.tareaDocumento_id %}" class="btn btn-sm btn-labeled btn-danger">
                         <span class="btn-label">
                             <span class="oi oi-circle-x"></span>
                         </span>

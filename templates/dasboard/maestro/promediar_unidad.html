@@ -1,0 +1,79 @@
+{% extends 'dasboard/base.html' %}
+{% load condicionales %}
+{% block titulo %}
+<title>Sensei | Promediar</title>
+{% endblock titulo %}
+
+{% block navegacion_links %}
+
+<nav aria-label="breadcrumb" role="navigation">
+  <ol class="breadcrumb adminx-page-breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'ctr:materia_list' %}">Materias</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'ctr:materia_list' %}">Unidad</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Promediar</li>
+  </ol>
+</nav>
+<div class="pb-3">
+  <h1>{{materia.materia_nombre}}</h1>
+  <h2>Promediar</h2>
+</div>
+{% endblock navegacion_links %}
+
+
+{% block contenido %}
+
+<div class="d-flex flex-row-reverse bd-highlight">
+  <div class="btn-group pb-2" role="group" aria-label="Basic example">
+    <a class="btn btn-primary" href=""
+      role="button">Añadir</a>
+  </div>
+</div>
+<br>
+
+
+<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+    <div class="card">
+      <div class="card-header">
+        Tareas
+      </div>
+      <div class="card-body">
+        <table class="table table-striped table-sm table-responsive">
+          <thead>
+            <tr>
+              <th scope="col">Unidad</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Total entregados</th>
+              <th scope="col">Suma</th>
+              <th scope="col">Promedio</th>
+              
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in object_list %}
+            <tr>
+              <td>{{item.tareaDocumento_Tarea__tarea_unidad__unidad_nombre}}</td>
+              <td>{{item.tareaDocumento_pertenece__first_name}} {{item.tareaDocumento_pertenece__last_name}}</td>
+              <td>{{item.total_tareas}}</td>
+              <td>{{item.total_suma}}</td>
+              <td>{{item.tareaDocumento_Tarea__tarea_unidad__unidad_id|get_promedio:item.total_suma}}</td>
+              <td>
+            </tr>
+            {% endfor %}         
+            
+            
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+
+
+    
+
+    
+
+
+
+{% endblock contenido %}
