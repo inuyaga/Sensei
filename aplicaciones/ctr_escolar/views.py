@@ -2162,6 +2162,24 @@ class TareaUpdateView(LoginRequiredMixin, UpdateView):
 
 
 
+
+class CalificarTareaListView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = TareaDocumento
+    template_name = 'dasboard/maestro/calificar_tarea.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tarea']=Tarea.objects.get(tarea_id=self.kwargs.get('id_tarea'))
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(tareaDocumento_Tarea__tarea_id=self.kwargs.get('id_tarea'))
+        return queryset
+
+
 class BlogListView(LoginRequiredMixin, ListView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
@@ -2552,7 +2570,7 @@ class EntrgaTareaAlumnoViewDelete(DeleteView):
         return context
 
 
-
+ 
 
 
 class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
@@ -2639,4 +2657,3 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
         context['tarea']=Tarea.objects.get(tarea_id=self.kwargs.get('id_examen'))
         return context
 
-  

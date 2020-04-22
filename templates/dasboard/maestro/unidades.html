@@ -66,6 +66,7 @@
               </th>
               <td>{{item.unidad_nombre}}</td>
               <td>
+
                 <a href="{% url 'ctr:unidad_tareas' view.kwargs.id_materia item.unidad_id %}"
                   class="btn btn-sm btn-labeled btn-success">
                   <span class="btn-label">
@@ -73,6 +74,16 @@
                   </span>
                   <span class="btn-text">
                     Tareas
+                  </span>
+                </a>
+
+                <a href="" 
+                  class="btn btn-sm btn-labeled btn-info">
+                  <span class="btn-label">
+                    <span class="oi oi-task"></span>
+                  </span>
+                  <span class="btn-text">
+                    Promediar
                   </span>
                 </a>
 

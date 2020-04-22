@@ -1,5 +1,5 @@
 from django import template
-from aplicaciones.ctr_escolar.models import Tarea
+from aplicaciones.ctr_escolar.models import Tarea, EleccionReactivo
 register = template.Library()
 from django.utils import timezone
 from django.urls import reverse_lazy
@@ -15,6 +15,15 @@ def is_aviable_tarea(id_tarea):
         return True
     else:
         return False
+
+@register.filter
+def is_mark_reactivo_true(id_reactivo):
+    reactivo = EleccionReactivo.objects.filter(el_reactivo=id_reactivo, el_verdadero=True).count()
+    print(reactivo)
+    if reactivo >= 1:
+        return 'success'
+    else:
+        return 'primary'
 
 @register.filter
 def return_button_tarea(id_tarea):

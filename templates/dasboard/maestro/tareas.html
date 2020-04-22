@@ -86,6 +86,15 @@
                         </span>
                       </a>
                       {% endif %}
+
+                       <a href="{% url 'ctr:calificar_tarea' item.tarea_id %}" class="btn btn-sm btn-labeled btn-dark">
+                        <span class="btn-label">
+                          <span class="oi oi-circle-check"></span>
+                        </span>
+                        <span class="btn-text">
+                          Calificar
+                        </span>
+                      </a>
                     
                     <a href="{% url 'ctr:tarea_update' item.tarea_id materia.materia_id unidad.unidad_id %}" class="btn btn-sm btn-labeled btn-primary">
                         <span class="btn-label">

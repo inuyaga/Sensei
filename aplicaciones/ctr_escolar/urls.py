@@ -100,6 +100,7 @@ urlpatterns = [
     path('materia/unidades/tareas/create/<int:id_materia>/<int:id_unidad>/', view_ctr.TareaCreateView.as_view(), name='tarea_crear'),    
     path('materia/unidades/tareas/delete/<int:pk>/<int:id_materia>/<int:id_unidad>/', view_ctr.TareaDeleteView.as_view(), name='tarea_delete'),    
     path('materia/unidades/tareas/update/<int:pk>/<int:id_materia>/<int:id_unidad>/', view_ctr.TareaUpdateView.as_view(), name='tarea_update'),    
+    path('materia/unidades/tareas/calificar/<int:id_tarea>/', view_ctr.CalificarTareaListView.as_view(), name='calificar_tarea'),    
 
     path('Blog/List/', view_ctr.BlogListView.as_view(), name='blog_list'),    
     path('Blog/crear/', view_ctr.BlogCreateView.as_view(), name='blog_crear'),    

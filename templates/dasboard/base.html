@@ -39,7 +39,7 @@
               <i data-feather="search"></i>
             </div>
           </div>
-          <input type="text" class="form-control" id="search" placeholder="Escriba su busqueda....">
+          <input type="text" class="form-control" name="search" id="search" placeholder="Escriba su busqueda....">
         </div>
       </form>
 
@@ -179,10 +179,24 @@
         <li class="sidebar-nav-item">
           <a href="{% url 'ctr:blog_list' %}" class="sidebar-nav-link">
             <span class="sidebar-nav-icon">
-              <span class="oi oi-bookmark"></span>
+              <span class="oi oi-task"></span>
             </span>
             <span class="sidebar-nav-name">
               Blogs
+            </span>
+            <span class="sidebar-nav-end">
+            </span>
+          </a>
+        </li>
+
+        
+        <li class="sidebar-nav-item">
+          <a href="" class="sidebar-nav-link">
+            <span class="sidebar-nav-icon">
+              <span class="oi oi-spreadsheet"></span>
+            </span>
+            <span class="sidebar-nav-name">
+              Calificar
             </span>
             <span class="sidebar-nav-end">
             </span>

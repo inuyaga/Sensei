@@ -1,0 +1,111 @@
+{% extends 'dasboard/base.html' %}
+{% load get_model_object %}
+{% load condicionales %}
+{% block titulo %}
+<title>Sensei | Tareas</title>
+{% endblock titulo %}
+
+{% block navegacion_links %}
+
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb adminx-page-breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'ctr:dasboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'ctr:materia_list' %}">Materias</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'ctr:materia_unidad' tarea.tarea_unidad.unidad_materia.materia_id %}">Unidad</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'ctr:unidad_tareas' tarea.tarea_unidad.unidad_materia.materia_id tarea.tarea_unidad.unidad_id %}">Tareas</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Calificar</li>
+    </ol>
+</nav>
+<div class="pb-3">
+    <h2>{{unidad.unidad_materia}}</h2>
+    <h3>{{unidad}}</h3>
+</div>
+{% endblock navegacion_links %}
+
+
+{% block contenido %}
+
+<h3>{{tarea.tarea_unidad.unidad_materia}}</h3>
+<h4>{{tarea.tarea_unidad}}</h4>
+<h5>{{tarea}}</h5>
+
+<div class="row">
+ 
+  <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+  <div class="card">
+    <div class="card-header">
+      Tareas
+    </div>
+    <div class="card-body">
+      <table class="table table-striped table-sm table-responsive">
+        <thead>
+          <tr>
+            <th scope="col">Archivo</th>
+            <th scope="col">Comentario</th>
+            <th scope="col">Respuesta</th>
+            <th scope="col">Entregado</th>
+            <th scope="col">Alumno</th>
+            <th scope="col">Status</th>
+            <th scope="col">Calificacion</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in object_list %}
+          <tr>
+            <td>
+                {% if item.tareaDocumento_Tarea.tarea_tipo == 'ENTREGA' %}
+                <a href="{{item.tareaDocumento_archivo.url}}" class="btn btn-sm btn-icon btn-secondary">
+                  <span class="oi oi-file"></span>
+                </a>
+                {% endif %}
+              </td>
+              <td>{{item.tareaDocumento_comentario_alumno}}</td>
+              <td>{{item.tareaDocumento_comentario_maestro}}</td>
+              <td>{{item.tareaDocumento_creado}}</td>
+              <td>{{item.tareaDocumento_pertenece.get_full_name}}</td>
+              <td>
+                
+                {% if item.tareaDocumento_status %}
+                <span class="badge badge-success">Calificado</span>
+                {% else %}
+                <span class="badge badge-info">Entregado</span>
+                {% endif %}
+                  
+              </td>
+              <td>{{item.tareaDocumento_calificacion}}</td>
+              <td>{{item.tareaDocumento_Tarea.tarea_tipo}}</td>
+              <td>
+                {% if item.tareaDocumento_Tarea.tarea_tipo != 'EXAMEN' %}
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <a href="" class="btn btn-sm btn-labeled btn-success">
+                        <span class="btn-label">
+                          <span class="oi oi-pencil"></span>
+                        </span>
+                        <span class="btn-text">
+                          Calificar
+                        </span>
+                      </a>
+                      <a href="{% url 'ctr:al_tareas_delete' item.tareaDocumento_id item.tareaDocumento_Tarea.tarea_unidad.unidad_id %}" class="btn btn-sm btn-labeled btn-danger">
+                        <span class="btn-label">
+                            <span class="oi oi-circle-x"></span>
+                        </span>
+                        <span class="btn-text">
+                          Eliminar
+                        </span>
+                      </a>
+                  </div>                
+                {% endif %}
+                  
+              </td>
+           
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+</div>
+{% endblock contenido %}
