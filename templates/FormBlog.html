@@ -58,6 +58,7 @@
 <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 
 <script>
+    document.getElementById('id_blog_contenido').required = false;
     tinymce.init({
         language: 'es',
         selector: '#id_blog_contenido',
