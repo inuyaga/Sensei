@@ -110,7 +110,7 @@ class TareaDocumento(models.Model):
     tareaDocumento_pertenece=models.ForeignKey(Usuario, verbose_name='Pertenece a', on_delete=models.CASCADE) 
     tareaDocumento_Tarea=models.ForeignKey(Tarea, verbose_name='Tarea', on_delete=models.CASCADE)
     tareaDocumento_status=models.BooleanField('Status Tarea', default=False)
-    tareaDocumento_calificacion=models.FloatField('Calificación', null=True, blank=True, validators=[MinValueValidator(1),MaxValueValidator(10)])
+    tareaDocumento_calificacion=models.FloatField('Calificación', null=True, blank=True, validators=[MinValueValidator(1),MaxValueValidator(10)],help_text="Calificacion valida de 1 a 10")
     tareaDocumento_actualizado=models.DateTimeField(auto_now=True) 
 
     def porcentaje_tarea(self):

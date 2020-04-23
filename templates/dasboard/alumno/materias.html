@@ -1,5 +1,6 @@
 {% extends 'dasboard/base.html' %}
 {% load get_model_object %}
+{% load condicionales %}
 {% block titulo %}
 <title>Sensei | Materia</title>
 {% endblock titulo %}
@@ -29,6 +30,7 @@
     <h5 class="card-title">{{item}}</h5>
     <h6 class="card-subtitle mb-2 text-muted">{{item.materia_aula}}</h6>
     <h6 class="card-subtitle mb-2 text-muted">{{item.materia_creado}}</h6>
+    <h6 class="card-subtitle mb-2 text-muted"><strong>Promedio:{{item.materia_id|get_promedio_materia:user.id}}</strong></h6>
   </div>
 
   <div class="list-group">

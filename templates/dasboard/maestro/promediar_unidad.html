@@ -23,13 +23,6 @@
 
 {% block contenido %}
 
-<div class="d-flex flex-row-reverse bd-highlight">
-  <div class="btn-group pb-2" role="group" aria-label="Basic example">
-    <a class="btn btn-primary" href=""
-      role="button">Añadir</a>
-  </div>
-</div>
-<br>
 
 
 <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
@@ -46,6 +39,7 @@
               <th scope="col">Total entregados</th>
               <th scope="col">Suma</th>
               <th scope="col">Promedio</th>
+              <th scope="col">Suma %</th>
               
             </tr>
           </thead>
@@ -53,10 +47,11 @@
             {% for item in object_list %}
             <tr>
               <td>{{item.tareaDocumento_Tarea__tarea_unidad__unidad_nombre}}</td>
-              <td>{{item.tareaDocumento_pertenece__first_name}} {{item.tareaDocumento_pertenece__last_name}}</td>
+              <td><a href="{% url 'ctr:detalle_alumno' item.tareaDocumento_pertenece__id item.tareaDocumento_Tarea__tarea_unidad__unidad_id %}">{{item.tareaDocumento_pertenece__first_name}} {{item.tareaDocumento_pertenece__last_name}}</a></td>
               <td>{{item.total_tareas}}</td>
               <td>{{item.total_suma}}</td>
               <td>{{item.tareaDocumento_Tarea__tarea_unidad__unidad_id|get_promedio:item.total_suma}}</td>
+              <td>{{item.suma_real_porcentaje}}</td>
               <td>
             </tr>
             {% endfor %}         

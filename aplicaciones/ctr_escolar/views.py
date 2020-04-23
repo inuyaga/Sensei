@@ -10,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
 from django.shortcuts import render_to_response
 from datetime import datetime, date, timedelta
-from django.db.models import Sum, FloatField, F
+from django.db.models import Sum, FloatField, F, ExpressionWrapper
 import pytz
 from django.utils import timezone 
 
@@ -2181,6 +2181,9 @@ class CalificarTareaListView(LoginRequiredMixin, ListView):
         status=self.request.GET.get('status')
         if status != None:
             queryset = queryset.filter(tareaDocumento_status=status)
+        queryset = queryset.annotate(
+                                    real_porcentaje=ExpressionWrapper((F('tareaDocumento_Tarea__tarea_porcentaje')/10)*F('tareaDocumento_calificacion'), output_field=FloatField())
+                                    )
         return queryset
 
 
@@ -2417,20 +2420,77 @@ class PromediarUnidadAlumnosView(LoginRequiredMixin, ListView):
     template_name = "dasboard/maestro/promediar_unidad.html"
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset() 
         queryset = queryset.values(
         'tareaDocumento_Tarea__tarea_unidad__unidad_id', 
         'tareaDocumento_Tarea__tarea_unidad__unidad_nombre', 
+        'tareaDocumento_pertenece__id',
         'tareaDocumento_pertenece__first_name',
         'tareaDocumento_pertenece__last_name',
         ).filter(tareaDocumento_Tarea__tarea_unidad=self.kwargs.get('id_unidad')).annotate(
             total_tareas=Count('tareaDocumento_id'),
             total_suma=Sum('tareaDocumento_calificacion')
+            ).annotate(
+                suma_real_porcentaje = Sum((F('tareaDocumento_Tarea__tarea_porcentaje')/10)*F('tareaDocumento_calificacion'), output_field=FloatField())
             ).order_by('tareaDocumento_pertenece')
-        print(queryset)
+        
         return queryset
 
 
+class DetalleAlumnoUnidadTareas(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = TareaDocumento
+    template_name = "dasboard/maestro/detalles_tarea_alumno.html" 
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(tareaDocumento_pertenece=self.kwargs.get('id_alumno'), tareaDocumento_Tarea__tarea_unidad__unidad_id=self.kwargs.get('id_unidad')).annotate(
+                                    real_porcentaje=ExpressionWrapper((F('tareaDocumento_Tarea__tarea_porcentaje')/10)*F('tareaDocumento_calificacion'), output_field=FloatField())
+                                    )
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['total_tares']=Tarea.objects.filter(tarea_unidad=self.kwargs.get('id_unidad')).count()
+        context['total_entregadas']=TareaDocumento.objects.filter(tareaDocumento_pertenece=self.kwargs.get('id_alumno'), tareaDocumento_Tarea__tarea_unidad=self.kwargs.get('id_unidad')).count()
+        return context 
+
+    
+
+
+class PromediarMateriaAlumnoView(LoginRequiredMixin, ListView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = TareaDocumento
+    template_name = "dasboard/maestro/promediar_materia.html" 
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['total_unidad']=Unidad.objects.filter(unidad_materia__materia_id=self.kwargs.get('id_materia')).count()
+        context['materia']=Materia.objects.get(materia_id=self.kwargs.get('id_materia'))
+        return context 
+
+    def get_queryset(self):
+        queryset = super().get_queryset() 
+        total_tareas = Unidad.objects.filter(unidad_materia__materia_id=self.kwargs.get('id_materia')).count()
+        queryset = queryset.values(
+        'tareaDocumento_Tarea__tarea_unidad__unidad_materia', 
+        'tareaDocumento_Tarea__tarea_unidad__unidad_materia__materia_nombre', 
+        # 'tareaDocumento_Tarea__tarea_unidad__unidad_id', 
+        # 'tareaDocumento_Tarea__tarea_unidad__unidad_nombre', 
+        'tareaDocumento_pertenece__id',
+        'tareaDocumento_pertenece__first_name',
+        'tareaDocumento_pertenece__last_name',
+        ).filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia=self.kwargs.get('id_materia')).annotate(
+            total_tareas=Count('tareaDocumento_id'),
+            total_suma=Sum('tareaDocumento_calificacion')
+            ).annotate(
+                suma_real_porcentaje = Sum((F('tareaDocumento_Tarea__tarea_porcentaje')/10)*F('tareaDocumento_calificacion'), output_field=FloatField()),
+                promedio_materia = Sum((F('tareaDocumento_Tarea__tarea_porcentaje')/10)*F('tareaDocumento_calificacion'), output_field=FloatField())/total_tareas,
+            ).order_by('tareaDocumento_pertenece')
+        
+        return queryset
 
 
 """
@@ -2536,8 +2596,13 @@ class TareasListViewAlumno(LoginRequiredMixin, ListView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         context['unidad'] = Unidad.objects.get(unidad_id=self.kwargs.get('id_unidad'))
-        context['entregas'] = TareaDocumento.objects.filter(tareaDocumento_pertenece=self.request.user, tareaDocumento_Tarea__tarea_unidad=self.kwargs.get('id_unidad'))
-
+        context['entregas'] = TareaDocumento.objects.filter(tareaDocumento_pertenece=self.request.user, tareaDocumento_Tarea__tarea_unidad=self.kwargs.get('id_unidad')).annotate(
+                suma_real_porcentaje = ExpressionWrapper((F('tareaDocumento_Tarea__tarea_porcentaje')/10)*F('tareaDocumento_calificacion'), output_field=FloatField()),
+            )
+        context['promedio'] = TareaDocumento.objects.filter(tareaDocumento_pertenece=self.request.user, tareaDocumento_Tarea__tarea_unidad=self.kwargs.get('id_unidad')).aggregate(
+                calificacion_unidad = Sum((F('tareaDocumento_Tarea__tarea_porcentaje')/10)*F('tareaDocumento_calificacion'), output_field=FloatField()),
+            )
+        
         return context
 
 

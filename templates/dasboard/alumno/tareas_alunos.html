@@ -22,6 +22,22 @@
 
 
 {% block contenido %}
+<div class="col-md-6 col-lg-4 d-flex">
+  <div class="card border-0 bg-success text-white text-center mb-grid w-100">
+    <div class="d-flex flex-row align-items-center h-100">
+      <div class="card-icon d-flex align-items-center h-100 justify-content-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square"><polyline points="9 11 12 14 23 3"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-info-title">Promedio Unidad</div>
+        <h3 class="card-title mb-0">
+         {{promedio.calificacion_unidad}}
+        </h3>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 
 <div class="row">
   <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
@@ -83,6 +99,7 @@
             <th scope="col">Entregado</th>
             <th scope="col">Status</th>
             <th scope="col">Calificacion</th>
+            <th scope="col">Real %</th>
             <th scope="col">Acción</th>
           </tr>
         </thead>
@@ -111,6 +128,7 @@
                 
             </td>
             <td>{{item.tareaDocumento_calificacion}}</td>
+            <td>{{item.suma_real_porcentaje}}</td>
             <td>
               {% if item.tareaDocumento_Tarea.tarea_tipo == 'ENTREGA' %}
               {% if item.tareaDocumento_status == False %}

@@ -1,9 +1,10 @@
 from django import template
-from aplicaciones.ctr_escolar.models import Tarea, EleccionReactivo
+from aplicaciones.ctr_escolar.models import Tarea, EleccionReactivo, TareaDocumento, Unidad
 register = template.Library()
 from django.utils import timezone
 from django.urls import reverse_lazy
 from datetime import datetime
+from django.db.models import Sum, F, FloatField
 @register.filter
 def is_aviable_tarea(id_tarea):
     ahora = timezone.now().date()
@@ -18,9 +19,20 @@ def is_aviable_tarea(id_tarea):
 
 @register.filter
 def get_promedio(id_unidad, suma):
+    suma = 0 if suma == None else suma
     tareas_count = Tarea.objects.filter(tarea_unidad=id_unidad).count()
     promedio = suma/tareas_count
     return round(promedio, 2)
+
+@register.filter
+def get_promedio_materia(id_materia, id_alumno):
+    total_unidad = Unidad.objects.filter(unidad_materia=id_materia).count()
+    suma_tareas = TareaDocumento.objects.filter(tareaDocumento_pertenece=id_alumno, tareaDocumento_Tarea__tarea_unidad__unidad_materia=id_materia).aggregate(
+                calificacion_unidad = Sum((F('tareaDocumento_Tarea__tarea_porcentaje')/10)*F('tareaDocumento_calificacion'), output_field=FloatField()),
+            )
+    suma_tareas['calificacion_unidad'] = 0 if suma_tareas['calificacion_unidad'] == None else suma_tareas['calificacion_unidad']
+    promedio = suma_tareas['calificacion_unidad']/total_unidad
+    return promedio
 
 @register.filter
 def is_mark_reactivo_true(id_reactivo):

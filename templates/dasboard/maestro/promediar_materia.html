@@ -1,0 +1,100 @@
+{% extends 'dasboard/base.html' %}
+{% load condicionales %}
+{% block titulo %}
+<title>Sensei | Promediar Materia</title>
+{% endblock titulo %}
+
+{% block navegacion_links %}
+
+<nav aria-label="breadcrumb" role="navigation">
+  <ol class="breadcrumb adminx-page-breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'ctr:materia_list' %}">Materias</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Promediar</li>
+  </ol>
+</nav>
+<div class="pb-3">
+  <h1>{{materia.materia_nombre}}</h1>
+  <h2>Promediar</h2>
+</div>
+{% endblock navegacion_links %}
+
+
+{% block contenido %}
+
+<div class="row">
+    <div class="col-md-6 col-lg-4 d-flex">
+      <div class="card border-0 bg-primary text-white text-center mb-grid w-100">
+        <div class="d-flex flex-row align-items-center h-100">
+          <div class="card-icon d-flex align-items-center h-100 justify-content-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-info-title">Materia</div>
+            <h3 class="card-title mb-0">
+              {{materia}}
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-4 d-flex">
+      <div class="card border-0 bg-success text-white text-center mb-grid w-100">
+        <div class="d-flex flex-row align-items-center h-100">
+          <div class="card-icon d-flex align-items-center h-100 justify-content-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square"><polyline points="9 11 12 14 23 3"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          </div>
+          <div class="card-body">
+            <div class="card-info-title">Total Unidades</div>
+            <h3 class="card-title mb-0">
+             {{total_unidad}}
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+
+<div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+    <div class="card">
+      <div class="card-header">
+        Calificaciones
+      </div>
+      <div class="card-body">
+        <table class="table table-striped table-sm table-responsive">
+          <thead>
+            <tr>
+              <th scope="col">Alumno</th> 
+              <th scope="col">Suma %</th>
+              <th scope="col">Promedio</th> 
+              
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in object_list %}
+            <tr>
+              <td>{{item.tareaDocumento_pertenece__first_name}} {{item.tareaDocumento_pertenece__last_name}}</td>
+              <td>{{item.suma_real_porcentaje}}%</td>
+              <td>{{item.promedio_materia}}</td>
+              
+            </tr>
+            {% endfor %}         
+            
+            
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+
+
+    
+
+    
+
+
+
+{% endblock contenido %}

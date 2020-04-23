@@ -104,6 +104,8 @@ urlpatterns = [
     path('materia/unidades/tareas/calificar/<int:pk>/form/', view_ctr.TareaDocumentoUpdateView.as_view(), name='tarea_update'),    
     path('materia/unidades/tareas/calificar/<int:pk>/delete/', view_ctr.TareaDocumentoDeleteView.as_view(), name='docu_delete'),    
     path('materia/unidades/promediar/<int:id_unidad>/', view_ctr.PromediarUnidadAlumnosView.as_view(), name='promediar_unidad'),    
+    path('materia/unidades/promediar/detalle/alumno/<int:id_alumno>/<int:id_unidad>/', view_ctr.DetalleAlumnoUnidadTareas.as_view(), name='detalle_alumno'),    
+    path('materia/promediar/alumnos/<int:id_materia>/', view_ctr.PromediarMateriaAlumnoView.as_view(), name='materia_promediar'),    
 
     path('Blog/List/', view_ctr.BlogListView.as_view(), name='blog_list'),    
     path('Blog/crear/', view_ctr.BlogCreateView.as_view(), name='blog_crear'),    
