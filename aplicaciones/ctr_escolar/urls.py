@@ -96,10 +96,15 @@ urlpatterns = [
     path('materia/unidades/update/<int:pk>/<int:id_materia>/', view_ctr.UnidadUpdateView.as_view(), name='materia_unidad_update'),    
     path('materia/unidades/delete/<int:pk>/<int:id_materia>/', view_ctr.UnidadDeleteView.as_view(), name='materia_unidad_delete'),    
 
-    path('materia/unidades/tareas/list/<int:id_materia>/<int:id_unidad>/', view_ctr.TareaListView.as_view(), name='unidad_tareas'),    
+    path('materia/unidades/tareas/list/<int:id_materia>/<int:id_unidad>/', view_ctr.TareaListView.as_view(), name='unidad_tareas'),     
     path('materia/unidades/tareas/create/<int:id_materia>/<int:id_unidad>/', view_ctr.TareaCreateView.as_view(), name='tarea_crear'),    
     path('materia/unidades/tareas/delete/<int:pk>/<int:id_materia>/<int:id_unidad>/', view_ctr.TareaDeleteView.as_view(), name='tarea_delete'),    
     path('materia/unidades/tareas/update/<int:pk>/<int:id_materia>/<int:id_unidad>/', view_ctr.TareaUpdateView.as_view(), name='tarea_update'),    
+    path('materia/unidades/tareas/copiar/<int:id_tarea>', view_ctr.TareaCopiarExamenView.as_view(), name='tarea_copy'),    
+    path('materia/unidades/tareas/copiar/unidad/<int:id_materia>/<int:id_tarea>', view_ctr.TareaCopiarExamenUnidadView.as_view(), name='tarea_copy_unidad'),    
+    path('materia/unidades/tareas/copiar/detalle/<int:id_unidad>/<int:id_tarea>', view_ctr.DetalleCopiadoExamenView.as_view(), name='tarea_copy_detail'),    
+
+    
     path('materia/unidades/tareas/calificar/<int:id_tarea>/', view_ctr.CalificarTareaListView.as_view(), name='calificar_tarea'),    
     path('materia/unidades/tareas/calificar/<int:pk>/form/', view_ctr.TareaDocumentoUpdateView.as_view(), name='tarea_update'),    
     path('materia/unidades/tareas/calificar/<int:pk>/delete/', view_ctr.TareaDocumentoDeleteView.as_view(), name='docu_delete'),    
@@ -119,7 +124,8 @@ urlpatterns = [
     # path('Examen/delete/<int:pk>/<int:id_unidad>/', view_ctr.ExamenDeleteView.as_view(), name='examen_delete'),   
 
     path('rectivo/listar/<int:id_tarea>/', view_ctr.ReactivoListView.as_view(), name='reactivo_list'),     
-    path('rectivo/delete/<int:pk>/<int:id_unidad>/', view_ctr.ReactivoDeleteView.as_view(), name='reactivo_delete'),     
+    path('rectivo/update/<int:pk>/<int:id_tarea>/', view_ctr.ReactivoUpdateView.as_view(), name='reactivo_update'),     
+    path('rectivo/delete/<int:pk>/<int:id_tarea>/', view_ctr.ReactivoDeleteView.as_view(), name='reactivo_delete'),      
     path('rectivo/eleccion/list/<int:id_reactivo>/', view_ctr.ItemReactivoListView.as_view(), name='eleccion_list'),   
 
 

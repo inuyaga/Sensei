@@ -54,8 +54,8 @@ class Unidad(models.Model):
 
 class Tarea(models.Model):
     tarea_id=models.AutoField(primary_key=True) 
-    tarea_nombre = models.CharField('Nombre', max_length=400)
-    tarea_descripcion = models.CharField('Descripcion', max_length=800)
+    tarea_nombre = models.CharField('Nombre', max_length=600)
+    tarea_descripcion = models.CharField('Descripcion', max_length=2000)
     tarea_fecha_inicio = models.DateField('Fecha de inicio')
     tarea_fecha_termino = models.DateField('Fecha de Final')
     TIPO_TAREA=(('ENTREGA', 'ENTREGA'), ('PARA CALIFICAR','PARA CALIFICAR'), ('EXAMEN', 'EXAMEN'))
@@ -69,7 +69,7 @@ class Tarea(models.Model):
 
 
 class Reactivo(models.Model):
-    rec_nombre = models.CharField("Redacte su pregunta",max_length=200)
+    rec_nombre = models.CharField("Redacte su pregunta",max_length=900)
     rec_examen = models.ForeignKey(Tarea, verbose_name ="Tarea", on_delete=models.CASCADE)
     rec_tipo = models.TextField('Tipo de reactivo', choices=TIPO_REACTIVO)
 
@@ -132,8 +132,8 @@ class TareaDocumento(models.Model):
 
 class Blog(models.Model):
     blog_id=models.AutoField(primary_key=True)
-    blog_titulo =models.CharField('Titulo', max_length=250)
-    blog_descripcion =models.CharField('Descripcion', max_length=500)
+    blog_titulo =models.CharField('Titulo', max_length=600)
+    blog_descripcion =models.CharField('Descripcion', max_length=2000)
     blog_contenido=models.TextField('Contenido', blank=False, null=True,)
     blog_imagen = models.ImageField('Imagen Blog', upload_to='img_blogs/')
     blog_creado=models.DateTimeField('Creado en', auto_now_add=True)

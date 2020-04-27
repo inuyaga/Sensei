@@ -1,13 +1,12 @@
 from django import template
 from aplicaciones.ctr_escolar.models import Tarea, EleccionReactivo, TareaDocumento, Unidad
 register = template.Library()
-from django.utils import timezone
 from django.urls import reverse_lazy
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from django.db.models import Sum, F, FloatField
 @register.filter
 def is_aviable_tarea(id_tarea):
-    ahora = timezone.now().date()
+    ahora = datetime.now().date()
     obj_tarea = Tarea.objects.get(tarea_id=id_tarea)
     fecha_inicial = obj_tarea.tarea_fecha_inicio
     fecha_final = obj_tarea.tarea_fecha_termino

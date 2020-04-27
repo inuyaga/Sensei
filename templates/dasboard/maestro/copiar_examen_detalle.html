@@ -1,0 +1,45 @@
+{% extends 'dasboard/base.html' %}
+{% load get_model_object %}
+
+{% block titulo %}
+<title>Sensei | Copiar</title>
+{% endblock titulo %}
+
+{% block navegacion_links %}
+
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb adminx-page-breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Copiado</li>
+    </ol>
+</nav>
+<div class="pb-3">
+    <h1>Copiar Examen</h1>
+</div>
+{% endblock navegacion_links %}
+{% block contenido %}
+<h6>{{tarea.tarea_unidad.unidad_materia}} > {{tarea.tarea_unidad}} > {{tarea}}</h6>
+<h6><strong>Hacia</strong></h6>
+<h6>{{unidad.unidad_materia}} > {{unidad}}</h6>
+
+<h6>Reactivos</h6>
+
+<ul>
+    {% for item in reactivos %}    
+    <li>{{item.rec_nombre}}</li> 
+    
+    {% for selecciones in item.id|elecciones_reactivo %}
+        <ul>
+            <li>{{selecciones.el_value}}</li>
+        </ul>
+    {% endfor %}
+        
+    {% endfor %}
+</ul>
+    
+<form action="" method="post">
+    {% csrf_token %}
+    <input class="btn btn-success btn-lg" type="submit" value="Confirmar">
+</form>
+
+{% endblock contenido %}

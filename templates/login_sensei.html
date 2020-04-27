@@ -3,6 +3,12 @@
 	
 	{% block contenido %}
 
+	<style>
+		.error_list{
+			color: red;
+		}
+	</style>
+
 	<section class="home-slider ftco-degree-bg">
 		<div class="slider-item">
 		  <div class="overlay"></div>
@@ -35,7 +41,8 @@
 						<!-- <div class="card-seperator">
 						  <span>or</span>
 						</div> -->
-						<div class="card-body">			
+						<div class="card-body" style="align-content: center;">			
+							<h1 style="color: black;">Inico de Sesion</h1>
 						  <form class="form-auth-small" action="" method="POST">
 							<input type="hidden" name="next" value="{% url 'ctr:dasboard' %}">
 							  {% csrf_token %}
@@ -52,7 +59,7 @@
 							  <div class="bottom">
 							  </div>
 							  {% for error in form.non_field_errors %}
-							  <li>{{ error }}</li>
+							  <li class="error_list">{{ error }}</li>
 							  {% endfor %}
 						  </form>
 						</div>

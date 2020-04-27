@@ -85,6 +85,15 @@
                           Reactivos
                         </span>
                       </a>
+
+                        <a href="{% url 'ctr:tarea_copy' item.tarea_id %}" class="btn btn-sm btn-labeled btn-warning">
+                        <span class="btn-label">
+                          <span class="oi oi-account-login"></span>
+                        </span>
+                        <span class="btn-text">
+                          Copiar
+                        </span>
+                      </a>
                       {% endif %}
 
                        <a href="{% url 'ctr:calificar_tarea' item.tarea_id %}" class="btn btn-sm btn-labeled btn-dark">
@@ -93,7 +102,7 @@
                         </span>
                         <span class="btn-text">
                           Calificar
-                        </span>
+                        </span> 
                       </a>
                     
                     <a href="{% url 'ctr:tarea_update' item.tarea_id materia.materia_id unidad.unidad_id %}" class="btn btn-sm btn-labeled btn-primary">

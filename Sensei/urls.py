@@ -28,5 +28,6 @@ urlpatterns = [
     path('perfil-usuario/edit/<int:pk>/', PerfilUpdate.as_view(),name='perfil_user_update'),
     path('cambiar_pasworduser/', ChaguePasswordUser.as_view(),name='cambiar_password'),
     re_path(r'^ajax_select/', include(ajax_select_urls)),
+    path('tinymce/', include('tinymce.urls')),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
  

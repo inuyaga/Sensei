@@ -1,0 +1,66 @@
+{% extends 'inicio/base_inicio.html' %}
+{% load static %}
+{% block titulo %}
+<title>Sensei | Documentación</title>
+{% endblock titulo %}
+{% block contenido %} 
+
+<section class="home-slider ftco-degree-bg">
+  <div class="slider-item bread-wrap"  data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row slider-text justify-content-center align-items-center">
+        <div class="col-md-10 col-sm-12 ftco-animate mb-4 text-center fadeInUp ftco-animated">
+          <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'web:index' %}">Inicio</a></span>
+          <h1 class="mb-3">Documentación</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ftco-section ftco-degree-bg">
+  <div class="container">
+    <div class="row">
+      
+      {% for item in object_list %}
+      <div class="col-md-4 ftco-animate fadeInUp ftco-animated">
+        <div class="blog-entry">
+          
+          <a href="{% url 'web:documentacion_view_post' item.blog_id %}" class="block-20" style="background-image: url({{item.blog_imagen.url}});">
+          </a>
+          <div class="text p-4 d-block">
+            <div class="meta mb-3">
+              <div><a href="{% url 'web:documentacion_view_post' item.blog_id %}">{{item.blog_creado}}</a></div>
+              <!-- <div><a href="#">Admin</a></div> -->
+              <!-- <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div> -->
+            </div>
+            <h3 class="heading"><a href="{% url 'web:documentacion_view_post' item.blog_id %}">{{item.blog_titulo}}</a></h3>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+        
+     
+    </div>
+    <div class="row mt-5">
+      <div class="col text-center">
+        <div class="block-27">
+          <ul>
+            {% if page_obj.has_previous %}
+                    <li><a href="?page=1">1</a></li>
+                    <li><a href="?page={{ page_obj.previous_page_number }}">&lt;</a></li>
+            {% endif %}
+            <li class="active"><span>{{ page_obj.number }}</span></li>
+            {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}">&gt;</a></li>
+                    <li><a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a></li>
+            {% endif %}            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock contenido %}
+    

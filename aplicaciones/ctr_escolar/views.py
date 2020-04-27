@@ -43,6 +43,9 @@ from datetime import datetime
 # EXCEPCIONES
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
+
+# COMPARACION DE METRICAS
+from hermetrics.levenshtein import Levenshtein
 # Create your views here.
 class index(LoginRequiredMixin, TemplateView):
     login_url = '/login/'
@@ -1764,12 +1767,17 @@ class ResponseMaestroAjax(TemplateView):
 """
 Nuevas vistas para la nueva version de sensei
 """
-
+ 
 
 class AdminIndex(LoginRequiredMixin, TemplateView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     template_name = "dasboard/base.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['hora']=datetime.now()
+        return context
 
 
 class AulaList(LoginRequiredMixin,ListView):
@@ -2162,7 +2170,69 @@ class TareaUpdateView(LoginRequiredMixin, UpdateView):
     
 
 
+class TareaCopiarExamenView(TemplateView):
+    template_name = 'dasboard/maestro/copiar_examen.html'
+    def get_context_data(self, **kwargs): 
+        context = super().get_context_data(**kwargs)
+        tarea_obj = Tarea.objects.get(tarea_id=self.kwargs.get('id_tarea'))
+        context['materias']=Materia.objects.filter(materia_aula__aula_pertenece=self.request.user).exclude(materia_id=tarea_obj.tarea_unidad.unidad_materia.materia_id)
+        return context
+class TareaCopiarExamenUnidadView(TemplateView):
+    template_name = 'dasboard/maestro/copiar_unidad.html'
+    def get_context_data(self, **kwargs): 
+        context = super().get_context_data(**kwargs)
+        context['unidades']=Unidad.objects.filter(unidad_materia=self.kwargs.get('id_materia'))
+        return context
 
+class DetalleCopiadoExamenView(TemplateView):
+    template_name = 'dasboard/maestro/copiar_examen_detalle.html'
+
+    def post(self, request, *args, **kwargs):
+        tarea_obj_source=Tarea.objects.get(tarea_id=self.kwargs.get('id_tarea'))
+        unidad_obj=Unidad.objects.get(unidad_id=self.kwargs.get('id_unidad'))
+
+        tarea_target=Tarea(
+            tarea_nombre = tarea_obj_source.tarea_nombre,
+            tarea_descripcion = tarea_obj_source.tarea_descripcion,
+            tarea_fecha_inicio = tarea_obj_source.tarea_fecha_inicio,
+            tarea_fecha_termino = tarea_obj_source.tarea_fecha_termino,
+            tarea_tipo=tarea_obj_source.tarea_tipo,
+            tarea_porcentaje=0,
+            tarea_unidad=unidad_obj,
+            tarea_hora_init = tarea_obj_source.tarea_hora_init,
+            tarea_hora_end = tarea_obj_source.tarea_hora_end,
+        )
+        tarea_target.save()
+
+        reactivo_source = Reactivo.objects.filter(rec_examen=tarea_obj_source.tarea_id)
+        for item in reactivo_source:
+            reactivo_target = Reactivo(
+                rec_nombre = item.rec_nombre,
+                rec_examen = tarea_target,
+                rec_tipo = item.rec_tipo,
+            )
+            reactivo_target.save()
+            eleccion_source = EleccionReactivo.objects.filter(el_reactivo=item.id)
+            for elec in eleccion_source:
+                EleccionReactivo(
+                    el_value = elec.el_value,
+                    el_reactivo = reactivo_target,
+                    el_verdadero = elec.el_verdadero,
+                ).save()
+
+        messages.info(request, 'Examen copiado correctamente es necesario que actualize el porcentaje del examen ya que el estado actual es de 0%')
+        url = reverse_lazy('ctr:unidad_tareas', kwargs={'id_materia':tarea_target.tarea_unidad.unidad_materia.materia_id, 'id_unidad':tarea_target.tarea_unidad.unidad_id})
+        return redirect(url)
+    def get_context_data(self, **kwargs): 
+        context = super().get_context_data(**kwargs)
+
+        tarea_obj=Tarea.objects.get(tarea_id=self.kwargs.get('id_tarea'))
+        unidad_obj=Unidad.objects.get(unidad_id=self.kwargs.get('id_unidad'))
+        
+        context['tarea']=tarea_obj
+        context['unidad']=unidad_obj
+        context['reactivos']=Reactivo.objects.filter(rec_examen=tarea_obj.tarea_id)
+        return context
 
 class CalificarTareaListView(LoginRequiredMixin, ListView):
     login_url = '/login/'
@@ -2233,6 +2303,10 @@ class BlogListView(LoginRequiredMixin, ListView):
     redirect_field_name = 'redirect_to'
     model = Blog
     template_name = 'dasboard/maestro/blog_list.html'
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(blog_pertenece=self.request.user)
+        return queryset
 
 
 
@@ -2367,8 +2441,22 @@ class ReactivoListView(ListView):
         return JsonResponse(status=status_code, data=datos)
 
 
+class ReactivoUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+    model = Reactivo
+    template_name = "FormCreate.html"
+    form_class = ReactivoUpdateForm
+    success_url = reverse_lazy('ctr:reactivo_list')
 
-class ItemReactivoListView(ListView):
+    def get_success_url(self):
+        url = reverse_lazy('ctr:reactivo_list', kwargs={'id_tarea':self.kwargs.get('id_tarea')})
+        return str(url)
+
+
+
+
+class ItemReactivoListView(ListView): 
     model=EleccionReactivo
     template_name = "dasboard/maestro/respuestaitem.html"
     def get_queryset(self):
@@ -2398,7 +2486,7 @@ class ReactivoDeleteView(DeleteView):
 
     def get_success_url(self):
         url = reverse_lazy('ctr:reactivo_list', kwargs={
-            'id_unidad':self.kwargs.get('id_unidad'),
+            'id_tarea':self.kwargs.get('id_tarea'),
             })
         return str(url)
 
@@ -2688,7 +2776,9 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
         return super().dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        from colorama import Fore, Back, Style 
         from difflib import SequenceMatcher as SM
+        from hermetrics.hamming import Hamming
         reactivos = Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen'))
         tarea_examen = Tarea.objects.get(tarea_id=self.kwargs.get('id_examen'))
         corecto=False
@@ -2701,18 +2791,27 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
                 if respuesta_alumno == str(r_corecto):
                     corecto = True
                 else:
-                    corecto =False
+                    corecto =False 
             else:
                 respuesta_alumno=request.POST.get(str(item.id))
                 respuesta_correcta=id_corecto.el_value
-                similitud = SM(None, respuesta_correcta, respuesta_alumno).ratio()
-                if similitud >= 0.4:
+
+                ham = Hamming()
+                # dam = DamerauLevenshtein()
+                metrica_similitud = ham.similarity(respuesta_alumno, respuesta_correcta)
+                print("{} similitud:{}".format(respuesta_alumno, metrica_similitud))
+                # similitud = SM(None, respuesta_correcta, respuesta_alumno).ratio()
+                if metrica_similitud >= 0.40:
+                    # print("Bueno: {} similitud:{}".format(respuesta_alumno, metrica_similitud))
+                    
                     corecto=True
                 else:
+                    # print("MALO: {} similitud:{}".format(respuesta_alumno, metrica_similitud))
                     corecto = False
             try:
-                rep=RespuestaExamen(re_reactivo_id=item.id, re_alumno=request.user, re_ok=corecto, re_text=request.POST.get(str(item.id)))
-                rep.save()
+                pass
+                # rep=RespuestaExamen(re_reactivo_id=item.id, re_alumno=request.user, re_ok=corecto, re_text=request.POST.get(str(item.id)))
+                # rep.save()
             except IntegrityError as error:
                 messages.warning(request, 'Examen ha sido contestado, no es posible responder nuevamente.')
                 url = reverse_lazy('ctr:al_tareas', kwargs={'id_unidad':tarea_examen.tarea_unidad.unidad_id})
@@ -2722,16 +2821,16 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
         total_preguntas = Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen')).count()
         respondidas_correctamente = RespuestaExamen.objects.filter(re_reactivo__rec_examen__tarea_id=self.kwargs.get('id_examen'), re_ok=True).count()
         resultado = (respondidas_correctamente / total_preguntas) * 10
-        tarea_docu=TareaDocumento(
-            tareaDocumento_archivo='n/a',
-            tareaDocumento_comentario_alumno='S/C',
-            tareaDocumento_comentario_maestro='S/C',
-            tareaDocumento_pertenece=request.user,
-            tareaDocumento_Tarea_id=self.kwargs.get('id_examen'),
-            tareaDocumento_status=True,
-            tareaDocumento_calificacion=round(resultado, 2),
-        )
-        tarea_docu.save()
+        # tarea_docu=TareaDocumento(
+        #     tareaDocumento_archivo='n/a',
+        #     tareaDocumento_comentario_alumno='S/C',
+        #     tareaDocumento_comentario_maestro='S/C',
+        #     tareaDocumento_pertenece=request.user,
+        #     tareaDocumento_Tarea_id=self.kwargs.get('id_examen'),
+        #     tareaDocumento_status=True,
+        #     tareaDocumento_calificacion=round(resultado, 2),
+        # )
+        # tarea_docu.save()
         messages.success(request, 'Examen completado su resultados total de preguntas:{} contestado correctamente:{} resultado={}.'.format(total_preguntas, respondidas_correctamente, resultado))
         url = reverse_lazy('ctr:al_tareas', kwargs={'id_unidad':tarea_examen.tarea_unidad.unidad_id})
         return redirect(url)

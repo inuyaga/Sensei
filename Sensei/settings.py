@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'aplicaciones.usuario',
     'aplicaciones.ctr_escolar',
+    'aplicaciones.web',
+    'tinymce',
     
 ]
 AUTH_USER_MODEL = 'usuario.User'
@@ -77,6 +79,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Sensei.wsgi.application'
 
+
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': "print, preview, paste, importcss, searchreplace, autolink, autosave, save, directionality, code, visualblocks, visualchars, fullscreen, image, link, media, template, codesample, table, charmap, hr, pagebreak, nonbreaking, anchor, toc, insertdatetime, advlist, lists, wordcount, imagetools, textpattern, noneditable, help, charmap, quickbars, emoticons,",
+    # 'theme': "advanced",
+}
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases

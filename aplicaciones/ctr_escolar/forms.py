@@ -223,5 +223,15 @@ class RespuestaExamenForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
 
+class ReactivoUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Reactivo
+        fields = ('rec_nombre',)
+    
+    def __init__(self, *args, **kwargs):
+        super(ReactivoUpdateForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-control'})
+
 
 

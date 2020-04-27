@@ -1,5 +1,5 @@
 from django.contrib import admin
-from aplicaciones.ctr_escolar.models import Aula, Blog, CalificacionMateria, CalificacionUnidad, ComentarioBlog, Documento, Materia, Tarea, TareaDocumento
+from aplicaciones.ctr_escolar.models import *
 
 # Register your models here.
 class AulaConfig(admin.ModelAdmin):
@@ -63,10 +63,13 @@ class TareaDocumentoConfig(admin.ModelAdmin):
 
 admin.site.register(Aula, AulaConfig)
 admin.site.register(Blog, BlogConfig)
-admin.site.register(CalificacionMateria)
-admin.site.register(CalificacionUnidad)
+# admin.site.register(CalificacionMateria)
+# admin.site.register(CalificacionUnidad)
 admin.site.register(ComentarioBlog)
 admin.site.register(Documento)
 admin.site.register(Materia)
 admin.site.register(Tarea, TareaConfig) 
 admin.site.register(TareaDocumento, TareaDocumentoConfig)
+admin.site.register(Reactivo)
+admin.site.register(EleccionReactivo)
+admin.site.register(RespuestaExamen)
