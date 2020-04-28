@@ -58,7 +58,20 @@ class TareaDocumentoConfig(admin.ModelAdmin):
         'tareaDocumento_pertenece__username',
         'tareaDocumento_Tarea__tarea_nombre',
         )
-    list_filter = ['tareaDocumento_status', 'tareaDocumento_creado']
+    list_filter = ['tareaDocumento_status', 'tareaDocumento_creado', 'tareaDocumento_Tarea__tarea_tipo']
+
+
+
+class RespuestaExamenConfig(admin.ModelAdmin):
+    list_display = (
+        're_reactivo',
+        're_alumno',
+        're_ok',
+        're_text',
+    )
+    list_filter = (
+        're_alumno',
+    )
 
 
 admin.site.register(Aula, AulaConfig)
@@ -72,4 +85,4 @@ admin.site.register(Tarea, TareaConfig)
 admin.site.register(TareaDocumento, TareaDocumentoConfig)
 admin.site.register(Reactivo)
 admin.site.register(EleccionReactivo)
-admin.site.register(RespuestaExamen)
+admin.site.register(RespuestaExamen, RespuestaExamenConfig)

@@ -2746,16 +2746,40 @@ class EntrgaTareaAlumnoViewDelete(DeleteView):
  
 
 
-class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
+class RespuestaExamenAlumnoView(LoginRequiredMixin, ListView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
-    model = RespuestaExamen
+    model = Reactivo
     template_name = "dasboard/alumno/resolucion_examen.html"
-    form_class = RespuestaExamenForm
-    success_url = reverse_lazy('ctr:al_tareas')
+    paginate_by = 1
+    # form_class = RespuestaExamenForm
+    # success_url = reverse_lazy('ctr:al_tareas')
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(rec_examen=self.kwargs.get('id_examen'))
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        get_copy = request.GET.copy()
+        if len(get_copy) > 0:
+            select = EleccionReactivo.objects.get(id=request.GET.get('selected_user'))
+            # respuesta_x_user = request.GET.get('selected_user')
+            # print(select.el_reactivo)
+            try:
+                RespuestaExamen(re_reactivo=select.el_reactivo, re_alumno=request.user, re_ok=select.el_verdadero, re_text=select.el_value).save()
+            except IntegrityError as error:
+                messages.warning(request, '{} ya ha sido contestada'.format(select.el_reactivo))
+
+
+        
+        context = self.get_context_data()
+        return self.render_to_response(context)
 
     def dispatch(self, *args, **kwargs):
         respuestas_examen_count=RespuestaExamen.objects.filter(re_alumno=self.request.user, re_reactivo__rec_examen=self.kwargs.get('id_examen')).count()
+        total_reactivos = Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen')).count()
         
         tarea_examen = Tarea.objects.get(tarea_id=self.kwargs.get('id_examen'))
         url = reverse_lazy('ctr:al_tareas', kwargs={'id_unidad':tarea_examen.tarea_unidad.unidad_id})
@@ -2764,7 +2788,7 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
         hora_inicial = tarea_examen.tarea_hora_init
         hora_final = tarea_examen.tarea_hora_end
         
-        if respuestas_examen_count > 0:
+        if respuestas_examen_count == total_reactivos:
             messages.warning(self.request, 'Examen ha sido contestado, no es posible responder nuevamente.')
             return redirect(url)
 
@@ -2787,7 +2811,6 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
             if item.rec_tipo == 'radio':
                 respuesta_alumno=request.POST.get(str(item.id))
                 r_corecto = id_corecto.id
-                # print('Alumno R:{} Corecto:{}'.format(respuesta_alumno, r_corecto))
                 if respuesta_alumno == str(r_corecto):
                     corecto = True
                 else:
@@ -2810,8 +2833,8 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
                     corecto = False
             try:
                 pass
-                # rep=RespuestaExamen(re_reactivo_id=item.id, re_alumno=request.user, re_ok=corecto, re_text=request.POST.get(str(item.id)))
-                # rep.save()
+                rep=RespuestaExamen(re_reactivo_id=item.id, re_alumno=request.user, re_ok=corecto, re_text=request.POST.get(str(item.id)))
+                rep.save()
             except IntegrityError as error:
                 messages.warning(request, 'Examen ha sido contestado, no es posible responder nuevamente.')
                 url = reverse_lazy('ctr:al_tareas', kwargs={'id_unidad':tarea_examen.tarea_unidad.unidad_id})
@@ -2819,25 +2842,25 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, CreateView):
             
         
         total_preguntas = Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen')).count()
-        respondidas_correctamente = RespuestaExamen.objects.filter(re_reactivo__rec_examen__tarea_id=self.kwargs.get('id_examen'), re_ok=True).count()
+        respondidas_correctamente = RespuestaExamen.objects.filter(re_reactivo__rec_examen__tarea_id=self.kwargs.get('id_examen'), re_ok=True, re_alumno=request.user).count()
         resultado = (respondidas_correctamente / total_preguntas) * 10
-        # tarea_docu=TareaDocumento(
-        #     tareaDocumento_archivo='n/a',
-        #     tareaDocumento_comentario_alumno='S/C',
-        #     tareaDocumento_comentario_maestro='S/C',
-        #     tareaDocumento_pertenece=request.user,
-        #     tareaDocumento_Tarea_id=self.kwargs.get('id_examen'),
-        #     tareaDocumento_status=True,
-        #     tareaDocumento_calificacion=round(resultado, 2),
-        # )
-        # tarea_docu.save()
+        tarea_docu=TareaDocumento(
+            tareaDocumento_archivo='n/a',
+            tareaDocumento_comentario_alumno='S/C',
+            tareaDocumento_comentario_maestro='S/C',
+            tareaDocumento_pertenece=request.user,
+            tareaDocumento_Tarea_id=self.kwargs.get('id_examen'),
+            tareaDocumento_status=True,
+            tareaDocumento_calificacion=round(resultado, 2),
+        )
+        tarea_docu.save()
         messages.success(request, 'Examen completado su resultados total de preguntas:{} contestado correctamente:{} resultado={}.'.format(total_preguntas, respondidas_correctamente, resultado))
         url = reverse_lazy('ctr:al_tareas', kwargs={'id_unidad':tarea_examen.tarea_unidad.unidad_id})
         return redirect(url)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['preguntas']=Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen'))
+        # context['preguntas']=Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen'))
         context['tarea']=Tarea.objects.get(tarea_id=self.kwargs.get('id_examen'))
         return context
 

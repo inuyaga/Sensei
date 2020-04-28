@@ -14,6 +14,8 @@
 </nav>
 <div class="pb-3"> 
     <h1>Examen</h1>
+    <h2>{{tarea}}</h2>
+    <p><strong><i>{{tarea.tarea_descripcion}}</i></strong></p>
 </div>
 {% endblock navegacion_links %}
 
@@ -22,27 +24,31 @@
 
 <div class="container">
   <h3 id="countdown" class="text-center"></h3>
+  <h3 class="text-center"> <i>Pregunta {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.</i></h3>
 <div class="row">
-<form action="" method="post">
-    {% csrf_token %}
-    
-    {% for item in preguntas %}
+<form action="" method="GET">
+    <!-- {% csrf_token %} -->
+
+    {% if page_obj.has_next %}
+    <input type="hidden" name="page" value="{{ page_obj.next_page_number }}">
+    {% endif %}
+    {% for item in object_list %}
         
         {% if item.rec_tipo == 'text' %}
         <div class="form-group">
             <label for="rep_txt" style="font-weight: bold;"><h5  style="font-weight: bold;">{{item}}</h5></label>
-            <input type="text" class="form-control" id="rep_txt" name="{{item.id}}" placeholder="Especifique su respuesta" required>
+            <input type="text" class="form-control" id="rep_txt" name="selected_user" placeholder="Especifique su respuesta" required>
           </div>
           {% elif item.rec_tipo == 'textarea' %}
           <div class="form-group">
             <label for="area_pregunta"><h5  style="font-weight: bold;">{{item}}</h5></label>
-            <textarea class="form-control" id="area_pregunta"  name="{{item.id}}" rows="3" required></textarea>
+            <textarea class="form-control" id="area_pregunta"  name="selected_user" rows="3" required></textarea>
           </div>
           {% elif item.rec_tipo == 'radio' %}
           <h5 style="font-weight: bold;">{{item}}</h5>
           {% for radio in item.id|elecciones_reactivo %}
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="{{radio.el_reactivo.id}}" id="{{radio.id}}" value="{{radio.id}}" required>
+            <input class="form-check-input" type="radio" name="selected_user" id="{{radio.id}}" value="{{radio.id}}" required>
             <label class="form-check-label" for="{{radio.id}}">
               {{radio.el_value}}
             </label>
@@ -54,10 +60,27 @@
             
     {% endfor %}
         
-    <input class="btn btn-outline-success" type="submit" value="Finalizar">
+    
+
+    <div class="card-footer d-flex justify-content-center">
+    
+      <ul class="pagination pagination-clean pagination-sm mb-0">
+        
+        {% if page_obj.has_next %}
+        <li class="page-item">
+          <input class="btn btn-outline-success" type="submit" value="Siguiente›">
+        </li>
+        {% else %}
+        <input class="btn btn-outline-success" type="submit" value="Terminar">
+        {% endif %}
+      </ul>
+    </div>
+    
 </form>
 </div>
 </div>
+
+
 
 
 

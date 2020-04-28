@@ -1,6 +1,6 @@
 
 	{% extends 'inicio/base_inicio.html' %}
-	
+	{% load static %}
 	{% block contenido %}
 
 	<style>
@@ -18,7 +18,7 @@
 					<div class="page-login">
 					  <div class="text-center">
 						<a class="navbar-brand mb-4 h1" href="#">
-						  <img src="../demo/img/logo.png" class="navbar-brand-image d-inline-block align-top mr-2" alt="dsdsd">
+						  <img src="{% static 'senei.png' %}" class="navbar-brand-image d-inline-block align-top mr-2" alt="dsdsd">
 						  Sensei
 						</a>
 					  </div>

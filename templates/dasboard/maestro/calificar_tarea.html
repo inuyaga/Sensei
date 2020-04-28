@@ -73,14 +73,14 @@
               <td>{{item.tareaDocumento_comentario_alumno}}</td>
               <td>{{item.tareaDocumento_comentario_maestro}}</td>
               <td>{{item.tareaDocumento_creado}}</td>
-              <td>{{item.tareaDocumento_pertenece.get_full_name}}</td>
+              <td>{{item.tareaDocumento_pertenece}}-->{{item.tareaDocumento_pertenece.get_full_name}}</td>
               <td>
                 
                 {% if item.tareaDocumento_status %}
                 <span class="badge badge-success">Calificado</span>
                 {% else %}
                 <span class="badge badge-info">Entregado</span>
-                {% endif %}
+                {% endif %} 
                   
               </td>
               <td>{{item.tareaDocumento_calificacion}}</td>
