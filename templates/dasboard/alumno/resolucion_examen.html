@@ -13,8 +13,9 @@
     </ol>
 </nav>
 <div class="pb-3"> 
-    <h1>Examen</h1>
-    <h2>{{tarea}}</h2>
+    <h2>MATERIA: {{tarea.tarea_unidad.unidad_materia}}</h2>
+    <h3>UNIDAD: {{tarea.tarea_unidad}}</h3>
+    <h5>EXAMEN: {{tarea}}</h5>
     <p><strong><i>{{tarea.tarea_descripcion}}</i></strong></p>
 </div>
 {% endblock navegacion_links %}
@@ -71,6 +72,7 @@
           <input class="btn btn-outline-success" type="submit" value="Siguiente›">
         </li>
         {% else %}
+        <input type="hidden" name="finished" value="true">
         <input class="btn btn-outline-success" type="submit" value="Terminar">
         {% endif %}
       </ul>

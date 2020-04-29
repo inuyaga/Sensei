@@ -24,12 +24,12 @@
 <div class="row">
 {% for item in object_list %}
 <div class="col-sm-4">
-<div class="card">
+<div class="card {% cycle 'border-primary' 'border-secondary' 'border-success' 'border-danger' 'border-warning' 'border-info' 'border-light' 'border-dark' %}">
   <!-- <img src="..." class="card-img-top" alt="..."> -->
-  <div class="card-body">
+  <div class="card-body {% cycle 'text-primary' 'text-secondary' 'text-success' 'text-danger' 'text-warning' 'text-info' 'text-light' 'text-dark' %}">
     <h5 class="card-title">{{item}}</h5>
     <h6 class="card-subtitle mb-2 text-muted">{{item.materia_aula}}</h6>
-    <h6 class="card-subtitle mb-2 text-muted">{{item.materia_creado}}</h6>
+    <h6 class="card-subtitle mb-2 text-muted">{{item.materia_aula.aula_pertenece.get_full_name}}</h6> 
     <h6 class="card-subtitle mb-2 text-muted"><strong>Promedio:{{item.materia_id|get_promedio_materia:user.id}}</strong></h6>
   </div>
 

@@ -2750,7 +2750,7 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, ListView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     model = Reactivo
-    template_name = "dasboard/alumno/resolucion_examen.html"
+    template_name = "dasboard/alumno/resolucion_examen.html" 
     paginate_by = 1
     # form_class = RespuestaExamenForm
     # success_url = reverse_lazy('ctr:al_tareas')
@@ -2762,7 +2762,7 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, ListView):
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
-        get_copy = request.GET.copy()
+        get_copy = request.GET.copy() 
         if len(get_copy) > 0:
             select = EleccionReactivo.objects.get(id=request.GET.get('selected_user'))
             # respuesta_x_user = request.GET.get('selected_user')
@@ -2770,7 +2770,26 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, ListView):
             try:
                 RespuestaExamen(re_reactivo=select.el_reactivo, re_alumno=request.user, re_ok=select.el_verdadero, re_text=select.el_value).save()
             except IntegrityError as error:
-                messages.warning(request, '{} ya ha sido contestada'.format(select.el_reactivo))
+                messages.warning(request, '{} YA HA SIDO RESPONDIDO'.format(select.el_reactivo))
+
+        
+        if request.GET.get('finished') == 'true':
+            total_preguntas = Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen')).count()
+            respondidas_correctamente = RespuestaExamen.objects.filter(re_reactivo__rec_examen__tarea_id=self.kwargs.get('id_examen'), re_ok=True, re_alumno=request.user).count()
+            resultado = (respondidas_correctamente / total_preguntas) * 10
+            tarea_docu=TareaDocumento(
+                tareaDocumento_archivo='n/a',
+                tareaDocumento_comentario_alumno='S/C',
+                tareaDocumento_comentario_maestro='S/C',
+                tareaDocumento_pertenece=request.user,
+                tareaDocumento_Tarea_id=self.kwargs.get('id_examen'),
+                tareaDocumento_status=True,
+                tareaDocumento_calificacion=round(resultado, 2),
+            )
+            tarea_docu.save() 
+            messages.success(request, 'Examen completado su resultados total de preguntas:{} contestado correctamente:{} resultado={}.'.format(total_preguntas, respondidas_correctamente, resultado))
+            url = reverse_lazy('ctr:al_tareas', kwargs={'id_unidad':tarea_docu.tareaDocumento_Tarea.tarea_unidad.unidad_id})
+            return redirect(url)
 
 
         
@@ -2795,6 +2814,20 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, ListView):
         if hora_inicial <= ahora <= hora_final:
             pass
         else:
+            total_preguntas = Reactivo.objects.filter(rec_examen=self.kwargs.get('id_examen')).count()
+            respondidas_correctamente = RespuestaExamen.objects.filter(re_reactivo__rec_examen__tarea_id=self.kwargs.get('id_examen'), re_ok=True, re_alumno=self.request.user).count()
+            resultado = (respondidas_correctamente / total_preguntas) * 10
+            tarea_docu=TareaDocumento(
+                tareaDocumento_archivo='n/a',
+                tareaDocumento_comentario_alumno='S/C',
+                tareaDocumento_comentario_maestro='S/C',
+                tareaDocumento_pertenece=self.request.user,
+                tareaDocumento_Tarea_id=self.kwargs.get('id_examen'),
+                tareaDocumento_status=True,
+                tareaDocumento_calificacion=round(resultado, 2),
+            )
+            tarea_docu.save() 
+            messages.success(self.request, 'Examen completado su resultados total de preguntas:{} contestado correctamente:{} promedio={}.'.format(total_preguntas, respondidas_correctamente, resultado))
             messages.warning(self.request, 'Supero el limite para responder entre:{} hasta:{} hora actual:{}'.format(hora_inicial, hora_final, ahora))
             return redirect(url)
         return super().dispatch(*args, **kwargs)
