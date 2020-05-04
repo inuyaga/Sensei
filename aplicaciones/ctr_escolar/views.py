@@ -2305,7 +2305,7 @@ class BlogListView(LoginRequiredMixin, ListView):
     template_name = 'dasboard/maestro/blog_list.html'
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.filter(blog_pertenece=self.request.user)
+        queryset = queryset.filter(blog_pertenece=self.request.user).order_by('-blog_creado')
         return queryset
 
 
@@ -2335,7 +2335,7 @@ class BlogLerrView(LoginRequiredMixin, DetailView):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
     model = Blog
-    template_name='dasboard/maestro/blog_leer.html'
+    template_name='dasboard/maestro/blog_leer.html' 
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

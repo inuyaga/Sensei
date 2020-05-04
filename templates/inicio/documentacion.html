@@ -34,7 +34,11 @@
               </p>
               {{object.blog_contenido|safe}}
                 
-          
+              <div class="container">
+                <div class="row">
+                    <div class="fb-comments" data-href="{{ request.build_absolute_uri }}" data-numposts="60" data-width=""></div>
+                </div>
+            </div>
 
           <!-- <div class="pt-5 mt-5">
             <h3 class="mb-5">6 Comments</h3>
@@ -210,4 +214,9 @@
     </div>
   </section>
 {% endblock contenido %}
+
+{% block script %}
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v6.0&appId=221590382616544&autoLogAppEvents=1"></script>
+{% endblock script %}
     

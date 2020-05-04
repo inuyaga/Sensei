@@ -2,191 +2,250 @@
 
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    
-    {% block titulo %}
-    <title>Sensei | Inicio</title>
-    {% endblock titulo %}
-      
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,700,800" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'dasboard/index/css/open-iconic-bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'dasboard/index/css/animate.css' %}">
-    <link rel="stylesheet" href="{% static 'dasboard/index/css/owl.carousel.min.css' %}">
-    <link rel="stylesheet" href="{% static 'dasboard/index/css/owl.theme.default.min.css' %}">
-    <link rel="stylesheet" href="{% static 'dasboard/index/css/magnific-popup.css' %}">
-    <link rel="stylesheet" href="{% static 'dasboard/index/css/aos.css' %}">
-    <link rel="stylesheet" href="{% static 'dasboard/index/css/ionicons.min.css' %}">
-    <link rel="stylesheet" href="{% static 'dasboard/index/css/bootstrap-datepicker.css' %}">
-    <link rel="stylesheet" href="{% static 'dasboard/index/css/jquery.timepicker.css' %}">
-    <link rel="stylesheet" href="{% static 'dasboard/index/css/flaticon.css' %}">
-    <link rel="stylesheet" href="{% static 'dasboard/index/css/icomoon.css' %}">
-    <link rel="stylesheet" href="{% static 'dasboard/index/css/style.css' %}">
-    
-    {% block style %}
-      
-    {% endblock style %}
-    <script data-ad-client="ca-pub-1326280141214369" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-  </head>
-  <body>
-    
-    {% block navegacion %}
-    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light awake" id="ftco-navbar">
-      <div class="container">
-        <a class="navbar-brand" href="{% url 'web:index' %}">Sensei</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="oi oi-menu"></span> Menu
-        </button>
 
-        <div class="collapse navbar-collapse" id="ftco-nav">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item active"><a href="{% url 'web:index' %}" class="nav-link">Inicio</a></li>
-            <!-- <li class="nav-item"><a href="#" class="nav-link">Acerca de</a></li> -->
-            <li class="nav-item"><a href="{% url 'web:documentacion' %}" class="nav-link">Documentación</a></li>
-            
-            {% if user.is_authenticated %}
-            <li class="nav-item"><a href="{% url 'ctr:dasboard' %}" class="nav-link">Dasboard</a></li>
-              {% else %}
-              <li class="nav-item"><a href="{% url 'web:registro' %}" class="nav-link">Registro</a></li>
-              <li class="nav-item"><a href="{% url 'web:login' %}" class="nav-link">Login</a></li>
-            {% endif %}
-              
-            <!-- <li class="nav-item dropdown">
+<head>
+  <script data-ad-client="ca-pub-1326280141214369" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+  {% block titulo %}
+  <title>SenseiClass | Sistema control de tareas</title>
+  <meta name="title" content="SenseiClass | Sistema control de tareas">
+  {% endblock titulo %}
+
+  {% block SEO %}
+  <meta name="description"
+    content="Sensei Class plataforma para estudiantes y maestros, establece control de tareas y mucho mas!">
+  <meta name="keywords" content="Tareas, Control tareas, alumnos, maestros, calificaciones, kardex, unidad, materias">
+  <meta name="robots" content="index, follow">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="Sensei Class">
+  <meta property="og:url" content="{% url 'web:index' %}">
+  <meta property="og:title" content="enseiClass | Sistema control de tareas">
+  <meta property="og:description"
+    content="Sensei Class plataforma para estudiantes y maestros, establece control de tareas y mucho mas!">
+  <meta property="og:image" content="{% static 'img/estudio-de-mercado.jpg' %}">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="{% url 'web:index' %}">
+  <meta property="twitter:title" content="enseiClass | Sistema control de tareas">
+  <meta property="twitter:description"
+    content="Sensei Class plataforma para estudiantes y maestros, establece control de tareas y mucho mas!">
+  <meta property="twitter:image" content="{% static 'img/estudio-de-mercado.jpg' %}">
+
+  <script type="application/ld+json">
+    {
+      "@context" : "http://schema.org",
+      "@type" : "SoftwareApplication",
+      "name" : "Sensei Class",
+      "image" : "{% static 'img/estudio-de-mercado.jpg' %}",
+      "url" : "https://www.senseiclass.com/",
+      "downloadUrl" : "https://www.senseiclass.com/documentacion/"
+    }
+    </script>
+  {% endblock SEO %}
+
+
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,700,800" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'dasboard/index/css/open-iconic-bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dasboard/index/css/animate.css' %}">
+  <link rel="stylesheet" href="{% static 'dasboard/index/css/owl.carousel.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dasboard/index/css/owl.theme.default.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dasboard/index/css/magnific-popup.css' %}">
+  <link rel="stylesheet" href="{% static 'dasboard/index/css/aos.css' %}">
+  <link rel="stylesheet" href="{% static 'dasboard/index/css/ionicons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'dasboard/index/css/bootstrap-datepicker.css' %}">
+  <link rel="stylesheet" href="{% static 'dasboard/index/css/jquery.timepicker.css' %}">
+  <link rel="stylesheet" href="{% static 'dasboard/index/css/flaticon.css' %}">
+  <link rel="stylesheet" href="{% static 'dasboard/index/css/icomoon.css' %}">
+  <link rel="stylesheet" href="{% static 'dasboard/index/css/style.css' %}">
+
+  {% block style %}
+
+  {% endblock style %}
+    
+
+</head>
+
+<body>
+
+  {% block navegacion %}
+  <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light awake" id="ftco-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'web:index' %}">Sensei Class</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
+        aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="oi oi-menu"></span> Menu
+      </button>
+
+      <div class="collapse navbar-collapse" id="ftco-nav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active"><a href="{% url 'web:index' %}" class="nav-link">Inicio</a></li>
+          <!-- <li class="nav-item"><a href="#" class="nav-link">Acerca de</a></li> -->
+          <li class="nav-item"><a href="{% url 'web:documentacion' %}" class="nav-link">Documentación</a></li>
+
+          {% if user.is_authenticated %}
+          <li class="nav-item"><a href="{% url 'ctr:dasboard' %}" class="nav-link">Dasboard</a></li>
+          {% else %}
+          <li class="nav-item"><a href="{% url 'web:registro' %}" class="nav-link">Registro</a></li>
+          <li class="nav-item"><a href="{% url 'web:login' %}" class="nav-link">Login</a></li>
+          {% endif %}
+
+          <!-- <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="room.html" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Portfolio</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown04">
                   <a class="dropdown-item" href="portfolio.html">Portfolio</a>
                   <a class="dropdown-item" href="portfolio-single.html">Portfolio Single</a>
                 </div>
             </li> -->
-          </ul>
-        </div>
+        </ul>
       </div>
-    </nav>
-    <!-- END nav -->
-    {% endblock navegacion %}
+    </div>
+  </nav>
+  <!-- END nav -->
+  {% endblock navegacion %}
 
 
-    
-    {% block contenido %}
-      
-    
-      
-    
-    <section class="home-slider ftco-degree-bg">
-      <div class="slider-item">
-        <div class="overlay"></div>
-        <div class="container">
-          <div class="row slider-text align-items-center justify-content-center">
-            <div class="col-md-10 ftco-animate text-center">
-              <h1 class="mb-4">El estudio es  
-                <strong class="typewrite" data-period="4000" data-type='[ "Esfuerzo.", "Constancia.", "Amor.", "Virtud." ]'>
-                  <span class="wrap"></span>
-                </strong>
-              </h1>
-              <p>La calidad nunca es un accidente, siempre es resultado de un esfuerzo de la inteligencia (John Ruskiin).</p>
-              <!-- <p><a href="https://vimeo.com/45830194" class="btn btn-primary btn-outline-white px-4 py-3 popup-vimeo"><span class="ion-ios-play mr-2"></span> Watch Video</a></p> -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- END slider -->
 
-    <section class="ftco-section-featured ftco-animate">
+  {% block contenido %}
+
+
+
+
+  <section class="home-slider ftco-degree-bg">
+    <div class="slider-item">
+      <div class="overlay"></div>
       <div class="container">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="carousel owl-carousel">
-              <div class="item">
-                <a href="#">
-                  <img src="{% static 'img/Que-se-debería.jpg' %}" class="img-fluid" alt="">
-                </a>
-              </div>
-              <div class="item">
-                <a href="#">
-                  <img src="{% static 'img/estudio-de-mercado.jpg' %}" class="img-fluid" alt="">
-                </a>
-              </div>
-              <div class="item">
-                <a href="#">
-                  <img src="{% static 'img/Tecnicas-Estudio.jpg' %}" class="img-fluid" alt="">
-                </a>
-              </div>
+        <div class="row slider-text align-items-center justify-content-center">
+          <div class="col-md-10 ftco-animate text-center">
+            <h1 class="mb-4">El estudio es
+              <strong class="typewrite" data-period="4000"
+                data-type='[ "Esfuerzo.", "Constancia.", "Amor.", "Virtud." ]'>
+                <span class="wrap"></span>
+              </strong>
+            </h1>
+            <p>La calidad nunca es un accidente, siempre es resultado de un esfuerzo de la inteligencia (John Ruskiin).
+            </p>
+            <!-- <p><a href="https://vimeo.com/45830194" class="btn btn-primary btn-outline-white px-4 py-3 popup-vimeo"><span class="ion-ios-play mr-2"></span> Watch Video</a></p> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- END slider -->
+
+  <section class="ftco-section-featured ftco-animate">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="carousel owl-carousel">
+            <div class="item">
+              <a href="#">
+                <img src="{% static 'img/estudio-de-mercado.jpg' %}" class="img-fluid" alt="Sensei class"
+                  longdesc="Sensei Class plataforma para estudiantes y maestro control de tareas y muvcho mas.">
+              </a>
+            </div>
+
+            <div class="item">
+              <a href="#">
+                <img src="{% static 'img/Que-se-debería.jpg' %}" class="img-fluid" alt="">
+              </a>
+            </div>
+
+            <div class="item">
+              <a href="#">
+                <img src="{% static 'img/Tecnicas-Estudio.jpg' %}" class="img-fluid" alt="">
+              </a>
             </div>
           </div>
         </div>
       </div>
-    </section>
-    
+    </div>
+  </section>
 
-    <section class="ftco-section ftco-degree-bg">
+
+  <section class="ftco-section ftco-degree-bg">
+    <div class="container">
+      <div class="row justify-content-center mb-5 pb-5">
+        <div class="col-md-7 text-center heading-section ftco-animate">
+          <span class="subheading">Servico</span>
+          <h2>¡Conoce lo grandioso que puede ser nuestra plataforma!</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
+          <div class="media block-6 services d-block text-center">
+            <div class="d-flex justify-content-center">
+              <div class="icon color-1 d-flex justify-content-center mb-3"><span
+                  class="align-self-center icon-layers"></span></div>
+            </div>
+            <div class="media-body p-2">
+              <h3 class="heading">Materias</h3>
+              <p>Podras crear materias ilimitadas.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
+          <div class="media block-6 services d-block text-center">
+            <div class="d-flex justify-content-center">
+              <div class="icon color-2 d-flex justify-content-center mb-3"><span
+                  class="align-self-center icon-gears"></span></div>
+            </div>
+            <div class="media-body p-2">
+              <h3 class="heading">Creacion de examenes</h3>
+              <p>Crea examenes para que puedan ser repondidos por tus alumnos</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
+          <div class="media block-6 services d-block text-center">
+            <div class="d-flex justify-content-center">
+              <div class="icon color-3 d-flex justify-content-center mb-3"><span
+                  class="align-self-center icon-paper-plane"></span></div>
+            </div>
+            <div class="media-body p-2">
+              <h3 class="heading">Creador de blogs instantaneos</h3>
+              <p>Crear maravillosos blogs como ayuda didactica para sus alumnos.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
+          <div class="media block-6 services d-block text-center">
+            <div class="d-flex justify-content-center">
+              <div class="icon color-4 d-flex justify-content-center mb-3"><span
+                  class="align-self-center icon-live_help"></span></div>
+            </div>
+            <div class="media-body p-2">
+              <h3 class="heading">Integracion de recursos didacticos</h3>
+              <p>Suba documentos para ayudar a sus alumnos, como guias, revistas, o instrucciones.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ftco-section-parallax ftco-degree-bg">
+    <div class="parallax-img d-flex align-items-center">
       <div class="container">
-        <div class="row justify-content-center mb-5 pb-5">
-          <div class="col-md-7 text-center heading-section ftco-animate">
-            <span class="subheading">Servico</span>
-            <h2>¡Conoce lo grandioso que puede ser nuestra plataforma!</h2>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services d-block text-center">
-              <div class="d-flex justify-content-center"><div class="icon color-1 d-flex justify-content-center mb-3"><span class="align-self-center icon-layers"></span></div></div>
-              <div class="media-body p-2">
-                <h3 class="heading">Materias</h3>
-                <p>Podras crear materias ilimitadas.</p>
-              </div>
-            </div>      
-          </div>
-          <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services d-block text-center">
-              <div class="d-flex justify-content-center"><div class="icon color-2 d-flex justify-content-center mb-3"><span class="align-self-center icon-gears"></span></div></div>
-              <div class="media-body p-2">
-                <h3 class="heading">Creacion de examenes</h3>
-                <p>Crea examenes para que puedan ser repondidos por tus alumnos</p>
-              </div>
-            </div>      
-          </div>
-          <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services d-block text-center">
-              <div class="d-flex justify-content-center"><div class="icon color-3 d-flex justify-content-center mb-3"><span class="align-self-center icon-paper-plane"></span></div></div>
-              <div class="media-body p-2">
-                <h3 class="heading">Creador de blogs instantaneos</h3>
-                <p>Crear maravillosos blogs como ayuda didactica para sus alumnos.</p>
-              </div>
-            </div>    
-          </div>
-
-          <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services d-block text-center">
-              <div class="d-flex justify-content-center"><div class="icon color-4 d-flex justify-content-center mb-3"><span class="align-self-center icon-live_help"></span></div></div>
-              <div class="media-body p-2">
-                <h3 class="heading">Integracion de recursos didacticos</h3>
-                <p>Suba documentos para ayudar a sus alumnos, como guias, revistas, o instrucciones.</p>
-              </div>
-            </div>      
+        <div class="row d-flex justify-content-center">
+          <div class="col-md-10 text-center heading-section heading-section-white ftco-animate">
+            <h2 class="h1 font-weight-bold">Como alumno puede ver las actividades que su maestro les ha encomendado para
+              realizarlas</h2>
+            <p><a href="#" class="btn btn-primary btn-outline-white mt-3 py-3 px-4">Muy Bien</a></p>
           </div>
         </div>
       </div>
-    </section>
-
-    <section class="ftco-section-parallax ftco-degree-bg">
-      <div class="parallax-img d-flex align-items-center">
-        <div class="container">
-          <div class="row d-flex justify-content-center">
-            <div class="col-md-10 text-center heading-section heading-section-white ftco-animate">
-              <h2 class="h1 font-weight-bold">Como alumno puede ver las actividades que su maestro les ha encomendado para realizarlas</h2>
-              <p><a href="#" class="btn btn-primary btn-outline-white mt-3 py-3 px-4">Muy Bien</a></p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    </div>
+  </section>
 
 
-    
-    
-    <section class="ftco-section">
+
+
+  <section class="ftco-section">
     <div class="container-fluid">
       <div class="row no-gutters justify-content-center mb-5 pb-5">
         <div class="col-md-7 text-center heading-section ftco-animate fadeInUp ftco-animated">
@@ -197,25 +256,26 @@
       <div class="row no-gutters">
         {% for item in blogs %}
         <div class="block-3 row ftco-animate fadeInUp ftco-animated">
-          <a href="#" class="{% cycle 'image' 'image order-2' %}" style="background-image: url('{{item.blog_imagen.url}}'); "></a>
+          <a href="#" class="{% cycle 'image' 'image order-2' %}"
+            style="background-image: url('{{item.blog_imagen.url}}'); "></a>
           <div class="{% cycle 'text' 'text order-1' %}">
             <h4 class="subheading">{{item.blog_creado}}</h4>
             <h2 class="heading"><a href="#">{{item.blog_titulo}}</a></h2>
             <p>{{item.blog_descripcion|safe}}....{{item.blog_descripcion|safe}}</p>
           </div>
         </div>
-        
-        {% endfor %}       
+
+        {% endfor %}
       </div>
     </div>
   </section>
 
 
-  
-      
-    
-    
-    <!-- <section class="ftco-section testimony-section ftco-degree-bg">
+
+
+
+
+  <!-- <section class="ftco-section testimony-section ftco-degree-bg">
       <div class="container">
         <div class="row justify-content-center mb-5 pb-5">
           <div class="col-md-7 text-center heading-section ftco-animate">
@@ -393,23 +453,24 @@
       </div>
     </section> -->
 
-    {% endblock contenido %}
+  {% endblock contenido %}
 
-    <footer class="ftco-footer ftco-bg-dark ftco-section">
-      <div class="container">
-        <div class="row mb-5">
-          <div class="col-md">
-            <div class="ftco-footer-widget mb-4">
-              <h2 class="ftco-heading-2">Sensei</h2>
-              <p>Todo error deja una enseñanza, toda enseñanza deja una experiencia, y toda experiencia deja una huella.</p>
-              <ul class="ftco-footer-social list-unstyled float-md-left float-lft">
-                <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
-                <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
-                <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
-              </ul>
-            </div>
+  <footer class="ftco-footer ftco-bg-dark ftco-section">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-md">
+          <div class="ftco-footer-widget mb-4">
+            <h2 class="ftco-heading-2">Sensei Class</h2>
+            <p>Todo error deja una enseñanza, toda enseñanza deja una experiencia, y toda experiencia deja una huella.
+            </p>
+            <ul class="ftco-footer-social list-unstyled float-md-left float-lft">
+              <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
+              <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
+              <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
+            </ul>
           </div>
-          <!-- <div class="col-md">
+        </div>
+        <!-- <div class="col-md">
              <div class="ftco-footer-widget mb-4">
               <h2 class="ftco-heading-2">Quick Links</h2>
               <ul class="list-unstyled">
@@ -422,48 +483,63 @@
               </ul>
             </div>
           </div> -->
-          <div class="col-md">
-             <div class="ftco-footer-widget mb-4">
-              <h2 class="ftco-heading-2">Contacto</h2>
-              <ul class="list-unstyled">
-                <li><a href="#" class="py-2 d-block">Informacion de contacto</a></li>
-                <li><a href="#" class="py-2 d-block">Grupo de preguntas frecuentes <span class="icon-whatsapp"></span></a></li>
-                <!-- <li><a href="#" class="py-2 d-block">info@yoursite.com</a></li>
+        <div class="col-md">
+          <div class="ftco-footer-widget mb-4">
+            <h2 class="ftco-heading-2">Contacto</h2>
+            <ul class="list-unstyled">
+              <li><a href="#" class="py-2 d-block">Informacion de contacto</a></li>
+              <li><a href="#" class="py-2 d-block">Grupo de preguntas frecuentes <span class="icon-whatsapp"></span></a>
+              </li>
+              <!-- <li><a href="#" class="py-2 d-block">info@yoursite.com</a></li>
                 <li><a href="#" class="py-2 d-block">email@email.com</a></li> -->
-              </ul>
-            </div>
+            </ul>
           </div>
-          <div class="col-md">
-            <div class="ftco-footer-widget mb-4">
-              <h2 class="ftco-heading-2">Proyecto GNU GPL</h2>
-              <p>Para estar al tanto de nuevas caracteristicas o promover ideas visiata mi patreon.</p>
-              <a href="https://www.patreon.com/hdezmarioe"><svg style="width:50px;height:50px;" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="patreon" class="svg-inline--fa fa-patreon fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M512 194.8c0 101.3-82.4 183.8-183.8 183.8-101.7 0-184.4-82.4-184.4-183.8 0-101.6 82.7-184.3 184.4-184.3C429.6 10.5 512 93.2 512 194.8zM0 501.5h90v-491H0v491z"></path></svg></a>
-              <!-- <form action="#" class="subscribe-form">
+        </div>
+        <div class="col-md">
+          <div class="ftco-footer-widget mb-4">
+            <h2 class="ftco-heading-2">Proyecto GNU GPL</h2>
+            <p>Para estar al tanto de nuevas caracteristicas o promover ideas visiata mi patreon.</p>
+            <a href="https://www.patreon.com/hdezmarioe"><svg style="width:50px;height:50px;" aria-hidden="true"
+                focusable="false" data-prefix="fab" data-icon="patreon" class="svg-inline--fa fa-patreon fa-w-16"
+                role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path fill="currentColor"
+                  d="M512 194.8c0 101.3-82.4 183.8-183.8 183.8-101.7 0-184.4-82.4-184.4-183.8 0-101.6 82.7-184.3 184.4-184.3C429.6 10.5 512 93.2 512 194.8zM0 501.5h90v-491H0v491z">
+                </path>
+              </svg></a>
+            <!-- <form action="#" class="subscribe-form">
                 <div class="form-group">
                   <span class="icon icon-paper-plane"></span>
                   <input type="text" class="form-control" placeholder="Subscribe">
                 </div>
               </form> -->
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12 text-center">
-
-            <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-  Copyright &copy;<script>document.write(new Date().getFullYear());</script> Todos los derechos reservados | Desarrollo a cargo <i class="icon-heart" aria-hidden="true"></i> de <a href="https://www.facebook.com/marioestebanh" target="_blank">marioestebanh</a>
-  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
           </div>
         </div>
       </div>
-    </footer>
-    
-  
+      <div class="row">
+        <div class="col-md-12 text-center">
+
+          <p>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            Copyright &copy;
+            <script>document.write(new Date().getFullYear());</script> Todos los derechos reservados | Desarrollo a
+            cargo <i class="icon-heart" aria-hidden="true"></i> de <a href="https://www.facebook.com/marioestebanh"
+              target="_blank">marioestebanh</a>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
 
   <!-- loader -->
-  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px">
+      <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee" />
+      <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"
+        stroke="#F96D00" /></svg></div>
 
-  
+
 
   <script src="{% static 'dasboard/index/js/jquery.min.js' %}"></script>
   <script src="{% static 'dasboard/index/js/jquery-migrate-3.0.1.min.js' %}"></script>
@@ -478,19 +554,21 @@
   <script src="{% static 'dasboard/index/js/jquery.animateNumber.min.js' %}"></script>
   <script src="{% static 'dasboard/index/js/bootstrap-datepicker.js' %}"></script>
   <script src="{% static 'dasboard/index/js/jquery.timepicker.min.js' %}"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
   <script src="{% static 'dasboard/index/js/google-map.js' %}"></script>
   <script src="{% static 'dasboard/index/js/main.js' %}"></script>
-    <!-- Smartsupp Live Chat script -->
-<script type="text/javascript">
-  var _smartsupp = _smartsupp || {};
-  _smartsupp.key = '3e4b96d1f9ab54fd25dc894c6053796ccdfe6784';
-  window.smartsupp||(function(d) {
-    var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
-    s=d.getElementsByTagName('script')[0];c=d.createElement('script');
-    c.type='text/javascript';c.charset='utf-8';c.async=true;
-    c.src='https://www.smartsuppchat.com/loader.js?';s.parentNode.insertBefore(c,s);
-  })(document);
+  <!-- Smartsupp Live Chat script -->
+  <script type="text/javascript">
+    var _smartsupp = _smartsupp || {};
+    _smartsupp.key = '3e4b96d1f9ab54fd25dc894c6053796ccdfe6784';
+    window.smartsupp || (function (d) {
+      var s, c, o = smartsupp = function () { o._.push(arguments) }; o._ = [];
+      s = d.getElementsByTagName('script')[0]; c = d.createElement('script');
+      c.type = 'text/javascript'; c.charset = 'utf-8'; c.async = true;
+      c.src = 'https://www.smartsuppchat.com/loader.js?'; s.parentNode.insertBefore(c, s);
+    })(document);
   </script>
-  </body>
+</body>
+
 </html>
