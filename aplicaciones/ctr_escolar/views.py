@@ -2157,11 +2157,15 @@ class TareaUpdateView(LoginRequiredMixin, UpdateView):
                 unida=Unidad.objects.get(unidad_id=form.instance.tarea_unidad.unidad_id)
                 idmateria=unida.unidad_materia.materia_id
                 materia=Materia.objects.get(materia_id=idmateria)
-                tarea = form.save(commit=False)
+                tarea = form.save(commit=False) 
                 tarea.save()
                 for id_user in materia.materia_registro_alumnnos.all():
-                    doc=TareaDocumento(tareaDocumento_archivo='s/n',tareaDocumento_comentario_alumno='s/n' ,tareaDocumento_pertenece=id_user ,tareaDocumento_Tarea=tarea)
+                    doc=TareaDocumento(tareaDocumento_archivo='PARA CALIFICAR',tareaDocumento_comentario_alumno='PARA CALIFICAR' ,tareaDocumento_pertenece=id_user ,tareaDocumento_Tarea=tarea)
                     doc.save()
+            if tipo_set=='ENTREGA' and get_tarea_id.tarea_tipo == 'PARA CALIFICAR':
+                TareaDocumento.objects.filter(tareaDocumento_Tarea=get_tarea_id).delete()
+            if tipo_set=='EXAMEN' and get_tarea_id.tarea_tipo == 'PARA CALIFICAR':
+                TareaDocumento.objects.filter(tareaDocumento_Tarea=get_tarea_id).delete()
             return super().form_valid(form)
         else:
             messages.info(self.request, 'Sobrepasa el limite de % debe ser menor o igual a 100%.')
@@ -2235,7 +2239,7 @@ class DetalleCopiadoExamenView(TemplateView):
         return context
 
 class CalificarTareaListView(LoginRequiredMixin, ListView):
-    login_url = '/login/'
+    login_url = '/login/' 
     redirect_field_name = 'redirect_to'
     model = TareaDocumento
     template_name = 'dasboard/maestro/calificar_tarea.html'
@@ -2243,6 +2247,27 @@ class CalificarTareaListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs): 
         context = super().get_context_data(**kwargs)
         context['tarea']=Tarea.objects.get(tarea_id=self.kwargs.get('id_tarea'))
+        recalculo = self.request.GET.get('recalculo')
+        if recalculo != None:
+            pk_examen = self.kwargs.get('id_tarea')
+            TareaDocumento.objects.filter(tareaDocumento_Tarea=pk_examen).delete()
+            resp_query = RespuestaExamen.objects.values('re_alumno').filter(re_reactivo__rec_examen=pk_examen, re_ok=True).annotate(Count('re_reactivo')).order_by('re_alumno')
+            total_preguntas = Reactivo.objects.filter(rec_examen=pk_examen).count()
+            for item in resp_query:                
+                resultado = (item['re_reactivo__count'] / total_preguntas) * 10
+                tarea_docu=TareaDocumento(
+                    tareaDocumento_archivo='n/a',
+                    tareaDocumento_comentario_alumno='Examen',
+                    tareaDocumento_comentario_maestro='Examen',
+                    tareaDocumento_pertenece_id=item['re_alumno'], 
+                    tareaDocumento_Tarea_id=pk_examen,
+                    tareaDocumento_status=True,
+                    tareaDocumento_calificacion=round(resultado, 2),
+                )
+                tarea_docu.save() 
+            
+            
+            
         return context
 
     def get_queryset(self):
@@ -2779,9 +2804,9 @@ class RespuestaExamenAlumnoView(LoginRequiredMixin, ListView):
             resultado = (respondidas_correctamente / total_preguntas) * 10
             tarea_docu=TareaDocumento(
                 tareaDocumento_archivo='n/a',
-                tareaDocumento_comentario_alumno='S/C',
-                tareaDocumento_comentario_maestro='S/C',
-                tareaDocumento_pertenece=request.user,
+                tareaDocumento_comentario_alumno='Examen',
+                tareaDocumento_comentario_maestro='Examen',
+                tareaDocumento_pertenece=request.user, 
                 tareaDocumento_Tarea_id=self.kwargs.get('id_examen'),
                 tareaDocumento_status=True,
                 tareaDocumento_calificacion=round(resultado, 2),

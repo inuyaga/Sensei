@@ -95,6 +95,8 @@ class RespuestaExamen(models.Model):
     re_text = models.TextField(verbose_name="Respondió")
     def __str__(self):
         return str(self.re_reactivo)
+    def examen_nombre(self):
+        return self.re_reactivo.rec_examen
     class Meta:
         unique_together = (("re_reactivo", "re_alumno"),)
         # ordering = ['-tareaDocumento_actualizado']

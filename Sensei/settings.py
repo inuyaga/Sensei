@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'aplicaciones.ctr_escolar',
     'aplicaciones.web',
     'tinymce',
+    'django_cleanup.apps.CleanupConfig',
     
 ]
 AUTH_USER_MODEL = 'usuario.User'

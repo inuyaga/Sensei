@@ -64,13 +64,15 @@ class TareaDocumentoConfig(admin.ModelAdmin):
 
 class RespuestaExamenConfig(admin.ModelAdmin):
     list_display = (
-        're_reactivo',
+        'id',
+        'examen_nombre',
         're_alumno',
         're_ok',
         're_text',
     )
+    search_fields = ('re_alumno__username','re_reactivo__rec_examen__tarea_id')
     list_filter = (
-        're_alumno',
+        're_ok',
     )
 
 

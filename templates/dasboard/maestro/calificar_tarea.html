@@ -34,9 +34,17 @@
     <a class="btn btn-outline-primary btn-sm" href="?" role="button">Todo</a>
     <a class="btn btn-outline-success btn-sm" href="?status=True" role="button">Calificado</a>
     <a class="btn btn-outline-info btn-sm" href="?status=False" role="button">Entregados</a>
+    
+    {% if tarea.tarea_tipo == 'EXAMEN' %}
+    <a class="btn btn-outline-danger btn-sm" href="?recalculo=yes" role="button">Recalcular</a>      
+    {% endif %}
+      
   </div>
 </div>
 <div class="row">
+
+
+    
  
   <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
   <div class="card">
