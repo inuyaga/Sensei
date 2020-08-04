@@ -1,4 +1,8 @@
 {
-    "python.pythonPath": "env\\Scripts\\python.exe",
-    "python.linting.pylintArgs": ["--reports", "12", "--disable-msg", "I0011"],
+    "python.linting.pylintArgs": [
+        "--reports",
+        "12",
+        "--disable-msg",
+        "I0011"
+    ],
 }
