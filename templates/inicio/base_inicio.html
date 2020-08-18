@@ -254,19 +254,21 @@
         </div>
       </div>
       <div class="row no-gutters">
-        {% for item in blogs %}
-        <div class="block-3 row ftco-animate fadeInUp ftco-animated">
-          <a href="#" class="{% cycle 'image' 'image order-2' %}"
-            style="background-image: url('{{item.blog_imagen.url}}'); "></a>
-          <div class="{% cycle 'text' 'text order-1' %}">
-            <h4 class="subheading">{{item.blog_creado}}</h4>
-            <h2 class="heading"><a href="#">{{item.blog_titulo}}</a></h2>
-            <p>{{item.blog_descripcion|safe}}....{{item.blog_descripcion|safe}}</p>
+        <div class="container text-center">                
+        <div class="row d-flex justify-content-center">                
+        {% for item in blogs %}        
+        <div class="col-sm-3 card">
+          <img src="{{item.blog_imagen.url}}" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">{{item.blog_titulo}}</h5>
+            <p class="card-text">{{item.blog_descripcion|safe}}</p>
+            <a href="{% url 'web:documentacion_view_post' item.blog_id %}" class="btn btn-primary">Mas</a>
           </div>
         </div>
-
         {% endfor %}
       </div>
+      </div>
+    </div>
     </div>
   </section>
 
