@@ -67,7 +67,7 @@
           <thead>
             <tr>
               <th scope="col">Alumno</th> 
-              <th scope="col">Suma %</th>
+              
               <th scope="col">Promedio</th> 
               
             </tr>
@@ -76,7 +76,7 @@
             {% for item in object_list %}
             <tr>
               <td>{{item.tareaDocumento_pertenece__first_name}} {{item.tareaDocumento_pertenece__last_name}}</td>
-              <td>{{item.suma_real_porcentaje}}%</td>
+              
               <td>{{item.promedio_materia}}</td>
               
             </tr>

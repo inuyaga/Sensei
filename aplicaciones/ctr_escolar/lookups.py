@@ -11,6 +11,9 @@ class TagsLookupDocumentos(LookupChannel):
     def format_item_display(self, item):
         filtering='<span class="badge badge-pill badge-info">{}</span>'.format(item.doc_nombre)
         return filtering
+    def check_auth(self, request):
+        if request.user.is_authenticated:
+            return True
 
 @register('user_register_materia')
 class TagsLookupUserRegister(LookupChannel):
@@ -20,4 +23,7 @@ class TagsLookupUserRegister(LookupChannel):
     def format_item_display(self, item):
         filtering='<span class="badge badge-info">{}-->{}</span>'.format(item.username,item.get_full_name())
         return filtering
+    def check_auth(self, request):
+        if request.user.is_authenticated:
+            return True
 

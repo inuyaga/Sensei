@@ -1764,6 +1764,11 @@ class ResponseMaestroAjax(TemplateView):
 
 
 
+
+
+
+
+
 """
 Nuevas vistas para la nueva version de sensei
 """
@@ -2596,11 +2601,11 @@ class PromediarMateriaAlumnoView(LoginRequiredMixin, ListView):
         'tareaDocumento_pertenece__first_name',
         'tareaDocumento_pertenece__last_name',
         ).filter(tareaDocumento_Tarea__tarea_unidad__unidad_materia=self.kwargs.get('id_materia')).annotate(
-            total_tareas=Count('tareaDocumento_id'),
-            total_suma=Sum('tareaDocumento_calificacion')
+            tareas_count=Count('tareaDocumento_id'),
+            # total_suma=Sum('tareaDocumento_calificacion')
             ).annotate(
                 suma_real_porcentaje = Sum((F('tareaDocumento_Tarea__tarea_porcentaje')/10)*F('tareaDocumento_calificacion'), output_field=FloatField()),
-                promedio_materia = Sum((F('tareaDocumento_Tarea__tarea_porcentaje')/10)*F('tareaDocumento_calificacion'), output_field=FloatField())/total_tareas,
+                promedio_materia =     Sum((F('tareaDocumento_Tarea__tarea_porcentaje')/10)*F('tareaDocumento_calificacion'), output_field=FloatField())/total_tareas,
             ).order_by('tareaDocumento_pertenece')
         
         return queryset
@@ -2617,7 +2622,7 @@ class BoligAlumnoListView(LoginRequiredMixin, ListView):
     redirect_field_name = 'redirect_to'
     model = Blog
     template_name = 'dasboard/alumno/blog_al_list.html'
-    paginate_by = 10
+    # paginate_by = 10
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset()

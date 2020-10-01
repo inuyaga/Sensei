@@ -18,8 +18,8 @@ class MateriaForm(forms.ModelForm):
         widgets = {
         'materia_archivos': forms.CheckboxSelectMultiple(attrs={'type': 'checkbox'}),
         }
-    materia_archivos = AutoCompleteSelectMultipleField('documentos_tags',required=False, help_text='Escriba el nombre del documento a agregar, y seleccione.')
-    materia_registro_alumnnos = AutoCompleteSelectMultipleField('user_register_materia',label='Alumnos registrados', required=False, help_text='Escriba el nombre de usuario del alumno.')
+    materia_archivos = AutoCompleteSelectMultipleField('documentos_tags',required=False, help_text='Escriba y seleccione recursos subidos con anterioridad (opcional, puede editar posteriormente).')
+    materia_registro_alumnnos = AutoCompleteSelectMultipleField('user_register_materia',label='Alumnos registrados', required=False, help_text='Alumnos registrados actualmente (opcional).')
     
     def __init__(self, *args, **kwargs):
         id_user = kwargs.pop('user')
