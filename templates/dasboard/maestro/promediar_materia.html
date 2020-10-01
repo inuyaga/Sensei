@@ -67,12 +67,12 @@
           <thead>
             <tr>
               <th scope="col">Alumno</th> 
-              
+              <th scope="col">Calificacion %</th>
               <th scope="col">Promedio</th> 
               
             </tr>
           </thead>
-          <tbody>
+          <tbody> 
             {% for item in object_list %}
             <tr>
               <td>{{item.tareaDocumento_pertenece__first_name}} {{item.tareaDocumento_pertenece__last_name}}</td>

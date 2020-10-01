@@ -10,7 +10,7 @@ class IndexView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['blogs']=Blog.objects.all().order_by('blog_creado')[:3]
+        context['blogs']=BlogWeb.objects.all().order_by('blog_creado')[:3] 
         return context
 
 class DocumentacionListView(ListView):   
