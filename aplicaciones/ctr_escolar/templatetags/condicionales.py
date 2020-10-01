@@ -25,12 +25,16 @@ def get_promedio(id_unidad, suma):
 
 @register.filter
 def get_promedio_materia(id_materia, id_alumno):
+    promedio=0
     total_unidad = Unidad.objects.filter(unidad_materia=id_materia).count()
     suma_tareas = TareaDocumento.objects.filter(tareaDocumento_pertenece=id_alumno, tareaDocumento_Tarea__tarea_unidad__unidad_materia=id_materia).aggregate(
                 calificacion_unidad = Sum((F('tareaDocumento_Tarea__tarea_porcentaje')/10)*F('tareaDocumento_calificacion'), output_field=FloatField()),
             )
-    suma_tareas['calificacion_unidad'] = 0 if suma_tareas['calificacion_unidad'] == None else suma_tareas['calificacion_unidad']
-    promedio = suma_tareas['calificacion_unidad']/total_unidad
+    suma_tareas['calificacion_unidad'] = 0 if suma_tareas['calificacion_unidad'] == None else suma_tareas['calificacion_unidad']    
+    try:
+        promedio = suma_tareas['calificacion_unidad']/total_unidad
+    except ZeroDivisionError:
+        pass    
     return promedio
 
 @register.filter

@@ -16,7 +16,15 @@
     </ol>
 </nav>
 <div class="pb-3">
-    <h1>{{materia.materia_nombre}}</h1> <h2>{{unidad.unidad_nombre}}</h2> <h3>Tareas</h3>
+    <h1>{{materia.materia_nombre}}</h1> 
+    <h2>{{unidad.unidad_nombre}}</h2> 
+    <h3>Tareas</h3>
+    <h4>Porcentaje completado</h4> 
+    <div class="progress">
+      <div class="progress-bar" role="progressbar" style="width: {{suma_porcentaje.tarea_porcentaje__sum|default_if_none:"0"}}%;" aria-valuenow="{{suma_porcentaje.tarea_porcentaje__sum|default_if_none:"0"}}" aria-valuemin="0" aria-valuemax="100">{{suma_porcentaje.tarea_porcentaje__sum|default_if_none:"0"}}%</div>
+    </div>
+    <h6 style="color: gray;">Para que el sistema funcione correctamente por cada unidad debe completar el 100%</ style="color: gray;">
+      
 </div>
 {% endblock navegacion_links %}
 

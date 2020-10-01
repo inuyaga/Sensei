@@ -30,10 +30,10 @@ class Documento(models.Model):
 
 class Materia(models.Model):
     materia_id = models.AutoField(primary_key=True)
-    materia_aula=models.ForeignKey(Aula, verbose_name='Aula', on_delete=models.CASCADE)
-    materia_nombre = models.CharField('Nombre', max_length=150)
-    materia_archivos=models.ManyToManyField(Documento, verbose_name="Archivos")
-    materia_registro_alumnnos=models.ManyToManyField(Usuario, verbose_name="Registro_materia")
+    materia_aula=models.ForeignKey(Aula, verbose_name='Aula', on_delete=models.CASCADE, help_text='Seleccione un alula')
+    materia_nombre = models.CharField('Nombre', max_length=150, help_text='Nombre de la Materia')
+    materia_archivos=models.ManyToManyField(Documento, verbose_name="Archivos", help_text='Escriba y seleccione recursos subidos con anterioridad (opcional puede editar posteriormente).')
+    materia_registro_alumnnos=models.ManyToManyField(Usuario, verbose_name="Registro_materia", help_text='Alumnos registrados actualmente (opcional).')
     materia_creado = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -47,7 +47,7 @@ class Materia(models.Model):
 
 class Unidad(models.Model):
     unidad_id=models.AutoField(primary_key=True)
-    unidad_nombre=models.CharField('Nombre', max_length=500)
+    unidad_nombre=models.CharField('Nombre', max_length=500, help_text='Nombre de la Unidad')
     unidad_materia=models.ForeignKey(Materia, verbose_name='Materia', on_delete=models.CASCADE)
     def __str__(self):
         return self.unidad_nombre
@@ -60,7 +60,7 @@ class Tarea(models.Model):
     tarea_fecha_termino = models.DateField('Fecha de Final')
     TIPO_TAREA=(('ENTREGA', 'ENTREGA'), ('PARA CALIFICAR','PARA CALIFICAR'), ('EXAMEN', 'EXAMEN'))
     tarea_tipo=models.CharField('Tipo de tarea', max_length=20, choices=TIPO_TAREA)
-    tarea_porcentaje=models.IntegerField('Valor en %', validators=[MinValueValidator(1),MaxValueValidator(100)], default=1)
+    tarea_porcentaje=models.IntegerField('Valor en %', validators=[MinValueValidator(1),MaxValueValidator(100)], default=1, help_text='Debe completar el 100% en toda unidad')
     tarea_unidad=models.ForeignKey(Unidad, verbose_name='Unidad', on_delete=models.CASCADE)
     tarea_hora_init = models.TimeField("Hora de inicio", help_text=mark_safe('<small class="form-text text-muted">Aplica si es examen</small>'),null=True, blank=True)
     tarea_hora_end = models.TimeField("Hora de finalización", help_text=mark_safe('<small class="form-text text-muted">Aplica si es examen</small>'),null=True, blank=True)
