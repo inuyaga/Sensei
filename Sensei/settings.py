@@ -26,7 +26,7 @@ SECRET_KEY = 'ik1pqj@67t++6!1)l*x#935@vpcu8w7s^%f(i@*r9c&jkzbn5('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework', #<<-- aplicacion para crear apis
+    'rest_framework.authtoken', #<<-- aplicacion para login en apps
     'aplicaciones.usuario',
     'aplicaciones.ctr_escolar',
     'aplicaciones.web',
